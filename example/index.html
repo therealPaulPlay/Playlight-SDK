@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playlight SDK Example</title>
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            background-color: #1a1a2e;
+            color: #e2e2e2;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        h1 {
+            color: #9567ff;
+            margin-bottom: 2rem;
+        }
+
+        .game-container {
+            background-color: #16213e;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .game-placeholder {
+            width: 100%;
+            height: 300px;
+            background-color: #0f3460;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        button {
+            background-color: #6d28d9;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin: 0.5rem;
+        }
+
+        button:hover {
+            background-color: #5b21b6;
+        }
+
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+
+        .config-panel {
+            background-color: #16213e;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            text-align: left;
+        }
+
+        .config-title {
+            margin-top: 0;
+            color: #9567ff;
+            margin-bottom: 1rem;
+        }
+
+        code {
+            display: block;
+            background-color: #0f3460;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            white-space: pre;
+            color: #e2e2e2;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Playlight SDK Demo</h1>
+
+        <div class="game-container">
+            <div class="game-placeholder">
+                [Your Game Here]
+            </div>
+
+            <p>This is a demo page showing how to integrate the Playlight SDK into your browser game.</p>
+
+            <div class="options">
+                <button id="show-discovery">Open Discovery</button>
+                <button id="change-position">Change Button Position</button>
+                <button id="get-games">Log Recommended Games</button>
+            </div>
+        </div>
+
+        <div class="config-panel">
+            <h3 class="config-title">Current Configuration</h3>
+            <code id="current-config">
+// Loading...
+      </code>
+        </div>
+    </div>
+
+    <!-- Configure the SDK -->
+    <script>
+        window.PlaylightConfig = {
+            button: {
+                position: 'bottom-right',
+                visible: true
+            },
+            exitIntent: {
+                enabled: true
+            }
+        };
+
+        // Update the displayed configuration
+        document.getElementById('current-config').textContent =
+            JSON.stringify(window.PlaylightConfig, null, 2);
+    </script>
+
+    <!-- Include the Playlight SDK -->
+    <script src="https://cdn.playlight.dev/sdk/latest/playlight-sdk.js"></script>
+
+    <!-- Control the SDK -->
+    <script>
+        // Get reference to the SDK
+        const sdk = window.PlayLightSDK;
+
+        // Set up button event listeners
+        document.getElementById('show-discovery').addEventListener('click', () => {
+            sdk.openDiscovery();
+        });
+
+        let currentPosition = 'bottom-right';
+        const positions = ['bottom-right', 'bottom-left', 'top-right', 'top-left'];
+
+        document.getElementById('change-position').addEventListener('click', () => {
+            // Cycle through positions
+            const currentIndex = positions.indexOf(currentPosition);
+            const nextIndex = (currentIndex + 1) % positions.length;
+            currentPosition = positions[nextIndex];
+
+            // Update the SDK
+            sdk.setPosition(currentPosition);
+
+            // Update the displayed configuration
+            const config = JSON.parse(document.getElementById('current-config').textContent);
+            config.button.position = currentPosition;
+            document.getElementById('current-config').textContent = JSON.stringify(config, null, 2);
+        });
+
+        document.getElementById('get-games').addEventListener('click', async () => {
+            try {
+                const games = await sdk.getRecommendedGames(null, 3);
+                console.log('Recommended games:', games);
+                alert(`Found ${games.length} recommended games. Check the console for details.`);
+            } catch (error) {
+                console.error('Error fetching games:', error);
+                alert('Error fetching games. Check the console for details.');
+            }
+        });
+    </script>
+</body>
+
+</html>
