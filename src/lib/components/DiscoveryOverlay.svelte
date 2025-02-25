@@ -4,12 +4,12 @@
 	import { X, ExternalLink } from "lucide-svelte";
 	import GameCard from "./GameCard.svelte";
 	import CategorySelector from "./CategorySelector.svelte";
-	import { api } from "../lib/api";
+	import api from "../api.js";
 
-	// Props
+	// Props with Svelte 5 syntax
 	let { currentGameCategory = null, selectedCategory = null, onClose, onGameClick, onCategoryChange } = $props();
 
-	// State
+	// State with Svelte 5 runes
 	let isLoading = $state(true);
 	let games = $state([]);
 	let categories = $state([]);
@@ -21,7 +21,7 @@
 	});
 
 	$effect(() => {
-		if (selectedCategory !== null) fetchGames();
+		if (selectedCategory !== null) fetchGameSuggestions();
 	});
 
 	async function fetchData() {
@@ -46,7 +46,7 @@
 				}
 			}
 
-			await fetchGames();
+			await fetchGameSuggestions();
 		} catch (err) {
 			error = "Failed to load discovery data";
 			toast.error(error);
@@ -56,13 +56,12 @@
 		}
 	}
 
-	async function fetchGames() {
+	async function fetchGameSuggestions() {
 		try {
 			isLoading = true;
 			games = await api.getSuggestions(selectedCategory);
 		} catch (err) {
-			error = "Failed to load games";
-			toast.error(error);
+			toast.error("Failed to load games: " + err);
 			console.error(err);
 		} finally {
 			isLoading = false;

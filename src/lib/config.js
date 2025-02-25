@@ -9,16 +9,23 @@ const defaultConfig = {
     }
 };
 
+// Store the active configuration
+let activeConfig = { ...defaultConfig };
+
 // Initialize configuration by merging defaults with user config
 export function initializeConfig(userConfig = {}) {
-    // Deep merge config objects
-    return deepMerge(defaultConfig, userConfig);
+    activeConfig = deepMerge(defaultConfig, userConfig); // Deep merge config objects
+    return activeConfig;
+}
+
+// Get the current configuration
+export function getConfig() {
+    return activeConfig;
 }
 
 // Helper for deep merging objects
 function deepMerge(target, source) {
     const output = { ...target };
-
     if (isObject(target) && isObject(source)) {
         Object.keys(source).forEach(key => {
             if (isObject(source[key])) {
@@ -32,11 +39,9 @@ function deepMerge(target, source) {
             }
         });
     }
-
     return output;
 }
 
-// Helper to check if value is an object
 function isObject(item) {
     return (item && typeof item === 'object' && !Array.isArray(item));
 }

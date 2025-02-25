@@ -1,7 +1,7 @@
-import App from '$lib/components/App.svelte';
-import { initializeConfig } from '$lib/config.js';
-import { detectExitIntent } from '$lib/exitIntent.js';
-import api from '$lib/api.js';
+import App from './App.svelte';
+import { initializeConfig } from './lib/config.js';
+import { detectExitIntent } from './lib/exitIntent.js';
+import api from './lib/api.js';
 
 // Create the main SDK class
 class PlaylightSDK {

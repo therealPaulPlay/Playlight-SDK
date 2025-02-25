@@ -4,10 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Playlight SDK Example</title>
+    <title>Playlight SDK Local Integration Example</title>
     <style>
         body {
-            font-family: system-ui, sans-serif;
+            font-family: system-ui, -apple-system, sans-serif;
             background-color: #1a1a2e;
             color: #e2e2e2;
             margin: 0;
@@ -27,7 +27,7 @@
         }
 
         h1 {
-            color: #9567ff;
+            color: #7c3aed;
             margin-bottom: 2rem;
         }
 
@@ -74,7 +74,7 @@
             margin-top: 2rem;
         }
 
-        .config-panel {
+        .instructions {
             background-color: #16213e;
             border-radius: 8px;
             padding: 1.5rem;
@@ -82,48 +82,65 @@
             text-align: left;
         }
 
-        .config-title {
+        .instruction-title {
             margin-top: 0;
-            color: #9567ff;
+            color: #7c3aed;
             margin-bottom: 1rem;
         }
 
         code {
             display: block;
             background-color: #0f3460;
-            padding: 1rem;
+            padding: 0.75rem;
             border-radius: 4px;
             overflow-x: auto;
             white-space: pre;
+            font-family: monospace;
             color: #e2e2e2;
             line-height: 1.5;
+        }
+
+        .note {
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background-color: rgba(124, 58, 237, 0.1);
+            border-left: 3px solid #7c3aed;
+            border-radius: 0 4px 4px 0;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <h1>Playlight SDK Demo</h1>
+        <h1>Playlight SDK Local Integration</h1>
 
         <div class="game-container">
             <div class="game-placeholder">
                 [Your Game Here]
             </div>
 
-            <p>This is a demo page showing how to integrate the Playlight SDK into your browser game.</p>
+            <p>This is a simple example showing how to integrate the Playlight SDK locally.</p>
 
             <div class="options">
                 <button id="show-discovery">Open Discovery</button>
                 <button id="change-position">Change Button Position</button>
-                <button id="get-games">Log Recommended Games</button>
+                <button id="toggle-exit-intent">Toggle Exit Intent</button>
             </div>
         </div>
 
-        <div class="config-panel">
-            <h3 class="config-title">Current Configuration</h3>
-            <code id="current-config">
-// Loading...
-      </code>
+        <div class="instructions">
+            <h3 class="instruction-title">How to Use This Example</h3>
+            <ol>
+                <li>Build the SDK with <code>npm run build</code></li>
+                <li>Copy the built file from <code>dist/playlight-sdk.iife.js</code> to this folder</li>
+                <li>Open this HTML file in your browser</li>
+            </ol>
+
+            <div class="note">
+                <strong>Note:</strong> This example loads the SDK directly from your local build.
+                For production, you should use a proper CDN or host the file on your server.
+            </div>
         </div>
     </div>
 
@@ -135,55 +152,56 @@
                 visible: true
             },
             exitIntent: {
-                enabled: true
+                enabled: true,
+                sensitivity: 20
+            },
+            game: {
+                category: 'action'
             }
         };
-
-        // Update the displayed configuration
-        document.getElementById('current-config').textContent =
-            JSON.stringify(window.PlaylightConfig, null, 2);
     </script>
 
     <!-- Include the Playlight SDK -->
-    <script src="https://cdn.playlight.dev/sdk/latest/playlight-sdk.js"></script>
+    <script src="../dist/playlight-sdk.iife.js"></script>
 
     <!-- Control the SDK -->
     <script>
-        // Get reference to the SDK
-        const sdk = window.PlayLightSDK;
+        // Wait for the SDK to be fully loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get reference to the SDK
+            const sdk = window.PlayLightSDK;
 
-        // Set up button event listeners
-        document.getElementById('show-discovery').addEventListener('click', () => {
-            sdk.openDiscovery();
-        });
+            // Set up button event listeners
+            document.getElementById('show-discovery').addEventListener('click', () => {
+                sdk.openDiscovery();
+            });
 
-        let currentPosition = 'bottom-right';
-        const positions = ['bottom-right', 'bottom-left', 'top-right', 'top-left'];
+            let currentPosition = 'bottom-right';
+            const positions = ['bottom-right', 'bottom-left', 'top-right', 'top-left'];
 
-        document.getElementById('change-position').addEventListener('click', () => {
-            // Cycle through positions
-            const currentIndex = positions.indexOf(currentPosition);
-            const nextIndex = (currentIndex + 1) % positions.length;
-            currentPosition = positions[nextIndex];
+            document.getElementById('change-position').addEventListener('click', () => {
+                // Cycle through positions
+                const currentIndex = positions.indexOf(currentPosition);
+                const nextIndex = (currentIndex + 1) % positions.length;
+                currentPosition = positions[nextIndex];
 
-            // Update the SDK
-            sdk.setPosition(currentPosition);
+                // Update the SDK
+                sdk.setPosition(currentPosition);
+                console.log(`Button position changed to: ${currentPosition}`);
+            });
 
-            // Update the displayed configuration
-            const config = JSON.parse(document.getElementById('current-config').textContent);
-            config.button.position = currentPosition;
-            document.getElementById('current-config').textContent = JSON.stringify(config, null, 2);
-        });
+            let exitIntentEnabled = true;
+            document.getElementById('toggle-exit-intent').addEventListener('click', () => {
+                exitIntentEnabled = !exitIntentEnabled;
 
-        document.getElementById('get-games').addEventListener('click', async () => {
-            try {
-                const games = await sdk.getRecommendedGames(null, 3);
-                console.log('Recommended games:', games);
-                alert(`Found ${games.length} recommended games. Check the console for details.`);
-            } catch (error) {
-                console.error('Error fetching games:', error);
-                alert('Error fetching games. Check the console for details.');
-            }
+                // Update the config
+                if (sdk.appActions && sdk.appActions.setExitIntentEnabled) {
+                    sdk.appActions.setExitIntentEnabled(exitIntentEnabled);
+                    console.log(`Exit intent ${exitIntentEnabled ? 'enabled' : 'disabled'}`);
+                } else {
+                    console.log('Cannot update exit intent setting - SDK not initialized properly');
+                }
+            });
         });
     </script>
 </body>

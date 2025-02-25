@@ -70,3 +70,7 @@ function triggerExitIntent() {
         }, 5000);
     }, 500);
 }
+
+export function setExitIntentEnabled(enabled) {
+    isEnabled = enabled;
+}

@@ -1,5 +1,5 @@
 <script>
-	import { GameController } from "lucide-svelte";
+	import { Gamepad } from "lucide-svelte";
 
 	// Props
 	let { position, onClick } = $props();
@@ -27,5 +27,5 @@
 	onclick={onClick}
 	aria-label="Open Playlight Discovery"
 >
-	<GameController size={24} />
+	<Gamepad size={24} />
 </button>

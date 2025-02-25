@@ -1,25 +1,25 @@
 import tailwindcss from '@tailwindcss/vite';
-import { sveltekit } from '@sveltejs/kit/vite';
+import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { defineConfig } from 'vite';
-import { terser } from 'rollup-plugin-terser';
+// import { terser } from 'rollup-plugin-terser';
 
 export default defineConfig({
-	plugins: [sveltekit(), tailwindcss()],
+	plugins: [svelte(), tailwindcss()],
 	build: {
 		lib: {
 			entry: 'src/index.js',
-			name: 'Playlight-SDK',
+			name: 'PlaylightSDK',
 			fileName: (format) => `playlight-sdk.${format}.js`,
 			formats: ['es', 'umd', 'iife']
 		},
 		rollupOptions: {
-			plugins: [
-				terser({
-					compress: {
-						drop_console: false
-					}
-				})
-			],
+			// plugins: [
+			// 	terser({
+			// 		compress: {
+			// 			drop_console: false
+			// 		}
+			// 	})
+			// ],
 			output: {
 				// Provide global variables for use in UMD/IIFE build
 				globals: {
@@ -27,7 +27,7 @@ export default defineConfig({
 				}
 			}
 		},
-		minify: 'terser',
+		minify: 'false', // can be terser
 		sourcemap: true
 	}
 });

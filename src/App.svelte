@@ -1,16 +1,16 @@
 <script>
+	import "./app.css";
 	import { blur } from "svelte/transition";
-	import { FloatingButton } from "./components/FloatingButton.svelte";
-	import { DiscoveryOverlay } from "./components/DiscoveryOverlay.svelte";
+	import FloatingButton from "./lib/components/FloatingButton.svelte";
+	import DiscoveryOverlay from "./lib/components/DiscoveryOverlay.svelte";
 	import { toast } from "svelte-sonner";
 	import { onMount } from "svelte";
 
 	// Props
-	let { config, api } = $props();
+	let { config = {}, api = {} } = $props();
 
-	// State variables using Svelte 5 runes
 	let showDiscovery = $state(false);
-	let buttonPosition = $state(config.button.position);
+	let buttonPosition = $state(config?.button?.position);
 	let selectedCategory = $state(null);
 	let currentGameCategory = $state();
 
@@ -43,8 +43,8 @@
 
 	$effect(async () => {
 		// Set initial category based on current game's category
-		if (!currentGameCategory && !selectedCategory) {
-			const currentGame = await api.getCurrentGameInfo();
+		if (!currentGameCategory && !selectedCategory && api) {
+			const currentGame = await api?.getCurrentGameInfo();
 			currentGameCategory = currentGame.category;
 			selectedCategory = currentGameCategory;
 		}
@@ -57,7 +57,7 @@
 	onClick={() => {
 		// Open Discovery
 		showDiscovery = true;
-		api.trackOpen();
+		api?.trackOpen();
 	}}
 />
 
@@ -71,7 +71,7 @@
 				showDiscovery = false;
 			}}
 			onGameClick={() => {
-				api.trackClick(gameId);
+				api?.trackClick(gameId);
 			}}
 			onCategoryChange={(category) => (selectedCategory = category)}
 		/>
