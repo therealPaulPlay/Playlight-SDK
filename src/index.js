@@ -1,3 +1,4 @@
+import { mount } from 'svelte';
 import App from './App.svelte';
 import { initializeConfig } from './lib/config.js';
 import { detectExitIntent } from './lib/exitIntent.js';
@@ -11,6 +12,7 @@ class PlaylightSDK {
         this.isInitialized = false;
         this.config = null;
         this.api = api;
+        this.appActions = null;
     }
 
     async init(userConfig = {}) {
@@ -24,8 +26,8 @@ class PlaylightSDK {
         this.container.id = 'playlight-sdk-container';
         document.body.appendChild(this.container);
 
-        // Render the main app
-        this.app = new App({
+        // Use mount function (client-side equivalent of render)
+        this.app = mount(App, {
             target: this.container,
             props: {
                 config: this.config,
@@ -33,13 +35,13 @@ class PlaylightSDK {
             }
         });
 
-        // Wait for the app to register its actions
-        setTimeout(() => {
-            this.appActions = window.__playlightActions;
-        }, 100);
+        // Global variable to store actions (safer than window.__)
+        if (typeof window !== 'undefined') {
+            window.playlightActions = {};
+        }
 
         // Set up exit intent detection if enabled
-        if (this.config.exitIntent.enabled) {
+        if (this.config.exitIntent && this.config.exitIntent.enabled) {
             detectExitIntent(() => {
                 this.openDiscovery();
             });
@@ -52,27 +54,35 @@ class PlaylightSDK {
         return this;
     }
 
+    // Access to app actions (with delay to ensure they're registered)
+    get actions() {
+        if (typeof window !== 'undefined') {
+            return window.playlightActions || {};
+        }
+        return {};
+    }
+
     // Public methods
     openDiscovery() {
         if (!this.isInitialized) return;
-        if (this.appActions && this.appActions.setShowDiscovery) {
-            this.appActions.setShowDiscovery(true);
+        if (this.actions.setShowDiscovery) {
+            this.actions.setShowDiscovery(true);
             this.trackEvent('open');
         }
     }
 
     closeDiscovery() {
         if (!this.isInitialized) return;
-        if (this.appActions && this.appActions.setShowDiscovery) {
-            this.appActions.setShowDiscovery(false);
+        if (this.actions.setShowDiscovery) {
+            this.actions.setShowDiscovery(false);
         }
     }
 
     setPosition(position) {
         if (!this.isInitialized) return;
         const validPositions = ['top-left', 'top-right', 'bottom-left', 'bottom-right'];
-        if (validPositions.includes(position) && this.appActions && this.appActions.setButtonPosition) {
-            this.appActions.setButtonPosition(position);
+        if (validPositions.includes(position) && this.actions.setButtonPosition) {
+            this.actions.setButtonPosition(position);
         } else {
             console.error("Invalid position for floating discovery button or actions not available.");
         }
@@ -102,12 +112,14 @@ class PlaylightSDK {
 const playlightSDK = new PlaylightSDK();
 
 // Auto-initialize if configured in the script tag
-if (window.PlaylightConfig) {
+if (typeof window !== 'undefined' && window.PlaylightConfig) {
     playlightSDK.init(window.PlaylightConfig);
 }
 
 // Expose SDK globally
-window.PlayLightSDK = playlightSDK;
+if (typeof window !== 'undefined') {
+    window.PlayLightSDK = playlightSDK;
+}
 
 // Export for module usage
 export default playlightSDK;

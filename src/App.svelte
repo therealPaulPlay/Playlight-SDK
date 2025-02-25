@@ -1,17 +1,15 @@
 <script>
-	import "./app.css";
 	import { blur } from "svelte/transition";
 	import FloatingButton from "./lib/components/FloatingButton.svelte";
 	import DiscoveryOverlay from "./lib/components/DiscoveryOverlay.svelte";
-	import { toast } from "svelte-sonner";
-	import { onMount } from "svelte";
+	import { toast, Toaster } from "svelte-sonner";
 
-	// Props
-	let { config = {}, api = {} } = $props();
+	let { config, api } = $props();
 
+	// State variables
 	let showDiscovery = $state(false);
-	let buttonPosition = $state(config?.button?.position);
-	let selectedCategory = $state(null);
+	let buttonPosition = $state(config?.button?.position || "bottom-right");
+	let selectedCategory = $state();
 	let currentGameCategory = $state();
 
 	// Actions that can be called from outside the component
@@ -27,39 +25,50 @@
 		selectedCategory = category;
 	}
 
-	// Register actions in the global object so they can be accessed by the SDK
-	onMount(() => {
-		window.__playlightActions = {
-			setShowDiscovery,
-			setButtonPosition,
-			setSelectedCategory,
-		};
-
-		// Cleanup
-		return () => {
-			window.__playlightActions = null;
-		};
-	});
-
-	$effect(async () => {
-		// Set initial category based on current game's category
-		if (!currentGameCategory && !selectedCategory && api) {
-			const currentGame = await api?.getCurrentGameInfo();
-			currentGameCategory = currentGame.category;
-			selectedCategory = currentGameCategory;
+	// Register actions globally - now inside the component top level (not onMount)
+	$effect(() => {
+		if (typeof window !== "undefined") {
+			window.playlightActions = {
+				setShowDiscovery,
+				setButtonPosition,
+				setSelectedCategory,
+			};
 		}
 	});
+
+	// Lifecycle effect for getting initial category
+	$effect(async () => {
+		// Set initial category based on current game's category
+		if (!currentGameCategory && !selectedCategory && api?.getCurrentGameInfo) {
+			try {
+				const currentGame = await api.getCurrentGameInfo();
+				if (currentGame && currentGame.category) {
+					currentGameCategory = currentGame.category;
+					selectedCategory = currentGameCategory;
+				}
+			} catch (error) {
+				console.error("Error getting current game info:", error);
+			}
+		}
+	});
+
+	// Methods
+	function handleOpenDiscovery() {
+		showDiscovery = true;
+		api.trackOpen();
+	}
+
+	function handleCloseDiscovery() {
+		showDiscovery = false;
+	}
+
+	function handleGameClick(gameId) {
+		api.trackClick(gameId);
+	}
 </script>
 
 <!-- Floating button -->
-<FloatingButton
-	position={buttonPosition}
-	onClick={() => {
-		// Open Discovery
-		showDiscovery = true;
-		api?.trackOpen();
-	}}
-/>
+<FloatingButton position={buttonPosition} onClick={handleOpenDiscovery} />
 
 <!-- Discovery overlay -->
 {#if showDiscovery}
@@ -67,12 +76,8 @@
 		<DiscoveryOverlay
 			{currentGameCategory}
 			{selectedCategory}
-			onClose={() => {
-				showDiscovery = false;
-			}}
-			onGameClick={() => {
-				api?.trackClick(gameId);
-			}}
+			onClose={handleCloseDiscovery}
+			onGameClick={handleGameClick}
 			onCategoryChange={(category) => (selectedCategory = category)}
 		/>
 	</div>
