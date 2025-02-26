@@ -5,8 +5,8 @@
 	import GameCard from "./GameCard.svelte";
 	import api from "../api.js";
 	import Navigation from "./Navigation.svelte";
-	
-    let { currentGameCategory = null, selectedCategory = $bindable(), onClose } = $props();
+
+	let { currentGameCategory = null, selectedCategory = $bindable(), onClose } = $props();
 
 	let isLoading = $state(true);
 	let games = $state([]);
@@ -64,7 +64,11 @@
 		<!-- Header -->
 		<div class="flex items-center justify-between p-4">
 			<img alt="logo" src="/static/images/logo_white_small.png" class="w-50" />
-			<button class="text-white mr-2 cursor-pointer hover:opacity-50 mt-4 md:mr-4 transition shadow-xl" onclick={onClose} aria-label="Close">
+			<button
+				class="mt-4 mr-2 cursor-pointer text-white shadow-xl transition hover:opacity-50 md:mr-4"
+				onclick={onClose}
+				aria-label="Close"
+			>
 				<X size={24} />
 			</button>
 		</div>
@@ -89,10 +93,9 @@
 					{#each games as game}
 						<GameCard
 							{game}
-							onClick={() =>
-								handleGameClick(() => {
-									api.trackClick(game.id);
-								})}
+							onClick={() => {
+								api.trackClick(game.id);
+							}}
 						/>
 					{/each}
 				</div>
@@ -113,7 +116,7 @@
 </div>
 
 <style>
-    :global([data-expanded]) {
-        border-radius: 0 !important;
-    }
+	:global([data-expanded]) {
+		border-radius: 0 !important;
+	}
 </style>

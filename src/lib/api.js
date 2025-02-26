@@ -81,7 +81,7 @@ class PlayLightAPI {
                 method: 'POST',
                 body: JSON.stringify({
                     domain: currentDomain,
-                    game_id: gameId
+                    gameId
                 })
             });
         } catch (error) {
