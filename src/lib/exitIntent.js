@@ -60,15 +60,13 @@ function triggerExitIntent() {
     const config = getConfig().exitIntent;
     isEnabled = false; // Temporarily disable to prevent multiple triggers
 
-    // Execute callback after delay of 500ms
-    setTimeout(() => {
-        callback();
+    // Execute callback
+    callback();
 
-        // Re-enable after a cooldown period (5 seconds)
-        setTimeout(() => {
-            isEnabled = true;
-        }, 5000);
-    }, 500);
+    // Re-enable after a cooldown period (5 seconds)
+    setTimeout(() => {
+        isEnabled = true;
+    }, 5000);
 }
 
 export function setExitIntentEnabled(enabled) {

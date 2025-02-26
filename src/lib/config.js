@@ -1,7 +1,7 @@
 // Default configuration
 const defaultConfig = {
     button: {
-        position: 'bottom-right', // 'top-left', 'top-right', 'bottom-left', 'bottom-right'
+        position: 'bottom-right',
         visible: true
     },
     exitIntent: {

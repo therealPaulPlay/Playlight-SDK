@@ -33,7 +33,6 @@
 
 			// Set initial category if not already set
 			if (!selectedCategory && categories.length > 0) {
-				// Try to use current game category if available
 				if (currentGameCategory) {
 					const found = categories.find((c) => c.id === currentGameCategory);
 					if (found) {
@@ -48,7 +47,7 @@
 
 			await fetchGameSuggestions();
 		} catch (err) {
-			error = "Failed to load discovery data";
+			error = "Failed to load discovery data.";
 			toast.error(error);
 			console.error(err);
 		} finally {
@@ -59,7 +58,9 @@
 	async function fetchGameSuggestions() {
 		try {
 			isLoading = true;
-			games = await api.getSuggestions(selectedCategory);
+			const suggestions = await api.getSuggestions(selectedCategory);
+			games = suggestions?.games;
+			const paginationInfo = suggestions?.pagination;
 		} catch (err) {
 			toast.error("Failed to load games: " + err);
 			console.error(err);
@@ -78,30 +79,28 @@
 	}
 </script>
 
-<div class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/75" transition:blur={{ duration: 200 }}>
-	<div class="flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-lg bg-gray-900 text-white shadow-xl">
+<div
+	class="bg-background/50 fixed inset-0 top-0 right-0 bottom-0 left-0 z-[99999] flex items-center justify-center backdrop-blur-md"
+	transition:blur={{ duration: 250 }}
+>
+	<div class="flex h-full w-full flex-col rounded-lg text-white">
 		<!-- Header -->
-		<div class="flex items-center justify-between border-b border-gray-800 p-4">
-			<h2 class="text-xl font-bold">Discover Games</h2>
-			<button class="text-gray-400 hover:text-white" onclick={onClose} aria-label="Close">
+		<div class="flex items-center justify-between p-4">
+			<img alt="logo" src="/static/images/logo_white_small.png" class="w-50" />
+			<button class="text-muted-foreground mr-2 cursor-pointer hover:text-white" onclick={onClose} aria-label="Close">
 				<X size={24} />
 			</button>
 		</div>
 
 		<!-- Category selector -->
-		<div class="border-b border-gray-800 px-4 py-2">
-			<CategorySelector
-				{categories}
-				selectedCategoryId={selectedCategory}
-				onChange={handleCategoryChange}
-				{isLoading}
-			/>
+		<div class="bg-muted/50 mx-auto max-w-4/5 p-2 backdrop-blur">
+			<CategorySelector {categories} {selectedCategory} onChange={handleCategoryChange} {isLoading} />
 		</div>
 
 		<!-- Game grid -->
-		<div class="flex-1 overflow-y-auto p-4">
+		<div class="h-full w-full flex-1 items-center justify-center overflow-y-auto p-4 mt-5">
 			{#if isLoading}
-				<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+				<div class="flex flex-wrap items-center justify-center gap-4">
 					{#each Array(6) as _, i}
 						<div class="animate-pulse overflow-hidden rounded-lg bg-gray-800">
 							<div class="h-40 bg-gray-700"></div>
@@ -113,18 +112,15 @@
 					{/each}
 				</div>
 			{:else if error}
-				<div class="py-8 text-center text-red-400">
-					<p>{error}</p>
-					<button class="mt-4 rounded bg-violet-600 px-4 py-2 hover:bg-violet-700" onclick={fetchData}>
-						Try Again
-					</button>
+				<div class="text-muted-foreground py-3 text-center">
+					<p>An error occured: {error}</p>
 				</div>
 			{:else if games.length === 0}
-				<div class="py-8 text-center text-gray-400">
-					<p>No games found in this category</p>
+				<div class="text-muted-foreground py-3 text-center">
+					<p>No games found in this category.</p>
 				</div>
 			{:else}
-				<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+				<div class="flex flex-wrap items-center justify-center gap-4">
 					{#each games as game}
 						<GameCard {game} onClick={() => handleGameClick(game.id)} />
 					{/each}
@@ -133,16 +129,14 @@
 		</div>
 
 		<!-- Footer -->
-		<div class="flex items-center justify-between border-t border-gray-800 p-4">
+		<div class="fixed right-0 bottom-0 flex items-center justify-between p-4">
 			<a
 				href="https://playlight.dev"
 				target="_blank"
-				rel="noopener noreferrer"
-				class="flex items-center gap-1 text-sm text-violet-400 hover:text-violet-300"
+				class="text-muted-foreground flex items-center gap-1 text-sm transition hover:text-white"
 			>
-				Developer? Join Playlight today <ExternalLink size={14} />
+				Game Dev? Join Playlight today <ExternalLink size={14} style="margin-top: 2px;" />
 			</a>
-			<div class="text-sm text-gray-500">Powered by Playlight</div>
 		</div>
 	</div>
 </div>

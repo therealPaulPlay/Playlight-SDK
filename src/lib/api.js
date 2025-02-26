@@ -24,8 +24,6 @@ class PlayLightAPI {
 
             return await response.json();
         } catch (error) {
-            console.error('API Request Error:', error);
-            toast.error('Failed to connect to Playlight API');
             throw error;
         }
     }
@@ -64,7 +62,7 @@ class PlayLightAPI {
                 })
             });
         } catch (error) {
-            console.error('Failed to track open event:', error);
+            console.warn('Failed to track open event:', error);
         }
     }
 
@@ -80,7 +78,7 @@ class PlayLightAPI {
                 })
             });
         } catch (error) {
-            console.error('Failed to track game click event:', error);
+            console.warn('Failed to track game click event:', error);
         }
     }
 }

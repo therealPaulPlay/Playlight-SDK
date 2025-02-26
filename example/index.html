@@ -5,10 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Playlight SDK Local Integration Example</title>
+    <link rel="stylesheet" href="../dist/playlight-sdk.css">
     <style>
         body {
             font-family: system-ui, -apple-system, sans-serif;
-            background-color: #1a1a2e;
+            background-color: rgb(20, 20, 20);
             color: #e2e2e2;
             margin: 0;
             padding: 0;
@@ -27,12 +28,12 @@
         }
 
         h1 {
-            color: #7c3aed;
+            color: white;
             margin-bottom: 2rem;
         }
 
         .game-container {
-            background-color: #16213e;
+            background-color: rgb(30, 30, 30);
             border-radius: 8px;
             padding: 2rem;
             margin-bottom: 2rem;
@@ -41,7 +42,7 @@
         .game-placeholder {
             width: 100%;
             height: 300px;
-            background-color: #0f3460;
+            background-color: black;
             border-radius: 8px;
             display: flex;
             align-items: center;
@@ -50,8 +51,8 @@
             margin-bottom: 1rem;
         }
 
-        button {
-            background-color: #6d28d9;
+        .button {
+            background-color: rgb(5, 5, 5);
             color: white;
             border: none;
             border-radius: 4px;
@@ -62,10 +63,6 @@
             margin: 0.5rem;
         }
 
-        button:hover {
-            background-color: #5b21b6;
-        }
-
         .options {
             display: flex;
             flex-wrap: wrap;
@@ -73,73 +70,22 @@
             gap: 0.5rem;
             margin-top: 2rem;
         }
-
-        .instructions {
-            background-color: #16213e;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-top: 2rem;
-            text-align: left;
-        }
-
-        .instruction-title {
-            margin-top: 0;
-            color: #7c3aed;
-            margin-bottom: 1rem;
-        }
-
-        code {
-            display: block;
-            background-color: #0f3460;
-            padding: 0.75rem;
-            border-radius: 4px;
-            overflow-x: auto;
-            white-space: pre;
-            font-family: monospace;
-            color: #e2e2e2;
-            line-height: 1.5;
-        }
-
-        .note {
-            font-size: 0.9rem;
-            margin-top: 1rem;
-            padding: 0.75rem;
-            background-color: rgba(124, 58, 237, 0.1);
-            border-left: 3px solid #7c3aed;
-            border-radius: 0 4px 4px 0;
-        }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <h1>Playlight SDK Local Integration</h1>
-
         <div class="game-container">
             <div class="game-placeholder">
-                [Your Game Here]
+                :-)
             </div>
 
-            <p>This is a simple example showing how to integrate the Playlight SDK locally.</p>
+            <p>This is a simple example showing the Playlight SDK running on a page.</p>
 
             <div class="options">
-                <button id="show-discovery">Open Discovery</button>
-                <button id="change-position">Change Button Position</button>
-                <button id="toggle-exit-intent">Toggle Exit Intent</button>
-            </div>
-        </div>
-
-        <div class="instructions">
-            <h3 class="instruction-title">How to Use This Example</h3>
-            <ol>
-                <li>Build the SDK with <code>npm run build</code></li>
-                <li>Copy the built file from <code>dist/playlight-sdk.iife.js</code> to this folder</li>
-                <li>Open this HTML file in your browser</li>
-            </ol>
-
-            <div class="note">
-                <strong>Note:</strong> This example loads the SDK directly from your local build.
-                For production, you should use a proper CDN or host the file on your server.
+                <button class="button" id="show-discovery">Open Discovery</button>
+                <button class="button" id="change-position">Change Button Position</button>
+                <button class="button" id="toggle-exit-intent">Toggle Exit Intent</button>
             </div>
         </div>
     </div>
@@ -152,11 +98,7 @@
                 visible: true
             },
             exitIntent: {
-                enabled: true,
-                sensitivity: 20
-            },
-            game: {
-                category: 'action'
+                enabled: true
             }
         };
     </script>
@@ -168,8 +110,7 @@
     <script>
         // Wait for the SDK to be fully loaded
         document.addEventListener('DOMContentLoaded', () => {
-            // Get reference to the SDK
-            const sdk = window.PlayLightSDK;
+            const sdk = window.PlaylightSDK;
 
             // Set up button event listeners
             document.getElementById('show-discovery').addEventListener('click', () => {
@@ -177,7 +118,7 @@
             });
 
             let currentPosition = 'bottom-right';
-            const positions = ['bottom-right', 'bottom-left', 'top-right', 'top-left'];
+            const positions = ['bottom-right', 'bottom-left'];
 
             document.getElementById('change-position').addEventListener('click', () => {
                 // Cycle through positions
@@ -191,16 +132,12 @@
             });
 
             let exitIntentEnabled = true;
+
             document.getElementById('toggle-exit-intent').addEventListener('click', () => {
                 exitIntentEnabled = !exitIntentEnabled;
 
-                // Update the config
-                if (sdk.appActions && sdk.appActions.setExitIntentEnabled) {
-                    sdk.appActions.setExitIntentEnabled(exitIntentEnabled);
-                    console.log(`Exit intent ${exitIntentEnabled ? 'enabled' : 'disabled'}`);
-                } else {
-                    console.log('Cannot update exit intent setting - SDK not initialized properly');
-                }
+                sdk.appActions.setExitIntentEnabled(exitIntentEnabled);
+                console.log(`Exit intent ${exitIntentEnabled ? 'enabled' : 'disabled'}`);
             });
         });
     </script>

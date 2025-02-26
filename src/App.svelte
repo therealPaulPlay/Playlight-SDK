@@ -1,4 +1,5 @@
 <script>
+	import "./app.css";
 	import { blur } from "svelte/transition";
 	import FloatingButton from "./lib/components/FloatingButton.svelte";
 	import DiscoveryOverlay from "./lib/components/DiscoveryOverlay.svelte";
@@ -72,15 +73,13 @@
 
 <!-- Discovery overlay -->
 {#if showDiscovery}
-	<div transition:blur={{ duration: 200 }}>
-		<DiscoveryOverlay
-			{currentGameCategory}
-			{selectedCategory}
-			onClose={handleCloseDiscovery}
-			onGameClick={handleGameClick}
-			onCategoryChange={(category) => (selectedCategory = category)}
-		/>
-	</div>
+	<DiscoveryOverlay
+		{currentGameCategory}
+		{selectedCategory}
+		onClose={handleCloseDiscovery}
+		onGameClick={handleGameClick}
+		onCategoryChange={(category) => (selectedCategory = category)}
+	/>
 {/if}
 
 <!-- Toaster for notifications -->

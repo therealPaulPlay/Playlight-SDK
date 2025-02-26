@@ -80,7 +80,7 @@ class PlaylightSDK {
 
     setPosition(position) {
         if (!this.isInitialized) return;
-        const validPositions = ['top-left', 'top-right', 'bottom-left', 'bottom-right'];
+        const validPositions = ['bottom-left', 'bottom-right'];
         if (validPositions.includes(position) && this.actions.setButtonPosition) {
             this.actions.setButtonPosition(position);
         } else {
@@ -118,7 +118,7 @@ if (typeof window !== 'undefined' && window.PlaylightConfig) {
 
 // Expose SDK globally
 if (typeof window !== 'undefined') {
-    window.PlayLightSDK = playlightSDK;
+    window.PlaylightSDK = playlightSDK;
 }
 
 // Export for module usage
