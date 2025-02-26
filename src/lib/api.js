@@ -19,11 +19,18 @@ class PlayLightAPI {
             });
 
             if (!response.ok) {
-                throw new Error(`API request failed: ${response.status}`);
+                let data;
+                try {
+                    data = await response.json();
+                } catch {
+                    throw new Error(`API request failed: ${response.status}`);
+                }
+                throw new Error(`API request failed: ${data.error || data.message || response.status}`);
             }
 
             return await response.json();
         } catch (error) {
+            toast.error("Error: " + error);
             throw error;
         }
     }

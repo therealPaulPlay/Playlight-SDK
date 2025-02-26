@@ -1,9 +1,9 @@
 <script>
 	import "./app.css";
-	import { blur } from "svelte/transition";
 	import FloatingButton from "./lib/components/FloatingButton.svelte";
 	import DiscoveryOverlay from "./lib/components/DiscoveryOverlay.svelte";
-	import { toast, Toaster } from "svelte-sonner";
+	import { Toaster } from "svelte-sonner";
+	import ExitIntentDetector from "./lib/components/ExitIntentDetector.svelte";
 
 	let { config, api } = $props();
 
@@ -16,14 +16,11 @@
 	// Actions that can be called from outside the component
 	function setShowDiscovery(value) {
 		showDiscovery = value;
+		if (value) api.trackOpen();
 	}
 
 	function setButtonPosition(position) {
 		buttonPosition = position;
-	}
-
-	function setSelectedCategory(category) {
-		selectedCategory = category;
 	}
 
 	// Register actions globally - now inside the component top level (not onMount)
@@ -32,55 +29,33 @@
 			window.playlightActions = {
 				setShowDiscovery,
 				setButtonPosition,
-				setSelectedCategory,
 			};
 		}
 	});
-
-	// Lifecycle effect for getting initial category
-	$effect(async () => {
-		// Set initial category based on current game's category
-		if (!currentGameCategory && !selectedCategory && api?.getCurrentGameInfo) {
-			try {
-				const currentGame = await api.getCurrentGameInfo();
-				if (currentGame && currentGame.category) {
-					currentGameCategory = currentGame.category;
-					selectedCategory = currentGameCategory;
-				}
-			} catch (error) {
-				console.error("Error getting current game info:", error);
-			}
-		}
-	});
-
-	// Methods
-	function handleOpenDiscovery() {
-		showDiscovery = true;
-		api.trackOpen();
-	}
-
-	function handleCloseDiscovery() {
-		showDiscovery = false;
-	}
-
-	function handleGameClick(gameId) {
-		api.trackClick(gameId);
-	}
 </script>
 
 <!-- Floating button -->
-<FloatingButton position={buttonPosition} onClick={handleOpenDiscovery} />
+<FloatingButton position={buttonPosition} onClick={() => setShowDiscovery(true)} />
 
 <!-- Discovery overlay -->
 {#if showDiscovery}
 	<DiscoveryOverlay
 		{currentGameCategory}
-		{selectedCategory}
-		onClose={handleCloseDiscovery}
-		onGameClick={handleGameClick}
-		onCategoryChange={(category) => (selectedCategory = category)}
+		{api}
+		bind:selectedCategory
+		onClose={() => {
+			showDiscovery = false;
+		}}
 	/>
 {/if}
+
+<!-- Detect user leaving page -->
+<ExitIntentDetector
+	enabled={config?.exitIntent?.enabled}
+	onIntent={() => {
+		if (!showDiscovery) setShowDiscovery(true);
+	}}
+/>
 
 <!-- Toaster for notifications -->
 <Toaster />

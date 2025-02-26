@@ -4,8 +4,8 @@
 	let { game, onClick } = $props();
 
 	function handleClick() {
-		window.open("https://" + game.domain, "_blank", "noopener,noreferrer"); // Open game in a new tab
 		if (onClick) onClick(game.id);
+		window.open("https://" + game.domain, "_blank", "noopener,noreferrer"); // Open game in a new tab
 	}
 
 	let isHovered = $state(false);
@@ -48,7 +48,7 @@
 				id="overlay"
 				class="bg-background/75 absolute right-0 bottom-0 left-0 flex flex-col overflow-hidden p-3 backdrop-blur-xl transition"
 			>
-				<div class="w-full h-full">
+				<div class="h-full w-full">
 					<h3 class="mb-1 truncate text-lg font-bold">{game.name}</h3>
 					<p class="text-muted-foreground mb-2 text-sm text-balance">{game.description || "No description."}</p>
 				</div>

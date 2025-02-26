@@ -1,7 +1,6 @@
 import { mount } from 'svelte';
 import App from './App.svelte';
 import { initializeConfig } from './lib/config.js';
-import { detectExitIntent } from './lib/exitIntent.js';
 import api from './lib/api.js';
 
 // Create the main SDK class
@@ -40,13 +39,6 @@ class PlaylightSDK {
             window.playlightActions = {};
         }
 
-        // Set up exit intent detection if enabled
-        if (this.config.exitIntent && this.config.exitIntent.enabled) {
-            detectExitIntent(() => {
-                this.openDiscovery();
-            });
-        }
-
         // Fetch categories and cache them
         await this.api.getCategories();
 
@@ -67,7 +59,7 @@ class PlaylightSDK {
         if (!this.isInitialized) return;
         if (this.actions.setShowDiscovery) {
             this.actions.setShowDiscovery(true);
-            this.trackEvent('open');
+            this.api.trackOpen();
         }
     }
 
@@ -96,15 +88,6 @@ class PlaylightSDK {
     // Current game information
     async getCurrentGame() {
         return await this.api.getCurrentGameInfo();
-    }
-
-    // Analytics
-    trackEvent(eventType, gameId = null) {
-        if (eventType === 'open') {
-            this.api.trackOpen();
-        } else if (eventType === 'click' && gameId) {
-            this.api.trackClick(gameId);
-        }
     }
 }
 
