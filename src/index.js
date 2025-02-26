@@ -59,7 +59,6 @@ class PlaylightSDK {
         if (!this.isInitialized) return;
         if (this.actions.setShowDiscovery) {
             this.actions.setShowDiscovery(true);
-            this.api.trackOpen();
         }
     }
 

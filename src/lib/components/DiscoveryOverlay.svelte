@@ -64,13 +64,13 @@
 		<!-- Header -->
 		<div class="flex items-center justify-between p-4">
 			<img alt="logo" src="/static/images/logo_white_small.png" class="w-50" />
-			<button class="text-white mr-2 cursor-pointer hover:opacity-50 transition" onclick={onClose} aria-label="Close">
+			<button class="text-white mr-2 cursor-pointer hover:opacity-50 mt-4 md:mr-4 transition shadow-xl" onclick={onClose} aria-label="Close">
 				<X size={24} />
 			</button>
 		</div>
 
 		<!-- Category selector -->
-		<div class="mx-auto max-w-4/5 p-2">
+		<div class="mx-auto p-2 px-5">
 			<Navigation {categories} bind:selectedCategory />
 		</div>
 
@@ -111,3 +111,9 @@
 		</div>
 	</div>
 </div>
+
+<style>
+    :global([data-expanded]) {
+        border-radius: 0 !important;
+    }
+</style>

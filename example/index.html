@@ -95,11 +95,9 @@
     <script>
         // Wait for the SDK to be fully loaded
         document.addEventListener('DOMContentLoaded', () => {
-            const sdk = window.PlaylightSDK;
-
             // Set up button event listeners
             document.getElementById('show-discovery').addEventListener('click', () => {
-                sdk.openDiscovery();
+                window.PlaylightSDK.openDiscovery();
             });
 
             let currentPosition = 'bottom-right';
@@ -112,7 +110,7 @@
                 currentPosition = positions[nextIndex];
 
                 // Update the SDK
-                sdk.setPosition(currentPosition);
+                window.PlaylightSDK.setPosition(currentPosition);
                 console.log(`Button position changed to: ${currentPosition}`);
             });
 
@@ -121,7 +119,7 @@
             document.getElementById('toggle-exit-intent').addEventListener('click', () => {
                 exitIntentEnabled = !exitIntentEnabled;
 
-                sdk.appActions.setExitIntentEnabled(exitIntentEnabled);
+                window.PlaylightSDK.appActions.setExitIntentEnabled(exitIntentEnabled);
                 console.log(`Exit intent ${exitIntentEnabled ? 'enabled' : 'disabled'}`);
             });
         });

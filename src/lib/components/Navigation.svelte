@@ -63,7 +63,7 @@
 	class="flex w-full flex-col py-2"
 >
 	<!-- Interactive title that serves as the dropdown trigger -->
-	<h1 class="py-2 text-center text-xl font-bold text-white md:text-2xl lg:text-4xl">
+	<h1 class="py-2 text-center text-2xl font-bold text-white lg:text-4xl drop-shadow-xl">
 		<span>{currentPhrase}</span>
 		<!-- Interactive category dropdown trigger -->
 		<button
@@ -90,11 +90,11 @@
 	{#if isOpen}
 		<div
 			bind:this={dropdownRef}
-			class="bg-background w-30w-full fixed left-1/2 z-50 mt-20 max-w-md -translate-x-1/2 transform border shadow-lg"
+			class="bg-background/75 backdrop-blur w-30 w-full fixed left-1/2 z-50 mt-22 max-w-xs -translate-x-1/2 transform border shadow-lg"
 			transition:fly={{ y: -5, duration: 250 }}
 		>
 			<!-- Search input at the top of dropdown -->
-			<div class="bg-foreground-muted border-b p-3">
+			<div class="border-b p-3">
 				<div class="relative">
 					<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-1">
 						<Search size={18} class="text-muted-foreground" />
@@ -102,7 +102,7 @@
 					<input
 						type="text"
 						placeholder="Search categories..."
-						class="bg-background w-full border-0 p-1 pl-10 text-white focus:ring-0 focus:outline-none"
+						class="w-full border-0 p-1 pl-10 text-white focus:ring-0 focus:outline-none"
 						bind:value={searchTerm}
 					/>
 				</div>

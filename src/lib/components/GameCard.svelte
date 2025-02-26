@@ -13,7 +13,7 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
-	class="bg-muted highlight-border relative flex h-2/3 h-full w-1/4 cursor-pointer flex-col border-1 transition hover:brightness-120"
+	class="bg-muted highlight-border shadow-xl relative flex h-2/3 h-full w-1/4 cursor-pointer flex-col border-1 transition hover:brightness-105"
 	onmouseover={() => {
 		isHovered = true;
 	}}
