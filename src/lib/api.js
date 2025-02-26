@@ -80,7 +80,7 @@ class PlayLightAPI {
             await this.request('/event/click', {
                 method: 'POST',
                 body: JSON.stringify({
-                    domain: currentDomain,
+                    sourceDomain: currentDomain,
                     gameId
                 })
             });
