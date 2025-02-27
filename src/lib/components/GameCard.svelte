@@ -36,7 +36,7 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
-	class="bg-muted highlight-border relative flex h-2/3 h-full w-1/4 cursor-pointer flex-col border-1 shadow-xl transition hover:brightness-105"
+	class="bg-muted highlight-border relative mb-[8%] flex aspect-[2/3] h-2/3 h-3/4 max-h-[80vw] w-1/4 cursor-pointer flex-col border-1 shadow-xl transition hover:brightness-105"
 	onmouseover={handleMouseEnter}
 	onfocus={handleMouseEnter}
 	onmouseout={handleMouseLeave}
@@ -48,7 +48,7 @@
 	tabindex="0"
 	onclick={handleClick}
 >
-	<div class="relative aspect-[2/3] h-full w-full w-full overflow-hidden">
+	<div class="bg-background relative h-full w-full w-full overflow-hidden">
 		<!-- Cover Image -->
 		<img
 			src={game.cover_image_url}
