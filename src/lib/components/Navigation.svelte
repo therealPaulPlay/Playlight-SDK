@@ -63,7 +63,7 @@
 	class="flex w-full flex-col py-2"
 >
 	<!-- Interactive title that serves as the dropdown trigger -->
-	<h1 class="py-2 text-center text-2xl font-bold text-white lg:text-4xl drop-shadow-xl mb-0">
+	<h1 class="py-2 text-center text-2xl font-bold text-white lg:text-4xl drop-shadow-xl mb-0!">
 		<span>{currentPhrase}</span>
 		<!-- Interactive category dropdown trigger -->
 		<button

@@ -36,7 +36,7 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
-	class="bg-muted highlight-border relative mb-[8%] flex aspect-[2/3] h-2/3 h-3/4 max-h-[80vw] w-1/4 cursor-pointer flex-col border-1 shadow-xl transition hover:brightness-105"
+	class="bg-muted highlight-border relative mb-[5%] mt-5 flex aspect-[2/3] lg:h-5/7 h-2/3 max-h-[75vh] cursor-pointer flex-col border-1 shadow-xl transition hover:brightness-105"
 	onmouseover={handleMouseEnter}
 	onfocus={handleMouseEnter}
 	onmouseout={handleMouseLeave}
@@ -48,7 +48,7 @@
 	tabindex="0"
 	onclick={handleClick}
 >
-	<div class="bg-background relative h-full w-full w-full overflow-hidden">
+	<div class="bg-background relative h-full aspect-[2/3] overflow-hidden">
 		<!-- Cover Image -->
 		<img
 			src={game.cover_image_url}
@@ -70,7 +70,6 @@
 				onloadeddata={handleVideoLoaded}
 			></video>
 		{/if}
-
 		{#if isHovered}
 			<div
 				transition:slide
@@ -88,7 +87,7 @@
 	<img
 		src={game.logo_url}
 		alt="game logo"
-		class="absolute right-0 -bottom-30 left-0 z-30 mx-auto h-23 w-23 rounded-full border-1 object-center transition"
+		class="absolute right-0 -bottom-[18%] left-0 z-30 aspect-square mx-auto w-1/5 rounded-full border-1 object-center transition"
 		loading="lazy"
 	/>
 </div>
