@@ -3,14 +3,16 @@
 
 	let { game, onClick } = $props();
 
-	function handleClick() {
-		if (onClick) onClick(game.id);
-		window.open("https://" + game.domain, "_blank", "noopener,noreferrer"); // Open game in a new tab
-	}
-
 	let isHovered = $state(false);
 	let videoElement = $state();
 	let videoLoaded = $state(false);
+	let coverImageLoaded = $state(false);
+	let logoImageLoaded = $state(false);
+
+	function handleClick() {
+		onClick?.(game.id);
+		window.open("https://" + game.domain, "_blank", "noopener,noreferrer"); // Open game in a new tab
+	}
 
 	function handleMouseEnter() {
 		isHovered = true;
@@ -26,11 +28,6 @@
 		if (videoElement) {
 			videoElement.pause();
 		}
-	}
-
-	// Function to handle video loaded
-	function handleVideoLoaded() {
-		videoLoaded = true;
 	}
 </script>
 
@@ -49,27 +46,38 @@
 	onclick={handleClick}
 >
 	<div class="bg-background relative aspect-[2/3] h-full overflow-hidden">
-		<!-- Cover Image -->
-		<img
-			src={game.cover_image_url}
-			alt="cover"
-			class="absolute top-0 left-0 z-10 h-full w-full object-cover transition-opacity duration-300"
-			style={isHovered && videoLoaded && game.cover_video_url ? "opacity: 0" : "opacity: 1"}
-			loading="eager"
-		/>
-		<!-- Cover Video (preloaded but initially hidden) -->
+		<!-- Cover Video -->
 		{#if game.cover_video_url}
 			<video
 				bind:this={videoElement}
 				src={game.cover_video_url}
-				class="absolute top-0 left-0 h-full w-full object-cover"
+				class="absolute top-0 left-0 z-5 h-full w-full object-cover opacity-0"
+				class:opacity-100={isHovered && videoLoaded && game.cover_video_url}
 				muted
 				playsinline
 				loop
 				preload="auto"
-				onloadeddata={handleVideoLoaded}
+				onloadeddata={() => {
+					videoLoaded = true;
+				}}
 			></video>
 		{/if}
+		<!-- Image loading skeleton -->
+		{#if !coverImageLoaded}
+			<div class="bg-muted absolute top-0 left-0 h-full w-full animate-pulse"></div>
+		{/if}
+		<!-- Cover Image - now using opacity transition instead of display:none -->
+		<img
+			src={game.cover_image_url}
+			alt="cover"
+			class="absolute top-0 left-0 z-10 h-full w-full object-cover opacity-0 transition"
+			class:opacity-100={coverImageLoaded && (!isHovered || !videoLoaded || !game.cover_video_url)}
+			loading="eager"
+			onload={() => {
+				coverImageLoaded = true;
+			}}
+		/>
+
 		{#if isHovered}
 			<div
 				transition:slide
@@ -84,11 +92,17 @@
 			</div>
 		{/if}
 	</div>
+
+	<!-- Logo image with opacity transition -->
 	<img
 		src={game.logo_url}
 		alt="game logo"
-		class="absolute right-0 -bottom-[18%] left-0 z-30 mx-auto aspect-square w-1/5 rounded-full border-1 object-center transition"
+		class="absolute right-0 -bottom-[18%] left-0 z-30 mx-auto aspect-square w-1/5 rounded-full border-1 object-center opacity-0 transition"
+		class:opacity-100={logoImageLoaded}
 		loading="eager"
+		onload={() => {
+			logoImageLoaded = true;
+		}}
 	/>
 </div>
 
