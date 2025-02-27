@@ -36,7 +36,7 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
-	class="bg-muted highlight-border relative mb-[5%] mt-5 flex aspect-[2/3] lg:h-5/7 h-2/3 max-h-[75vh] cursor-pointer flex-col border-1 shadow-xl transition hover:brightness-105"
+	class="bg-muted highlight-border relative mt-5 mb-[5%] flex aspect-[2/3] h-2/3 max-h-[75vh] cursor-pointer flex-col border-1 shadow-xl transition hover:brightness-105 lg:h-5/7"
 	onmouseover={handleMouseEnter}
 	onfocus={handleMouseEnter}
 	onmouseout={handleMouseLeave}
@@ -48,14 +48,14 @@
 	tabindex="0"
 	onclick={handleClick}
 >
-	<div class="bg-background relative h-full aspect-[2/3] overflow-hidden">
+	<div class="bg-background relative aspect-[2/3] h-full overflow-hidden">
 		<!-- Cover Image -->
 		<img
 			src={game.cover_image_url}
 			alt="cover"
 			class="absolute top-0 left-0 z-10 h-full w-full object-cover transition-opacity duration-300"
 			style={isHovered && videoLoaded && game.cover_video_url ? "opacity: 0" : "opacity: 1"}
-			loading="lazy"
+			loading="eager"
 		/>
 		<!-- Cover Video (preloaded but initially hidden) -->
 		{#if game.cover_video_url}
@@ -87,8 +87,8 @@
 	<img
 		src={game.logo_url}
 		alt="game logo"
-		class="absolute right-0 -bottom-[18%] left-0 z-30 aspect-square mx-auto w-1/5 rounded-full border-1 object-center transition"
-		loading="lazy"
+		class="absolute right-0 -bottom-[18%] left-0 z-30 mx-auto aspect-square w-1/5 rounded-full border-1 object-center transition"
+		loading="eager"
 	/>
 </div>
 
