@@ -31,7 +31,7 @@
 <!-- svelte-ignore a11y_mouse_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
-	class="fixed top-0 left-0 right-0 h-2"
+	class="fixed top-0 left-0 right-0 h-2 z-99990"
 	onmouseover={(event) => {
 		const currentMouseY = event.clientY;
 		// Trigger popup only if mouse is moving upwards and was inside the page before

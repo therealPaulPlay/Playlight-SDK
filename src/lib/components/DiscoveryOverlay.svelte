@@ -57,7 +57,7 @@
 </script>
 
 <div
-	class="bg-background/75 fixed inset-0 top-0 right-0 bottom-0 left-0 z-[99999] flex items-center justify-center backdrop-blur-md"
+	class="bg-background/75 fixed inset-0 top-0 right-0 bottom-0 left-0 z-99999 flex items-center justify-center backdrop-blur-md"
 	transition:blur={{ duration: 250 }}
 >
 	<div class="flex h-full w-full flex-col rounded-lg text-white">
@@ -109,7 +109,7 @@
 				target="_blank"
 				class="text-muted-foreground flex items-center gap-1 text-sm transition hover:text-white"
 			>
-				Game Developer? Join Playlight <ExternalLink size={14} style="margin-top: 2px;" />
+				Game Developer? Join Playlight <ExternalLink size={14} style="margin-top: 1px;" />
 			</a>
 		</div>
 	</div>

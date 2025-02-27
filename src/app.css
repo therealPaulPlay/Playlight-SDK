@@ -48,3 +48,7 @@
   font-family: Geist;
   src: url("/static/fonts/Geist[wght].ttf");
 }
+
+* {
+  font-synthesis: none !important;
+}
