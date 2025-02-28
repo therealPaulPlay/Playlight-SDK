@@ -102,7 +102,7 @@
 		</div>
 
 		<!-- Game grid -->
-		<div class="relative mb-7 h-full w-full flex-1 items-center justify-center p-4">
+		<div class="mask-fade relative h-full w-full overflow-y-auto p-4">
 			{#if isLoading}
 				<div class="flex h-4/5 items-center justify-center gap-4">
 					<LoaderCircle class="animate-spin opacity-75" size={50} strokeWidth={2.5} />
@@ -112,7 +112,7 @@
 					<p>No games found that match the filter.</p>
 				</div>
 			{:else}
-				<div class="flex h-full min-h-full w-full flex-wrap items-center justify-center gap-10 overflow-x-auto">
+				<div class="mx-auto flex h-full flex-wrap content-start justify-center gap-10 lg:max-w-4/5">
 					{#each games as game}
 						<GameCard
 							{game}
@@ -121,6 +121,7 @@
 							}}
 						/>
 					{/each}
+					<div class="h-5 w-full"></div>
 				</div>
 			{/if}
 		</div>
@@ -141,5 +142,27 @@
 <style>
 	:global([data-expanded]) {
 		border-radius: 0 !important;
+	}
+
+	.mask-fade {
+		mask-image: linear-gradient(
+			to bottom,
+			transparent 0%,
+			rgba(0, 0, 0, 0.326) 1%,
+			rgba(0, 0, 0, 0.554) 2%,
+			rgba(0, 0, 0, 0.74) 3%,
+			rgba(0, 0, 0, 0.86) 4%,
+			rgba(0, 0, 0, 0.954) 5%,
+			rgba(0, 0, 0, 0.982) 6%,
+			black 7%,
+			black 93%,
+			rgba(0, 0, 0, 0.982) 94%,
+			rgba(0, 0, 0, 0.954) 95%,
+			rgba(0, 0, 0, 0.86) 96%,
+			rgba(0, 0, 0, 0.74) 97%,
+			rgba(0, 0, 0, 0.554) 98%,
+			rgba(0, 0, 0, 0.326) 99%,
+			transparent 100%
+		);
 	}
 </style>

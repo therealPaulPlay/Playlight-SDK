@@ -45,7 +45,7 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
-	class="bg-muted highlight-border relative mt-5 mb-[5%] flex aspect-[2/3] h-2/3 max-h-[75vh] cursor-pointer flex-col border-1 shadow-xl transition hover:brightness-105 lg:h-5/7"
+	class="bg-muted highlight-border mb-[calc(5dvh+4vw)] relative mt-5 flex aspect-[2/3] h-2/3 max-h-[75vh] cursor-pointer flex-col border-1 shadow-xl transition hover:brightness-105 lg:h-5/7"
 	onmouseenter={handleMouseEnter}
 	onfocus={handleMouseEnter}
 	onmouseleave={handleMouseLeave}
@@ -61,7 +61,7 @@
 		<!-- Cover Video -->
 		{#if isNewGame(game?.created_at)}
 			<div
-				class="bg-foreground text-background absolute top-4 right-4 z-35 px-2 py-0.5 font-bold transition-opacity"
+				class="bg-foreground text-background absolute top-4 right-4 z-13 px-2 py-0.5 font-bold transition-opacity"
 				class:opacity-0={isHovered}
 			>
 				<p class="uppercase">New</p>
@@ -104,7 +104,7 @@
 			<div
 				transition:slide
 				id="overlay"
-				class="bg-background/75 text-foreground absolute right-0 bottom-0 left-0 z-20 flex max-h-1/3 flex-col overflow-hidden p-3 backdrop-blur-xl transition"
+				class="bg-background/75 text-foreground absolute right-0 bottom-0 left-0 z-11 flex max-h-1/3 flex-col overflow-hidden p-3 backdrop-blur-xl transition"
 			>
 				<div class="hide-scrollbar h-full w-full overflow-y-auto">
 					<h3 class="mb-2 truncate text-lg font-bold">{game.name}</h3>
@@ -119,7 +119,7 @@
 	<img
 		src={game.logo_url}
 		alt="game logo"
-		class="absolute right-0 -bottom-[18%] left-0 z-30 mx-auto aspect-square w-1/5 rounded-full border-1 object-center opacity-0 transition"
+		class="absolute right-0 -bottom-[18%] left-0 z-12 mx-auto aspect-square w-1/5 rounded-full border-1 object-center opacity-0 transition"
 		class:opacity-100={logoImageLoaded}
 		loading="eager"
 		onload={() => {

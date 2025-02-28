@@ -84,7 +84,7 @@
 	{#if isOpen}
 		<div
 			bind:this={dropdownRef}
-			class="bg-background/75 fixed left-1/2 z-50 mt-22 w-30 w-full max-w-xs -translate-x-1/2 transform border shadow-lg backdrop-blur"
+			class="bg-background/85 fixed left-1/2 z-50 mt-24 w-30 w-full max-w-xs -translate-x-1/2 transform border shadow-lg backdrop-blur"
 			transition:fly={{ y: -5, duration: 250 }}
 		>
 			<!-- Search input at the top of dropdown -->
