@@ -66,7 +66,6 @@
 			onclick={() => {
 				searchTerm = "";
 				isOpen = !isOpen;
-				playSound("/static/sounds/dropdown_open.ogg", 0.75);
 			}}
 		>
 			<span class="max-w-[40vw] truncate">{displayCategory}</span>
