@@ -2,29 +2,30 @@
 	import { slide } from "svelte/transition";
 
 	let { game, onClick } = $props();
-
 	let isHovered = $state(false);
 	let videoElement = $state();
 	let videoLoaded = $state(false);
 	let coverImageLoaded = $state(false);
 	let logoImageLoaded = $state(false);
+	let isLoadingVideo = $state(false);
 
 	function handleClick() {
 		onClick?.(game.id);
-		window.open("https://" + game.domain, "_blank", "noopener,noreferrer"); // Open game in a new tab
+		window.open("https://" + game.domain, "_blank", "noopener");
 	}
 
 	function handleMouseEnter() {
 		isHovered = true;
 		if (videoElement && game.cover_video_url) {
+			isLoadingVideo = true; // Flag that we're attempting to load the video
 			videoElement.play().catch((err) => console.error("Video play error:", err));
 		}
 	}
 
-	// Function to handle mouse leave
 	function handleMouseLeave() {
 		isHovered = false;
-		if (videoElement) videoElement.pause();
+		// Only pause if it's already loaded and playing
+		if (videoElement && videoLoaded) videoElement.pause();
 	}
 
 	function isNewGame(createdAtString) {
@@ -59,6 +60,7 @@
 				<p class="uppercase">New</p>
 			</div>
 		{/if}
+
 		{#if game.cover_video_url}
 			<video
 				bind:this={videoElement}
@@ -71,6 +73,7 @@
 				preload="auto"
 				onloadeddata={() => {
 					videoLoaded = true;
+					isLoadingVideo = false;
 				}}
 			></video>
 		{/if}
