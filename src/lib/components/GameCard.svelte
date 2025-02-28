@@ -17,7 +17,6 @@
 	function handleMouseEnter() {
 		isHovered = true;
 		if (videoElement && game.cover_video_url) {
-			videoElement.currentTime = 0;
 			videoElement.play().catch((err) => console.error("Video play error:", err));
 		}
 	}
@@ -25,9 +24,7 @@
 	// Function to handle mouse leave
 	function handleMouseLeave() {
 		isHovered = false;
-		if (videoElement) {
-			videoElement.pause();
-		}
+		if (videoElement) videoElement.pause();
 	}
 
 	function isNewGame(createdAtString) {
@@ -55,7 +52,10 @@
 	<div class="bg-background relative aspect-[2/3] h-full overflow-hidden">
 		<!-- Cover Video -->
 		{#if isNewGame(game?.created_at)}
-			<div class="bg-foreground absolute top-4 right-4 px-2 py-0.5 z-35 font-bold text-background transition-opacity" class:opacity-0={isHovered}>
+			<div
+				class="bg-foreground text-background absolute top-4 right-4 z-35 px-2 py-0.5 font-bold transition-opacity"
+				class:opacity-0={isHovered}
+			>
 				<p class="uppercase">New</p>
 			</div>
 		{/if}
@@ -94,7 +94,7 @@
 			<div
 				transition:slide
 				id="overlay"
-				class="bg-background/75 absolute right-0 bottom-0 left-0 z-20 flex max-h-1/3 flex-col overflow-hidden p-3 backdrop-blur-xl transition text-foreground"
+				class="bg-background/75 text-foreground absolute right-0 bottom-0 left-0 z-20 flex max-h-1/3 flex-col overflow-hidden p-3 backdrop-blur-xl transition"
 			>
 				<div class="hide-scrollbar h-full w-full overflow-y-auto">
 					<h3 class="mb-2 truncate text-lg font-bold">{game.name}</h3>

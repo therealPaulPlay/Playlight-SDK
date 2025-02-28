@@ -5,12 +5,14 @@
 	import GameCard from "./GameCard.svelte";
 	import api from "../api.js";
 	import Navigation from "./Navigation.svelte";
+	import { onMount } from "svelte";
 
 	let { currentGameCategory = null, selectedCategory = $bindable(), onClose } = $props();
 
 	let isLoading = $state(true);
 	let games = $state([]);
 	let categories = $state([]);
+	let exitIntentEnabled = $state(true);
 
 	// Fetch data on mount and when category changes
 	$effect(() => {
@@ -54,6 +56,10 @@
 			isLoading = false;
 		}
 	}
+
+	onMount(() => {
+		exitIntentEnabled = !Boolean(localStorage.getItem("playlight_exit_intent_disabled_by_user"));
+	});
 </script>
 
 <div
@@ -64,13 +70,26 @@
 		<!-- Header -->
 		<div class="flex items-center justify-between p-4">
 			<img alt="logo" src="/static/images/logo_white_small.png" class="w-50" />
-			<button
-				class="mt-4 mr-2 cursor-pointer text-white shadow-xl transition hover:opacity-50 md:mr-4"
-				onclick={onClose}
-				aria-label="Close"
-			>
-				<X size={24} />
-			</button>
+			<div class="mt-4 mr-2 flex items-center justify-evenly gap-8 overflow-hidden md:mr-4">
+				<button
+					class="cursor-pointer truncate text-sm text-nowrap text-white opacity-50 transition hover:opacity-25 max-md:hidden"
+					onclick={() => {
+						localStorage.getItem("playlight_exit_intent_disabled_by_user")
+							? localStorage.removeItem("playlight_exit_intent_disabled_by_user")
+							: localStorage.setItem("playlight_exit_intent_disabled_by_user", true);
+						exitIntentEnabled = !exitIntentEnabled;
+					}}
+				>
+					<p>{exitIntentEnabled ? "Ignore exit intent" : "Trigger on exit intent"}</p>
+				</button>
+				<button
+					class="cursor-pointer text-white shadow-xl transition hover:opacity-50"
+					onclick={onClose}
+					aria-label="Close"
+				>
+					<X size={24} />
+				</button>
+			</div>
 		</div>
 
 		<!-- Category selector -->
@@ -82,7 +101,7 @@
 		<div class="relative mb-7 h-full w-full flex-1 items-center justify-center p-4">
 			{#if isLoading}
 				<div class="flex h-4/5 items-center justify-center gap-4">
-					<LoaderCircle class="animate-spin opacity-75" size={50} strokeWidth={2} />
+					<LoaderCircle class="animate-spin opacity-75" size={50} strokeWidth={2.5} />
 				</div>
 			{:else if games.length === 0}
 				<div class="text-muted-foreground flex h-4/5 items-center justify-center gap-4">

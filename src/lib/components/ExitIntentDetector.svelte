@@ -36,7 +36,7 @@
 		const currentMouseY = event.clientY;
 		// Trigger popup only if mouse is moving upwards and was inside the page before
 		if (currentMouseY < lastMouseY && isMouseInPage) {
-			if (enabled) onIntent?.();
+			if (enabled && !localStorage.getItem("playlight_exit_intent_disabled_by_user")) onIntent?.();
 		}
 		// Update lastMouseY after checking
 		lastMouseY = currentMouseY;
