@@ -4,56 +4,35 @@
 	import DiscoveryOverlay from "./lib/components/DiscoveryOverlay.svelte";
 	import { Toaster } from "svelte-sonner";
 	import ExitIntentDetector from "./lib/components/ExitIntentDetector.svelte";
+	import { discoveryOpen } from "./lib/store.js";
 
 	let { config, api } = $props();
 
 	// State variables
-	let showDiscovery = $state(false);
 	let buttonPosition = $state(config?.button?.position || "bottom-right");
 	let selectedCategory = $state();
 	let currentGameCategory = $state();
 
 	// Actions that can be called from outside the component
-	function setShowDiscovery(value) {
-		showDiscovery = value;
-		if (value) api.trackOpen();
+	function openDiscovery() {
+		$discoveryOpen = true;
+		api.trackOpen();
 	}
-
-	function setButtonPosition(position) {
-		buttonPosition = position;
-	}
-
-	// Register actions globally - now inside the component top level (not onMount)
-	$effect(() => {
-		if (typeof window !== "undefined") {
-			window.playlightActions = {
-				setShowDiscovery,
-				setButtonPosition,
-			};
-		}
-	});
 </script>
 
 <!-- Floating button -->
-<FloatingButton position={buttonPosition} onClick={() => setShowDiscovery(true)} />
+<FloatingButton position={buttonPosition} onClick={openDiscovery} />
 
 <!-- Discovery overlay -->
-{#if showDiscovery}
-	<DiscoveryOverlay
-		{currentGameCategory}
-		{api}
-		bind:selectedCategory
-		onClose={() => {
-			showDiscovery = false;
-		}}
-	/>
+{#if $discoveryOpen}
+	<DiscoveryOverlay {currentGameCategory} {api} bind:selectedCategory />
 {/if}
 
 <!-- Detect user leaving page -->
 <ExitIntentDetector
 	enabled={config?.exitIntent?.enabled}
 	onIntent={() => {
-		if (!showDiscovery) setShowDiscovery(true);
+		if (!$discoveryOpen) openDiscovery();
 	}}
 />
 

@@ -19,13 +19,7 @@
 	);
 
 	// Random leading phrases - only change when explicitly selecting a new category
-	const leadingPhrases = [
-		"Looking for",
-		"Interested in",
-		"Searching for",
-		"Fancy some",
-		"What about these",
-	];
+	const leadingPhrases = ["Looking for", "Interested in", "Searching for", "Fancy some", "What about these"];
 
 	// Current random phrase
 	let currentPhrase = $state(leadingPhrases[0]);
@@ -114,13 +108,12 @@
 				{:else if filteredCategories.length === 0}
 					<div class="text-muted-foreground p-4 text-center">No categories found.</div>
 				{:else}
-					<div class="p-1">
+					<div class="p-1 space-y-1">
 						{#each filteredCategories as category (category)}
 							<button
-								class="w-full cursor-pointer px-4 py-2 text-left transition-colors hover:brightness-110 {selectedCategory ==
-								category
-									? 'bg-white text-black'
-									: 'text-white'}"
+								class="w-full cursor-pointer px-4 py-2 text-left transition-colors {selectedCategory != category
+									? 'hover:bg-muted-foreground/20'
+									: ''} {selectedCategory == category ? 'bg-white text-black' : 'text-white'}"
 								onclick={() => {
 									selectedCategory = category;
 									isOpen = false;

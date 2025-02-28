@@ -28,11 +28,6 @@
             padding: 2rem;
         }
 
-        h1 {
-            color: white;
-            margin-bottom: 2rem;
-        }
-
         .game-container {
             background-color: rgb(30, 30, 30);
             border-radius: 8px;
@@ -46,10 +41,12 @@
             border: none;
             border-radius: 4px;
             padding: 0.75rem 1.5rem;
-            font-size: 1rem;
             cursor: pointer;
-            transition: background-color 0.2s;
             margin: 0.5rem;
+        }
+
+        .button:hover {
+            opacity: 0.5;
         }
 
         .options {
@@ -69,15 +66,16 @@
 
             <div class="options">
                 <button class="button" id="show-discovery">Open Discovery</button>
-                <button class="button" id="change-position">Change Button Position</button>
-                <button class="button" id="toggle-exit-intent">Toggle Exit Intent</button>
             </div>
         </div>
     </div>
 
-    <!-- Configure the SDK -->
+    <!-- Include the Playlight SDK -->
+    <script src="../dist/playlight-sdk.iife.js"></script>
+
     <script>
-        window.PlaylightConfig = {
+        // Initialize the SDK
+        window.PlaylightSDK.init({
             button: {
                 position: 'bottom-right',
                 visible: true
@@ -85,42 +83,12 @@
             exitIntent: {
                 enabled: true
             }
-        };
-    </script>
+        });
 
-    <!-- Include the Playlight SDK -->
-    <script src="../dist/playlight-sdk.iife.js"></script>
-
-    <!-- Control the SDK -->
-    <script>
         // Wait for the SDK to be fully loaded
         document.addEventListener('DOMContentLoaded', () => {
-            // Set up button event listeners
             document.getElementById('show-discovery').addEventListener('click', () => {
-                window.PlaylightSDK.openDiscovery();
-            });
-
-            let currentPosition = 'bottom-right';
-            const positions = ['bottom-right', 'bottom-left'];
-
-            document.getElementById('change-position').addEventListener('click', () => {
-                // Cycle through positions
-                const currentIndex = positions.indexOf(currentPosition);
-                const nextIndex = (currentIndex + 1) % positions.length;
-                currentPosition = positions[nextIndex];
-
-                // Update the SDK
-                window.PlaylightSDK.setPosition(currentPosition);
-                console.log(`Button position changed to: ${currentPosition}`);
-            });
-
-            let exitIntentEnabled = true;
-
-            document.getElementById('toggle-exit-intent').addEventListener('click', () => {
-                exitIntentEnabled = !exitIntentEnabled;
-
-                window.PlaylightSDK.appActions.setExitIntentEnabled(exitIntentEnabled);
-                console.log(`Exit intent ${exitIntentEnabled ? 'enabled' : 'disabled'}`);
+                window.PlaylightSDK.setDiscovery(true);
             });
         });
     </script>

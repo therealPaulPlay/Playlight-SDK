@@ -6,8 +6,9 @@
 	import api from "../api.js";
 	import Navigation from "./Navigation.svelte";
 	import { onMount } from "svelte";
+	import { discoveryOpen } from "../store.js";
 
-	let { currentGameCategory = null, selectedCategory = $bindable(), onClose } = $props();
+	let { currentGameCategory = null, selectedCategory = $bindable() } = $props();
 
 	let isLoading = $state(true);
 	let games = $state([]);
@@ -84,7 +85,9 @@
 				</button>
 				<button
 					class="cursor-pointer text-white shadow-xl transition hover:opacity-50"
-					onclick={onClose}
+					onclick={() => {
+						$discoveryOpen = false;
+					}}
 					aria-label="Close"
 				>
 					<X size={24} />
