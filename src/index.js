@@ -48,16 +48,6 @@ class PlaylightSDK {
         discoveryOpen.set(value);
         if (get(discoveryOpen)) api.trackOpen();
     }
-
-    // Game recommendation methods
-    async getRecommendedGames(category = null) {
-        return await this.api.getSuggestions(category);
-    }
-
-    // Current game information
-    async getCurrentGame() {
-        return await this.api.getCurrentGameInfo();
-    }
 }
 
 // Create instance and expose it globally
