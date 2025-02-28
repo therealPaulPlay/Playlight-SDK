@@ -1,5 +1,6 @@
 <script>
 	import { Gamepad } from "lucide-svelte";
+	import { playSound } from "../playSound";
 	let { position, onClick } = $props();
 </script>
 
@@ -9,7 +10,9 @@
 		: position == 'bottom-right'
 			? 'right-4 bottom-4'
 			: ''} group children-text-white z-99990 flex cursor-pointer gap-2 rounded-md bg-white p-3 font-bold text-black uppercase shadow-lg transition-all hover:scale-105"
-	onclick={onClick}
+	onclick={() => {
+		onClick?.();
+	}}
 	id="floating playlight button"
 	aria-label="Open Playlight Discovery"
 >

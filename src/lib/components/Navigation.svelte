@@ -4,6 +4,7 @@
 	import { elasticOut } from "svelte/easing";
 	import { flip } from "svelte/animate";
 	import { Search, ChevronDown } from "lucide-svelte";
+	import { playSound } from "../playSound.js";
 	let { categories = [], selectedCategory = $bindable() } = $props();
 
 	// Local state for the component
@@ -65,6 +66,7 @@
 			onclick={() => {
 				searchTerm = "";
 				isOpen = !isOpen;
+				playSound("/static/sounds/dropdown_open.ogg", 0.75);
 			}}
 		>
 			<span class="max-w-[40vw] truncate">{displayCategory}</span>
@@ -108,7 +110,7 @@
 				{:else if filteredCategories.length === 0}
 					<div class="text-muted-foreground p-4 text-center">No categories found.</div>
 				{:else}
-					<div class="p-1 space-y-1">
+					<div class="space-y-1 p-1">
 						{#each filteredCategories as category (category)}
 							<button
 								class="w-full cursor-pointer px-4 py-2 text-left transition-colors {selectedCategory != category

@@ -1,5 +1,6 @@
 <script>
 	import { slide } from "svelte/transition";
+	import { playSound } from "../playSound.js";
 
 	let { game, onClick } = $props();
 	let isHovered = $state(false);
@@ -15,6 +16,12 @@
 	}
 
 	function handleMouseEnter() {
+		// Play hover sound
+		if (!isHovered) {
+			playSound("/static/sounds/hover_selection.ogg", 0.25);
+		}
+
+		// Original hover logic
 		isHovered = true;
 		if (videoElement && game.cover_video_url) {
 			isLoadingVideo = true; // Flag that we're attempting to load the video
@@ -39,9 +46,9 @@
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
 	class="bg-muted highlight-border relative mt-5 mb-[5%] flex aspect-[2/3] h-2/3 max-h-[75vh] cursor-pointer flex-col border-1 shadow-xl transition hover:brightness-105 lg:h-5/7"
-	onmouseover={handleMouseEnter}
+	onmouseenter={handleMouseEnter}
 	onfocus={handleMouseEnter}
-	onmouseout={handleMouseLeave}
+	onmouseleave={handleMouseLeave}
 	onblur={handleMouseLeave}
 	ontouchstart={handleMouseEnter}
 	ontouchend={handleMouseLeave}
