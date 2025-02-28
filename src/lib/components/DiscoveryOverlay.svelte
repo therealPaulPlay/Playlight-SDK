@@ -79,7 +79,7 @@
 		</div>
 
 		<!-- Game grid -->
-		<div class="relative mb-7 h-full w-full flex-1 items-center justify-center overflow-y-auto p-4">
+		<div class="relative mb-7 h-full w-full flex-1 items-center justify-center p-4">
 			{#if isLoading}
 				<div class="flex h-4/5 items-center justify-center gap-4">
 					<LoaderCircle class="animate-spin opacity-75" size={50} strokeWidth={2} />
@@ -89,7 +89,7 @@
 					<p>No games found that match the filter.</p>
 				</div>
 			{:else}
-				<div class="flex h-full min-h-full w-full flex-wrap items-center justify-center gap-4 overflow-y-auto">
+				<div class="flex h-full min-h-full w-full flex-wrap items-center justify-center gap-10 overflow-x-auto">
 					{#each games as game}
 						<GameCard
 							{game}

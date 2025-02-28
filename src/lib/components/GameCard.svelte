@@ -29,6 +29,13 @@
 			videoElement.pause();
 		}
 	}
+
+	function isNewGame(createdAtString) {
+		const sevenDaysAgo = new Date();
+		sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+		const createdAt = new Date(createdAtString);
+		return createdAt > sevenDaysAgo;
+	}
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -47,6 +54,11 @@
 >
 	<div class="bg-background relative aspect-[2/3] h-full overflow-hidden">
 		<!-- Cover Video -->
+		{#if isNewGame(game?.created_at)}
+			<div class="bg-foreground absolute top-4 right-4 px-2 py-0.5 z-35 font-bold text-background transition-opacity" class:opacity-0={isHovered}>
+				<p class="uppercase">New</p>
+			</div>
+		{/if}
 		{#if game.cover_video_url}
 			<video
 				bind:this={videoElement}
@@ -82,7 +94,7 @@
 			<div
 				transition:slide
 				id="overlay"
-				class="bg-background/75 absolute right-0 bottom-0 left-0 z-20 flex max-h-1/3 flex-col overflow-hidden p-3 backdrop-blur-xl transition"
+				class="bg-background/75 absolute right-0 bottom-0 left-0 z-20 flex max-h-1/3 flex-col overflow-hidden p-3 backdrop-blur-xl transition text-foreground"
 			>
 				<div class="hide-scrollbar h-full w-full overflow-y-auto">
 					<h3 class="mb-2 truncate text-lg font-bold">{game.name}</h3>

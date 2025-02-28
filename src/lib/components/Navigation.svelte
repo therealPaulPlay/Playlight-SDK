@@ -20,12 +20,11 @@
 
 	// Random leading phrases - only change when explicitly selecting a new category
 	const leadingPhrases = [
-		"Looking for more",
-		"Interested in more",
-		"Searching for new",
+		"Looking for",
+		"Interested in",
+		"Searching for",
 		"Fancy some",
 		"What about these",
-		"Want more",
 	];
 
 	// Current random phrase
@@ -63,7 +62,7 @@
 	class="flex w-full flex-col py-2"
 >
 	<!-- Interactive title that serves as the dropdown trigger -->
-	<h1 class="py-2 text-center text-2xl font-bold text-white lg:text-4xl drop-shadow-xl mb-0!">
+	<h1 class="mb-0! py-2 text-center text-2xl font-bold text-white drop-shadow-xl lg:text-4xl">
 		<span>{currentPhrase}</span>
 		<!-- Interactive category dropdown trigger -->
 		<button
@@ -90,7 +89,7 @@
 	{#if isOpen}
 		<div
 			bind:this={dropdownRef}
-			class="bg-background/75 backdrop-blur w-30 w-full fixed left-1/2 z-50 mt-22 max-w-xs -translate-x-1/2 transform border shadow-lg"
+			class="bg-background/75 fixed left-1/2 z-50 mt-22 w-30 w-full max-w-xs -translate-x-1/2 transform border shadow-lg backdrop-blur"
 			transition:fly={{ y: -5, duration: 250 }}
 		>
 			<!-- Search input at the top of dropdown -->
