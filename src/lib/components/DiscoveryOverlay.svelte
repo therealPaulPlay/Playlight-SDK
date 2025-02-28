@@ -49,6 +49,7 @@
 			isLoading = true;
 			const suggestions = await api.getSuggestions(selectedCategory);
 			games = suggestions?.games;
+			games = games.filter((element) => element?.domain !== window.location.hostname); // Filter out current game from suggestions
 			const paginationInfo = suggestions?.pagination;
 		} catch (err) {
 			toast.error("Failed to load games: " + err);
