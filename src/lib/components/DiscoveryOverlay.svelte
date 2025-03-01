@@ -14,6 +14,7 @@
 	let games = $state([]);
 	let categories = $state([]);
 	let exitIntentEnabled = $state(true);
+    let page = $state(1);
 
 	// Fetch data on mount and when category changes
 	$effect(() => {
@@ -47,9 +48,8 @@
 	async function fetchGameSuggestions() {
 		try {
 			isLoading = true;
-			const suggestions = await api.getSuggestions(selectedCategory);
+			const suggestions = await api.getSuggestions(selectedCategory, page, window.location.hostname);
 			games = suggestions?.games;
-			games = games.filter((element) => element?.domain !== window.location.hostname); // Filter out current game from suggestions
 			const paginationInfo = suggestions?.pagination;
 		} catch (err) {
 			toast.error("Failed to load games: " + err);

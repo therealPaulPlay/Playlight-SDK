@@ -23,7 +23,11 @@ class PlayLightAPI {
                 try {
                     data = await response.json();
                 } catch {
-                    throw new Error(`API request failed: ${response.status}`);
+                    if (response.status != 429) {
+                        throw new Error(`API request failed: ${response.status}`);
+                    } else {
+                        console.warn("Playlight request didn't go through due to rate limiting.");
+                    }
                 }
                 throw new Error(`API request failed: ${data.error || data.message || response.status}`);
             }
@@ -44,9 +48,11 @@ class PlayLightAPI {
     }
 
     // Get game suggestions, optionally filtered by category
-    async getSuggestions(category = null) {
+    async getSuggestions(category = null, page = 1, withoutFilter) {
         let endpoint = '/suggestions';
         if (category) endpoint += "/" + category;
+        if (page) endpoint += "?page=" + page;
+        if (withoutFilter) endpoint += "&without=" + withoutFilter;
         return await this.request(endpoint);
     }
 

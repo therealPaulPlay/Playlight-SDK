@@ -45,7 +45,7 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
-	class="bg-muted highlight-border mb-[calc(5dvh+4vw)] relative mt-5 flex aspect-[2/3] h-2/3 max-h-[75vh] cursor-pointer flex-col border-1 shadow-xl transition hover:brightness-105 lg:h-5/7"
+	class="bg-muted highlight-border relative mt-5 mb-[calc(3dvh+1.5vw)] flex aspect-[2/3] h-1/2 max-h-[75vh] cursor-pointer flex-col border-1 shadow-xl transition hover:brightness-105 lg:h-3/7"
 	onmouseenter={handleMouseEnter}
 	onfocus={handleMouseEnter}
 	onmouseleave={handleMouseLeave}
@@ -57,7 +57,7 @@
 	tabindex="0"
 	onclick={handleClick}
 >
-	<div class="bg-background relative aspect-[2/3] h-full overflow-hidden">
+	<div class="bg-background aspect-[2/3] h-full overflow-hidden">
 		<!-- Cover Video -->
 		{#if isNewGame(game?.created_at)}
 			<div
