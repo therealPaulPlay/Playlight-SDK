@@ -18,33 +18,51 @@
 	let page = $state(1);
 	let hasMoreGames = $state(true);
 	let loadingRef = $state();
+	let fetchAllGames = $state(false);
+	let observer;
 
-	let isInitialFetch = $state(true);
-
-	// Init just once
+	// Initialization
 	onMount(() => {
-		if (isInitialFetch) {
-			isInitialFetch = false;
-			fetchCategories();
-		}
+		exitIntentEnabled = !Boolean(localStorage.getItem("playlight_exit_intent_disabled_by_user"));
+		fetchCategories();
+
+		// Setup scroll observer
+		observer = new IntersectionObserver(
+			(entries) => {
+				if (entries[0].isIntersecting && hasMoreGames && !isLoading && !isLoadingMore) {
+					fetchGames();
+				}
+			},
+			{ rootMargin: "200px" },
+		);
+
+		return () => observer?.disconnect();
 	});
 
-	// Reset when category changes
+	// Handle category change
 	$effect(() => {
-		if (selectedCategory && !isInitialFetch) {
-			games = [];
-			page = 1;
-			hasMoreGames = true;
-			isLoading = true;
-			fetchGames();
+		if (!selectedCategory) return;
+
+		games = [];
+		page = 1;
+		hasMoreGames = true;
+		fetchAllGames = false;
+		isLoading = true;
+
+		// Delay fetch to prevent rapid requests
+		setTimeout(() => fetchGames(), 100);
+	});
+
+	// Observe loading element when it becomes available
+	$effect(() => {
+		if (loadingRef && observer) {
+			observer.observe(loadingRef);
 		}
 	});
 
 	async function fetchCategories() {
 		try {
-			const fetchedCategories = await api.getCategories();
-			categories = fetchedCategories;
-
+			categories = await api.getCategories();
 			if (!selectedCategory && categories.length > 0) {
 				selectedCategory =
 					currentGameCategory && categories.includes(currentGameCategory) ? currentGameCategory : categories[0];
@@ -56,20 +74,34 @@
 	}
 
 	async function fetchGames() {
+		if (isLoading && page > 1) return;
 		if (isLoadingMore) return;
 
 		try {
-            page === 1 ? isLoading = true : isLoadingMore = true;
+			page === 1 ? (isLoading = true) : (isLoadingMore = true);
 
-			const result = await api.getSuggestions(selectedCategory, page, window.location.hostname);
+			// Get games (null category = all games)
+			const categoryToUse = fetchAllGames ? null : selectedCategory;
+			const result = await api.getSuggestions(categoryToUse, page, window.location.hostname);
 			const newGames = result?.games || [];
 
-			if (newGames.length === 0) {
-				hasMoreGames = false;
+			// Filter out duplicates (simpler than using a Set)
+			const uniqueGames = newGames.filter((newGame) => !games.some((existingGame) => existingGame.id === newGame.id));
+
+			if (uniqueGames.length === 0) {
+				if (!fetchAllGames && selectedCategory) {
+					// Try with all games
+					fetchAllGames = true;
+					page = 1;
+					// Delay to prevent rapid requests
+					setTimeout(() => fetchGames(), 100);
+				} else {
+					hasMoreGames = false;
+				}
 			} else {
-				games = [...games, ...newGames];
+				games = [...games, ...uniqueGames];
 				page += 1;
-				hasMoreGames = newGames.length >= 10;
+				hasMoreGames = uniqueGames.length >= 10;
 			}
 		} catch (err) {
 			console.error(err);
@@ -79,35 +111,6 @@
 			isLoadingMore = false;
 		}
 	}
-
-	onMount(() => {
-		exitIntentEnabled = !Boolean(localStorage.getItem("playlight_exit_intent_disabled_by_user"));
-
-		if (isInitialFetch) {
-			isInitialFetch = false;
-			fetchCategories();
-			setTimeout(() => fetchGames(), 100);
-		}
-
-		// Setup intersection observer
-		const observer = new IntersectionObserver(
-			(entries) => {
-				if (entries[0].isIntersecting && hasMoreGames && !isLoadingMore) {
-					fetchGames();
-				}
-			},
-			{ rootMargin: "200px" },
-		);
-
-		setTimeout(() => {
-			if (loadingRef) {
-				console.log("Observer attached");
-				observer.observe(loadingRef);
-			}
-		}, 500);
-
-		return () => observer.disconnect();
-	});
 </script>
 
 <div
@@ -132,9 +135,7 @@
 				</button>
 				<button
 					class="cursor-pointer text-white shadow-xl transition hover:opacity-50"
-					onclick={() => {
-						$discoveryOpen = false;
-					}}
+					onclick={() => ($discoveryOpen = false)}
 					aria-label="Close"
 				>
 					<X size={24} />
@@ -159,13 +160,8 @@
 				</div>
 			{:else}
 				<div class="mx-auto flex h-full flex-wrap content-start justify-center gap-10 lg:max-w-4/5">
-					{#each games as game}
-						<GameCard
-							{game}
-							onClick={() => {
-								api.trackClick(game.id);
-							}}
-						/>
+					{#each games as game, i}
+						<GameCard {game} onClick={() => api.trackClick(game.id)} />
 					{/each}
 
 					<!-- Loading indicator -->
