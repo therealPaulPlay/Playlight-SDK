@@ -11,56 +11,102 @@
 	let { currentGameCategory = null, selectedCategory = $bindable() } = $props();
 
 	let isLoading = $state(true);
+	let isLoadingMore = $state(false);
 	let games = $state([]);
 	let categories = $state([]);
 	let exitIntentEnabled = $state(true);
-    let page = $state(1);
+	let page = $state(1);
+	let hasMoreGames = $state(true);
+	let loadingRef = $state();
 
-	// Fetch data on mount and when category changes
-	$effect(() => {
-		fetchedCategories();
-		if (selectedCategory !== null) fetchGameSuggestions();
+	let isInitialFetch = $state(true);
+
+	// Init just once
+	onMount(() => {
+		if (isInitialFetch) {
+			isInitialFetch = false;
+			fetchCategories();
+		}
 	});
 
-	async function fetchedCategories() {
+	// Reset when category changes
+	$effect(() => {
+		if (selectedCategory && !isInitialFetch) {
+			games = [];
+			page = 1;
+			hasMoreGames = true;
+			isLoading = true;
+			fetchGames();
+		}
+	});
+
+	async function fetchCategories() {
 		try {
-			// Fetch categories
 			const fetchedCategories = await api.getCategories();
 			categories = fetchedCategories;
 
-			// Set initial category if not already set
 			if (!selectedCategory && categories.length > 0) {
-				if (currentGameCategory) {
-					const found = categories.find((c) => c === currentGameCategory);
-					selectedCategory = found ? currentGameCategory : categories[0];
-				} else {
-					selectedCategory = categories[0];
-				}
+				selectedCategory =
+					currentGameCategory && categories.includes(currentGameCategory) ? currentGameCategory : categories[0];
 			}
-
-			await fetchGameSuggestions();
 		} catch (err) {
 			console.error(err);
 			toast.error(err);
 		}
 	}
 
-	async function fetchGameSuggestions() {
+	async function fetchGames() {
+		if (isLoadingMore) return;
+
 		try {
-			isLoading = true;
-			const suggestions = await api.getSuggestions(selectedCategory, page, window.location.hostname);
-			games = suggestions?.games;
-			const paginationInfo = suggestions?.pagination;
+            page === 1 ? isLoading = true : isLoadingMore = true;
+
+			const result = await api.getSuggestions(selectedCategory, page, window.location.hostname);
+			const newGames = result?.games || [];
+
+			if (newGames.length === 0) {
+				hasMoreGames = false;
+			} else {
+				games = [...games, ...newGames];
+				page += 1;
+				hasMoreGames = newGames.length >= 10;
+			}
 		} catch (err) {
-			toast.error("Failed to load games: " + err);
 			console.error(err);
+			toast.error("Failed to load games: " + err);
 		} finally {
 			isLoading = false;
+			isLoadingMore = false;
 		}
 	}
 
 	onMount(() => {
 		exitIntentEnabled = !Boolean(localStorage.getItem("playlight_exit_intent_disabled_by_user"));
+
+		if (isInitialFetch) {
+			isInitialFetch = false;
+			fetchCategories();
+			setTimeout(() => fetchGames(), 100);
+		}
+
+		// Setup intersection observer
+		const observer = new IntersectionObserver(
+			(entries) => {
+				if (entries[0].isIntersecting && hasMoreGames && !isLoadingMore) {
+					fetchGames();
+				}
+			},
+			{ rootMargin: "200px" },
+		);
+
+		setTimeout(() => {
+			if (loadingRef) {
+				console.log("Observer attached");
+				observer.observe(loadingRef);
+			}
+		}, 500);
+
+		return () => observer.disconnect();
 	});
 </script>
 
@@ -103,11 +149,11 @@
 
 		<!-- Game grid -->
 		<div class="mask-fade relative h-full w-full overflow-y-auto p-4">
-			{#if isLoading}
+			{#if isLoading && games.length === 0}
 				<div class="flex h-4/5 items-center justify-center gap-4">
 					<LoaderCircle class="animate-spin opacity-75" size={50} strokeWidth={2.5} />
 				</div>
-			{:else if games.length === 0}
+			{:else if games.length === 0 && !isLoading}
 				<div class="text-muted-foreground flex h-4/5 items-center justify-center gap-4">
 					<p>No games found that match the filter.</p>
 				</div>
@@ -121,7 +167,13 @@
 							}}
 						/>
 					{/each}
-					<div class="h-5 w-full"></div>
+
+					<!-- Loading indicator -->
+					<div bind:this={loadingRef} class="flex h-10 w-full justify-center">
+						{#if isLoadingMore}
+							<LoaderCircle class="animate-spin opacity-75" size={30} strokeWidth={2.5} />
+						{/if}
+					</div>
 				</div>
 			{/if}
 		</div>

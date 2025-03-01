@@ -23,13 +23,14 @@ class PlayLightAPI {
                 try {
                     data = await response.json();
                 } catch {
-                    if (response.status != 429) {
-                        throw new Error(`API request failed: ${response.status}`);
+                    // Do nothing...
+                } finally {
+                    if (response.status !== 429) {
+                        throw new Error(`API request failed: ${data?.error || data?.message || response.status}`);
                     } else {
-                        console.warn("Playlight request didn't go through due to rate limiting.");
+                        return console.warn("Playlight request didn't go through due to rate limiting.");
                     }
                 }
-                throw new Error(`API request failed: ${data.error || data.message || response.status}`);
             }
 
             return await response.json();
