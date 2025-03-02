@@ -52,7 +52,7 @@ class PlaylightSDK {
 // Create instance and expose it globally
 const playlightSDK = new PlaylightSDK();
 
-// Expose SDK globally
+// Expose SDK as global var for iife (legacy) usage
 if (typeof window !== 'undefined') {
     window.PlaylightSDK = playlightSDK;
 }

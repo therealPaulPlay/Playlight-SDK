@@ -70,12 +70,10 @@
         </div>
     </div>
 
-    <!-- Include the Playlight SDK -->
-    <script src="../dist/playlight-sdk.iife.js"></script>
+    <script type="module">
+        import playlightSDK from "../dist/playlight-sdk.es.js";
 
-    <script>
-        // Initialize the SDK
-        window.PlaylightSDK.init({
+        playlightSDK.init({
             button: {
                 position: 'bottom-right',
                 visible: true
@@ -88,7 +86,7 @@
         // Wait for the SDK to be fully loaded
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('show-discovery').addEventListener('click', () => {
-                window.PlaylightSDK.setDiscovery(true);
+                playlightSDK.setDiscovery(true);
             });
         });
     </script>
