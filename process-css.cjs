@@ -5,30 +5,30 @@ const cssPath = path.resolve(__dirname, 'dist/playlight-sdk.css');
 // Read the CSS file
 let css = fs.readFileSync(cssPath, 'utf8');
 
-// Create a simple CSS parser to handle the transformation correctly
+// Optimized CSS transformer that correctly handles keyframes and media queries
 function transformCss(css) {
-    // Extend the at-rule patterns to include @property rules so they’re not processed below.
-    const atRulePatterns = [
-        /@(?:media|keyframes|font-face|supports|layer|import|charset|property)[^{]*\{[^]*?\}/g,
-        /@[^{]*;/g
-    ];
-
+    // Store at-rules to restore them later
     const atRules = [];
     let processedCss = css;
 
-    // Extract all at-rules (including @property)
-    atRulePatterns.forEach(pattern => {
-        processedCss = processedCss.replace(pattern, match => {
-            const placeholder = `__AT_RULE_${atRules.length}__`;
-            atRules.push({ placeholder, rule: match });
-            return placeholder;
-        });
+    // Extract all at-rules
+    processedCss = processedCss.replace(/@[^{]*\{[^]*?\}/g, match => {
+        const placeholder = `__AT_RULE_${atRules.length}__`;
+        atRules.push({ placeholder, rule: match });
+        return placeholder;
     });
 
-    // Process regular rules
+    // Extract simple at-rules like @import
+    processedCss = processedCss.replace(/@[^{]*;/g, match => {
+        const placeholder = `__AT_RULE_${atRules.length}__`;
+        atRules.push({ placeholder, rule: match });
+        return placeholder;
+    });
+
+    // Process regular CSS rules
     processedCss = processedCss.replace(/([^{}]+)\{([^{}]*)\}/g, (match, selector, declarations) => {
         // If it's a placeholder, skip it
-        if (selector.includes('__AT_RULE_')) {
+        if (selector.trim().startsWith('__AT_RULE_')) {
             return match;
         }
 
@@ -44,14 +44,53 @@ function transformCss(css) {
             return `#playlight-sdk-container ${s}`;
         });
 
-        // Return the rule with original declarations (no !important added)
+        // Return the rule with prefixed selectors
         return `${prefixedSelectors.join(', ')} {${declarations}}`;
     });
 
-    // Restore at-rules
-    atRules.forEach(({ placeholder, rule }) => {
-        processedCss = processedCss.replace(placeholder, rule);
-    });
+    // Process at-rules one by one
+    for (let i = atRules.length - 1; i >= 0; i--) {
+        const { placeholder, rule } = atRules[i];
+
+        if (rule.startsWith('@keyframes') || rule.startsWith('@-webkit-keyframes')) {
+            // Special handling for keyframes
+            let processedRule = rule.replace(/\{([^{}]*)\{([^{}]*)\}\}/g, (match, keyframeSelector, declarations) => {
+                // Don't prefix the keyframe selectors (from, to, percentages)
+                return `{${keyframeSelector}{${declarations}}}`;
+            });
+
+            // Replace the placeholder with the processed rule
+            processedCss = processedCss.replace(placeholder, processedRule);
+        } else if (rule.startsWith('@media') || rule.startsWith('@supports')) {
+            // Handle media and support queries
+            let processedRule = rule.replace(/([^{}]+)\{([^{}]*)\}/g, (match, selector, declarations) => {
+                // Skip the at-rule declaration itself
+                if (selector.trim().startsWith('@')) {
+                    return match;
+                }
+
+                // Process comma-separated selectors
+                const selectors = selector.split(',').map(s => s.trim()).filter(Boolean);
+
+                // Add container prefix to each selector
+                const prefixedSelectors = selectors.map(s => {
+                    // Do not prefix global selectors
+                    if (s === ':root' || s === 'html' || s.includes('#playlight-sdk-container')) {
+                        return s;
+                    }
+                    return `#playlight-sdk-container ${s}`;
+                });
+
+                return `${prefixedSelectors.join(', ')} {${declarations}}`;
+            });
+
+            // Replace the placeholder with the processed rule
+            processedCss = processedCss.replace(placeholder, processedRule);
+        } else {
+            // Other at-rules can be restored as-is
+            processedCss = processedCss.replace(placeholder, rule);
+        }
+    }
 
     return processedCss;
 }
