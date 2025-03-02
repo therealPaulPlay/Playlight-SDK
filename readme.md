@@ -2,7 +2,17 @@
 Playlight is an integrable game discovery platform.
 
 ## Installation
-Coming soon.
+Please refer to [the docs](https://playlight.dev/docs).
+
+Quick start:
+```html
+<!-- Include the script tag -->
+<script src="https://sdk.playlight.dev/playlight-sdk.iife.js"></script>
+<script>
+  // Initialize the SDK (async)
+  window.PlaylightSDK.init();
+</script>
+```
 
 ## Developing
 
