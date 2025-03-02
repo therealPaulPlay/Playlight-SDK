@@ -5,6 +5,7 @@
 	"scripts": {
 		"dev": "vite dev --port 3000",
 		"build": "vite build",
+		"postbuild": "node process-css.cjs",
 		"preview": "vite preview",
 		"format": "prettier --write .",
 		"lint": "prettier --check ."

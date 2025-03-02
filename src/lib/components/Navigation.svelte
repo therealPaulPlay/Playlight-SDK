@@ -72,7 +72,7 @@
 			<ChevronDown
 				size={25}
 				strokeWidth={3}
-				class="mt-1 ml-1 text-black group-hover:text-gray-700 {isOpen
+				class="mt-1 ml-1 text-black {isOpen
 					? 'rotate-180 transform'
 					: ''} transition-transform duration-200"
 			/>
