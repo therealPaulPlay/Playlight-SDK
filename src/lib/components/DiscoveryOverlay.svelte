@@ -129,9 +129,9 @@
 	transition:blur={{ duration: 250 }}
 >
 	<!-- Header -->
-	<div class="flex items-center justify-between p-4 ml-2">
+	<div class="ml-2 flex items-center justify-between p-4">
 		<a href="https://playlight.dev" target="_blank"
-			><img alt="logo" src="/static/images/logo_white_small.png" class="w-50" /></a
+			><img alt="logo" src="https://sdk.playlight.dev/static/images/logo-white-small.png" class="w-50" /></a
 		>
 		<div class="mt-4 mr-2 flex items-center justify-evenly gap-8 overflow-hidden md:mr-4">
 			<button

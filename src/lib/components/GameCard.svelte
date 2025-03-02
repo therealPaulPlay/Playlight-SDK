@@ -18,7 +18,7 @@
 	function handleMouseEnter() {
 		// Play hover sound
 		if (!isHovered) {
-			playSound("/static/sounds/hover_selection.ogg", 0.25);
+			playSound("https://sdk.playlight.dev/static/sounds/hover-selection.ogg", 0.25);
 		}
 
 		// Original hover logic
