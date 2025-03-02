@@ -27,7 +27,8 @@
 		"vite": "^6.0.0"
 	},
 	"dependencies": {
-		"lucide-svelte": "^0.476.0"
+		"lucide-svelte": "^0.476.0",
+		"vite-plugin-static-copy": "^2.3.0"
 	},
 	"description": "The SDK for Playlight.",
 	"main": "dist/playlight-sdk.js",
