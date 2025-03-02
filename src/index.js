@@ -30,13 +30,12 @@ class PlaylightSDK {
         this.app = mount(App, {
             target: this.container,
             props: {
-                config: this.config,
-                api: this.api
+                config: this.config
             }
         });
 
-        // Fetch categories and cache them
-        await this.api.getCategories();
+        // Fetch current game info to cache it
+        await this.api.getCurrentGameInfo();
 
         this.isInitialized = true;
         return this;

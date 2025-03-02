@@ -2,16 +2,16 @@
 	import "./app.css";
 	import FloatingButton from "./lib/components/FloatingButton.svelte";
 	import DiscoveryOverlay from "./lib/components/DiscoveryOverlay.svelte";
+	import api from "./lib/api";
 	import { Toaster } from "svelte-sonner";
 	import ExitIntentDetector from "./lib/components/ExitIntentDetector.svelte";
 	import { discoveryOpen } from "./lib/store.js";
 
-	let { config, api } = $props();
+	let { config } = $props();
 
 	// State variables
-	let buttonPosition = $state(config?.button?.position || "bottom-right");
-	let selectedCategory = $state();
-	let currentGameCategory = $state();
+	let buttonPosition = $state(config?.button?.position);
+	let buttonVisible = $state(config?.button?.visible);
 
 	// Actions that can be called from outside the component
 	function openDiscovery() {
@@ -21,11 +21,11 @@
 </script>
 
 <!-- Floating button -->
-<FloatingButton position={buttonPosition} onClick={openDiscovery} />
+<FloatingButton position={buttonPosition} visible={buttonVisible} onClick={openDiscovery} />
 
 <!-- Discovery overlay -->
 {#if $discoveryOpen}
-	<DiscoveryOverlay {currentGameCategory} {api} bind:selectedCategory />
+	<DiscoveryOverlay />
 {/if}
 
 <!-- Detect user leaving page -->
