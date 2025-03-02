@@ -105,11 +105,11 @@
 			<div
 				transition:slide
 				id="overlay"
-				class="bg-background/75 text-foreground absolute right-0 bottom-0 left-0 z-11 flex max-h-1/3 flex-col overflow-hidden p-3 backdrop-blur-xl transition"
+				class="bg-background/75 text-foreground text-center! absolute right-0 bottom-0 left-0 z-11 flex max-h-1/3 flex-col overflow-hidden p-3 backdrop-blur-xl transition"
 			>
 				<div class="hide-scrollbar h-full w-full overflow-y-auto">
 					<h3 class="mb-2 truncate text-lg font-bold">{game.name}</h3>
-					<p class="text-muted-foreground mb-4 text-sm text-balance">{game.description || "No description."}</p>
+					<p class="text-muted-foreground mb-4 text-sm text-balance!">{game.description || "No description."}</p>
 				</div>
 				<div class="fade-mask bg-background/75 pointer-events-none absolute right-0 bottom-0 left-0 h-8"></div>
 			</div>
