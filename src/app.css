@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss" important;
 @config '../tailwind.config.js';
 
 @layer base {
