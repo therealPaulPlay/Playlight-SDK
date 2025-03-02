@@ -1,14 +1,14 @@
 import { mount } from 'svelte';
 import App from './App.svelte';
 import { initializeConfig } from './lib/config.js';
-import { discoveryOpen } from './lib/store.js';
+import { discoveryOpen, projectUrl } from './lib/store.js';
 import api from './lib/api.js';
 import { get } from 'svelte/store';
 
-// Create the main SDK class
 class PlaylightSDK {
     constructor() {
         this.container = null;
+        this.shadow = null;
         this.app = null;
         this.isInitialized = false;
         this.config = null;
@@ -24,19 +24,33 @@ class PlaylightSDK {
         // Create container for Svelte app
         this.container = document.createElement('div');
         this.container.id = 'playlight-sdk-container';
-        document.body.appendChild(this.container);
 
-        // Use mount function (client-side equivalent of render)
+        // Create shadow DOM
+        this.shadow = this.container.attachShadow({ mode: 'open' });
+
+        // Create a container for the app inside shadow DOM
+        const appContainer = document.createElement('div');
+        this.shadow.appendChild(appContainer);
+
+        // Add the stylesheet to the shadow DOM
+        const stylesheet = document.createElement('link');
+        stylesheet.rel = 'stylesheet';
+        stylesheet.href = get(projectUrl) + '/playlight-sdk.css';
+        this.shadow.appendChild(stylesheet);
+
+        // Mount the app inside shadow DOM
         this.app = mount(App, {
-            target: this.container,
+            target: appContainer,
             props: {
                 config: this.config
             }
         });
 
+        // Add container to document
+        document.body.appendChild(this.container);
+
         // Fetch current game info to cache it
         await this.api.getCurrentGameInfo();
-
         this.isInitialized = true;
         return this;
     }
