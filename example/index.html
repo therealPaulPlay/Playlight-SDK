@@ -71,24 +71,18 @@
     </div>
 
     <script type="module">
-        import playlightSDK from "../dist/playlight-sdk.es.js";
+        try {
+            const module = await import("https://sdk.playlight.dev/playlight-sdk.es.js");
+            const playlightSDK = module.default;
+            await playlightSDK.init();
 
-        playlightSDK.init({
-            button: {
-                position: 'bottom-right',
-                visible: true
-            },
-            exitIntent: {
-                enabled: true
-            }
-        });
-
-        // Wait for the SDK to be fully loaded
-        document.addEventListener('DOMContentLoaded', () => {
+            // Wait for the SDK to be fully loaded
             document.getElementById('show-discovery').addEventListener('click', () => {
-                playlightSDK.setDiscovery(true);
+                playlightSDK?.setDiscovery(true);
             });
-        });
+        } catch (error) {
+            console.error("Playlight SDK could not be loaded:", error);
+        }
     </script>
 </body>
 
