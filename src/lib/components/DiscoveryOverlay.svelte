@@ -68,15 +68,12 @@
 	});
 
 	async function fetchCategories() {
-		try {
-			categories = await api.getCategories();
-			if (!selectedCategory && categories.length > 0) {
-				selectedCategory =
-					currentGameCategory && categories.includes(currentGameCategory) ? currentGameCategory : categories[0];
-			}
-		} catch (err) {
-			console.error(err);
-			toast.error(err);
+		categories = await api.getCategories();
+		if (!selectedCategory && categories?.length > 0) {
+			selectedCategory =
+				currentGameCategory && categories?.includes(currentGameCategory)
+					? currentGameCategory
+					: categories?.[categories?.length - 1];
 		}
 	}
 

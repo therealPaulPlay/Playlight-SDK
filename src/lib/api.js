@@ -25,10 +25,12 @@ class PlayLightAPI {
                 } catch {
                     // Do nothing...
                 } finally {
-                    if (response.status !== 429) {
+                    if (response.status !== 429 && response.status !== 404) {
                         throw new Error(`API request failed: ${data?.error || data?.message || response.status}`);
-                    } else {
+                    } else if (response.status === 429) {
                         return console.warn("Playlight request didn't go through due to rate limiting.");
+                    } else {
+                        return console.warn("Playlight game not found. This is normal in a test / local environment, but should not appear in production.");
                     }
                 }
             }
@@ -36,7 +38,7 @@ class PlayLightAPI {
             return await response.json();
         } catch (error) {
             toast.error("Error: " + error);
-            throw error;
+            console.error("Playlight API error:", error);
         }
     }
 
@@ -67,33 +69,25 @@ class PlayLightAPI {
 
     // Track discovery overlay open
     async trackOpen() {
-        try {
-            const currentDomain = window.location.hostname;
-            await this.request('/event/open', {
-                method: 'POST',
-                body: JSON.stringify({
-                    domain: currentDomain
-                })
-            });
-        } catch (error) {
-            console.warn('Failed to track open event:', error);
-        }
+        const currentDomain = window.location.hostname;
+        await this.request('/event/open', {
+            method: 'POST',
+            body: JSON.stringify({
+                domain: currentDomain
+            })
+        });
     }
 
     // Track game click (pass id of the game that was clicked on)
     async trackClick(gameId) {
-        try {
-            const currentDomain = window.location.hostname;
-            await this.request('/event/click', {
-                method: 'POST',
-                body: JSON.stringify({
-                    sourceDomain: currentDomain,
-                    gameId
-                })
-            });
-        } catch (error) {
-            console.warn('Failed to track game click event:', error);
-        }
+        const currentDomain = window.location.hostname;
+        await this.request('/event/click', {
+            method: 'POST',
+            body: JSON.stringify({
+                sourceDomain: currentDomain,
+                gameId
+            })
+        });
     }
 }
 
