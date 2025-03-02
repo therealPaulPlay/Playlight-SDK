@@ -54,7 +54,7 @@ const playlightSDK = new PlaylightSDK();
 
 // Expose SDK as global var for iife (legacy) usage
 if (typeof window !== 'undefined') {
-    window.PlaylightSDK = playlightSDK;
+    window.playlightSDK = playlightSDK;
 }
 
 // Export for module usage
