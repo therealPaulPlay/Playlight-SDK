@@ -72,7 +72,7 @@
 
     <script type="module">
         try {
-            const module = await import("https://sdk.playlight.dev/playlight-sdk.es.js");
+            const module = await import("../dist/playlight-sdk.es.js");
             const playlightSDK = module.default;
             await playlightSDK.init();
 
