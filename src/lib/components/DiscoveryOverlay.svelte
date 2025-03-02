@@ -6,7 +6,7 @@
 	import api from "../api.js";
 	import Navigation from "./Navigation.svelte";
 	import { onMount } from "svelte";
-	import { discoveryOpen } from "../store.js";
+	import { discoveryOpen, projectUrl } from "../store.js";
 
 	let selectedCategory = $state();
 	let isLoading = $state(true);
@@ -131,7 +131,7 @@
 	<!-- Header -->
 	<div class="ml-2 flex items-center justify-between p-4">
 		<a href="https://playlight.dev" target="_blank"
-			><img alt="logo" src="https://sdk.playlight.dev/static/images/logo-white-small.png" class="w-50" /></a
+			><img alt="logo" src={$projectUrl + "/static/images/logo-white-small.png"} class="w-50" /></a
 		>
 		<div class="mt-4 mr-2 flex items-center justify-evenly gap-8 overflow-hidden md:mr-4">
 			<button

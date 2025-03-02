@@ -1,6 +1,7 @@
 <script>
 	import { slide } from "svelte/transition";
 	import { playSound } from "../playSound.js";
+	import { projectUrl } from "../store.js";
 
 	let { game, onClick } = $props();
 	let isHovered = $state(false);
@@ -18,7 +19,7 @@
 	function handleMouseEnter() {
 		// Play hover sound
 		if (!isHovered) {
-			playSound("https://sdk.playlight.dev/static/sounds/hover-selection.ogg", 0.25);
+			playSound($projectUrl + "/static/sounds/hover-selection.ogg", 0.25);
 		}
 
 		// Original hover logic
