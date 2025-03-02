@@ -46,7 +46,9 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
-	class="bg-muted highlight-border bg-background relative mt-5 mb-[calc(3dvh+1.5vw)] flex aspect-[2/3] h-1/2 max-h-[75vh] min-h-92 cursor-pointer flex-col border-1 shadow-xl transition hover:brightness-105 lg:h-3/7"
+	class="bg-background highlight-border group relative mt-5 mb-[calc(3dvh+1.5vw)] flex aspect-[2/3] h-1/2 max-h-[75vh] min-h-92 cursor-pointer flex-col shadow-xl transition hover:outline-2 hover:brightness-105 lg:h-3/7 {coverImageLoaded
+		? ''
+		: 'animate-pulse'}"
 	onmouseenter={handleMouseEnter}
 	onfocus={handleMouseEnter}
 	onmouseleave={handleMouseLeave}
@@ -84,10 +86,6 @@
 			}}
 		></video>
 	{/if}
-	<!-- Image loading skeleton -->
-	{#if !coverImageLoaded}
-		<div class="bg-muted absolute top-0 left-0 h-full w-full animate-pulse"></div>
-	{/if}
 	<!-- Cover Image - now using opacity transition instead of display:none -->
 	<img
 		src={game.cover_image_url}
@@ -120,7 +118,7 @@
 	<img
 		src={game.logo_url}
 		alt="game logo"
-		class="absolute right-0 -bottom-[18%] left-0 z-12 mx-auto aspect-square w-1/5 rounded-full border-1 object-center opacity-0 transition"
+		class="absolute right-0 -bottom-[18%] left-0 z-12 mx-auto aspect-square w-1/5 rounded-full object-center opacity-0 transition group-hover:outline-2"
 		class:opacity-100={logoImageLoaded}
 		loading="eager"
 		onload={() => {
@@ -130,9 +128,9 @@
 </div>
 
 <style>
-	.highlight-border:hover,
-	.highlight-border:hover img {
-		border-color: rgba(255, 255, 255, 0.75);
+	.highlight-border,
+	.highlight-border img {
+		outline-color: rgba(255, 255, 255, 0.75);
 	}
 
 	.hide-scrollbar {

@@ -114,6 +114,22 @@
 		} finally {
 			isLoading = false;
 			isLoadingMore = false;
+
+			// For Chrome: manually check if element is still in view and should trigger another load
+			if (hasMoreGames && loadingRef) {
+				setTimeout(() => {
+					const rect = loadingRef.getBoundingClientRect();
+					const isVisible =
+						rect.top >= -200 && // Include rootMargin
+						rect.left >= 0 &&
+						rect.bottom <= window.innerHeight + 200 && // Include rootMargin
+						rect.right <= window.innerWidth;
+
+					if (isVisible && !isLoading && !isLoadingMore) {
+						fetchGames();
+					}
+				}, 150);
+			}
 		}
 	}
 </script>
@@ -161,7 +177,7 @@
 	</div>
 
 	<!-- Game grid -->
-	<div class="mask-fade relative h-full w-full overflow-y-auto p-4 no-scrollbar">
+	<div class="mask-fade no-scrollbar relative h-full w-full overflow-y-auto p-4">
 		{#if isLoading && games.length === 0}
 			<div class="flex h-4/5 items-center justify-center gap-4">
 				<LoaderCircle class="animate-spin opacity-75" size={50} strokeWidth={2.5} />
@@ -225,7 +241,7 @@
 		);
 	}
 
-    .no-scrollbar {
-        scrollbar-width: none;
-    }
+	.no-scrollbar {
+		scrollbar-width: none;
+	}
 </style>
