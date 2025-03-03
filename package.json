@@ -2,6 +2,9 @@
 	"name": "playlight-sdk",
 	"version": "0.0.1",
 	"type": "module",
+	"description": "The SDK for Playlight - a discovery platform, built into your own game.",
+	"main": "dist/playlight-sdk.es.js",
+	"module": "dist/playlight-sdk.es.js",
 	"scripts": {
 		"dev": "vite dev --port 3000",
 		"build": "vite build",
@@ -31,10 +34,6 @@
 		"lucide-svelte": "^0.476.0",
 		"vite-plugin-static-copy": "^2.3.0"
 	},
-	"description": "The SDK for Playlight.",
-	"main": "dist/playlight-sdk.js",
-	"module": "dist/playlight-sdk.esm.js",
-	"unpkg": "dist/playlight-sdk.umd.js",
 	"files": [
 		"dist"
 	],

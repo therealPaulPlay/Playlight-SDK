@@ -22,7 +22,7 @@ export default defineConfig({
 			entry: 'src/index.js',
 			name: 'PlaylightSDK',
 			fileName: (format) => `playlight-sdk.${format}.js`,
-			formats: ['es', 'umd', 'iife']
+			formats: ['es', 'iife']
 		},
 		rollupOptions: {
 			plugins: [

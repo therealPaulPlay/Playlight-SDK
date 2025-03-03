@@ -4,6 +4,7 @@ Playlight is an integrable game discovery platform.
 ## Installation
 Please refer to [the docs](https://playlight.dev/docs).
 If you want to contribute to the docs, you can access the [source](https://github.com/therealPaulPlay/Playlight-Site/blob/main/src/routes/docs/%2Bpage.svelte) here.
+The package is also available on [NPM](https://npmjs.com) under the name `playlight-sdk`.
 
 ## Developing
 
