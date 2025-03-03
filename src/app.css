@@ -49,6 +49,7 @@
   src: url("/static/fonts/Geist[wght].ttf");
 }
 
-* {
+#playlight-sdk-container {
+  font-family: Geist, sans-serif;
   font-synthesis: none !important;
 }
