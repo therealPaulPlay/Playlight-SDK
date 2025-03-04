@@ -5,7 +5,6 @@ const cssPath = path.resolve(__dirname, 'dist/playlight-sdk.css');
 // Read the CSS file
 let css = fs.readFileSync(cssPath, 'utf8');
 
-// Optimized CSS transformer that correctly handles keyframes and media queries
 function transformCss(css) {
     // Store at-rules to restore them later
     const atRules = [];
@@ -38,8 +37,12 @@ function transformCss(css) {
         // Add container prefix to each selector if not already present or if it is a global selector
         const prefixedSelectors = selectors.map(s => {
             // Do not prefix global selectors like :root or html
-            if (s === ':root' || s === 'html' || s.includes('#playlight-sdk-container')) {
+            if (s === ':root' || s.includes('#playlight-sdk-container')) {
                 return s;
+            }
+            // Handle html selector specifically
+            if (s === 'html') {
+                return '#playlight-sdk-container';
             }
             return `#playlight-sdk-container ${s}`;
         });
@@ -75,14 +78,56 @@ function transformCss(css) {
                 // Add container prefix to each selector
                 const prefixedSelectors = selectors.map(s => {
                     // Do not prefix global selectors
-                    if (s === ':root' || s === 'html' || s.includes('#playlight-sdk-container')) {
+                    if (s === ':root' || s.includes('#playlight-sdk-container')) {
                         return s;
+                    }
+                    // Handle html selector specifically
+                    if (s === 'html') {
+                        return '#playlight-sdk-container';
                     }
                     return `#playlight-sdk-container ${s}`;
                 });
 
                 return `${prefixedSelectors.join(', ')} {${declarations}}`;
             });
+
+            // Replace the placeholder with the processed rule
+            processedCss = processedCss.replace(placeholder, processedRule);
+        } else if (rule.startsWith('@layer base')) {
+            // Handle @layer base with special processing for html selectors
+            let processedRule = rule;
+
+            // First, directly replace 'html,' with '#playlight-sdk-container,'
+            processedRule = processedRule.replace(/html\s*,/g, '#playlight-sdk-container ,');
+
+            // Then process other selectors
+            processedRule = processedRule.replace(
+                /([^{}]+)\{([^{}]*)\}/g,
+                (match, selectors, declarations) => {
+                    // Skip if not a CSS rule
+                    if (selectors.trim().startsWith('@')) {
+                        return match;
+                    }
+
+                    // Split the selectors
+                    const selectorList = selectors.split(',').map(s => s.trim());
+
+                    // Prefix or replace each selector appropriately
+                    const prefixedSelectors = selectorList.map(selector => {
+                        if (selector === 'html') {
+                            return '#playlight-sdk-container';
+                        } else if (selector === ':root') {
+                            return selector;
+                        } else if (selector.includes('#playlight-sdk-container')) {
+                            return selector;
+                        } else {
+                            return `#playlight-sdk-container ${selector}`;
+                        }
+                    });
+
+                    return `${prefixedSelectors.join(', ')} {${declarations}}`;
+                }
+            );
 
             // Replace the placeholder with the processed rule
             processedCss = processedCss.replace(placeholder, processedRule);
