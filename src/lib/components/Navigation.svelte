@@ -68,13 +68,11 @@
 				isOpen = !isOpen;
 			}}
 		>
-			<span class="max-w-[40vw] truncate">{displayCategory}</span>
+			<span class="truncate max-w-[40vw] text-2xl font-bold text-black lg:text-4xl">{displayCategory}</span>
 			<ChevronDown
 				size={25}
 				strokeWidth={3}
-				class="mt-1 ml-1 text-black {isOpen
-					? 'rotate-180 transform'
-					: ''} transition-transform duration-200"
+				class="mt-1 ml-1 text-black {isOpen ? 'rotate-180 transform' : ''} transition-transform duration-200"
 			/>
 		</button>
 		<span>games?</span>

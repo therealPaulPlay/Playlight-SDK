@@ -1,3 +1,74 @@
+/* Resets to prevent host page overrides */
+.playlight-sdk-container,
+.playlight-sdk-container * {
+  font-family: Geist, sans-serif !important;
+  font-synthesis: none !important;
+  box-sizing: border-box !important;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+}
+
+/* Container base styles */
+.playlight-sdk-container {
+  position: relative;
+  font-size: 1rem;
+  line-height: 1.5;
+  font-weight: normal;
+  color: white;
+  background-color: transparent;
+  isolation: isolate;
+  text-size-adjust: 100%;
+}
+
+.playlight-sdk-container p {
+  font-weight: normal;
+  color: inherit;
+  font-size: 1rem;
+  color: black;
+}
+
+/* Button styles - these will affect ALL buttons at ANY depth */
+.playlight-sdk-container button {
+  appearance: button;
+  cursor: pointer;
+  background: none;
+  color: black;
+  font-size: 1rem;
+}
+
+/* Link styles - using multiple selectors to target ALL links at ANY depth */
+.playlight-sdk-container a,
+.playlight-sdk-container a:visited,
+.playlight-sdk-container a:hover,
+.playlight-sdk-container a:link {
+  color: white;
+  text-decoration: none !important;
+  text-decoration-thickness: 1px;
+  cursor: pointer;
+}
+
+/* Form element styles - these will affect ALL form elements at ANY depth */
+.playlight-sdk-container input,
+.playlight-sdk-container select,
+.playlight-sdk-container textarea {
+  appearance: revert;
+  background: none;
+}
+
+/* List styles - these will affect ALL lists at ANY depth */
+.playlight-sdk-container ul,
+.playlight-sdk-container ol {
+  list-style: none;
+}
+
+/* Table styles - these will affect ALL tables at ANY depth */
+.playlight-sdk-container table {
+  border-collapse: collapse;
+}
+
+/* Import Tailwind AFTER the resets, it should take precedence over them */
 @import "tailwindcss" important;
 @config '../tailwind.config.js';
 
@@ -49,7 +120,8 @@
   src: url("/static/fonts/Geist[wght].ttf");
 }
 
-#playlight-sdk-container {
-  font-family: Geist, sans-serif;
+#playlight-sdk-container,
+#playlight-sdk-container * {
+  font-family: Geist, sans-serif !important;
   font-synthesis: none !important;
 }

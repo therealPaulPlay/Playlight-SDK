@@ -22,7 +22,7 @@
 				strokeWidth={1.75}
 				class="z-2 mr-2 transform transition-all duration-300 group-hover:rotate-12"
 			/>
-			<span class="mr-0.25 inline-block">More Games</span>
+			<span class="mr-0.25 inline-block font-bold">More Games</span>
 		</p>
 
 		<!-- Simple border bottom animation -->

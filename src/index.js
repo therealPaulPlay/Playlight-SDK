@@ -18,12 +18,17 @@ class PlaylightSDK {
     async init(userConfig = {}) {
         if (this.isInitialized) return;
 
+        if (typeof window === 'undefined') {
+            return console.error("Playlight cannot run on the server, as it depends browser APIs.");
+        }
+
         // Initialize configuration with defaults and user overrides
         this.config = initializeConfig(userConfig);
 
         // Create container for Svelte app
         this.container = document.createElement('div');
         this.container.id = 'playlight-sdk-container';
+        this.container.className = 'playlight-sdk-container';
         document.body.appendChild(this.container);
 
         // Use mount function (client-side equivalent of render)

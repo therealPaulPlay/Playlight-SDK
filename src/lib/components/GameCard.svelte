@@ -63,10 +63,10 @@
 	<!-- Cover Video -->
 	{#if isNewGame(game?.created_at)}
 		<div
-			class="bg-foreground text-background absolute top-4 right-4 z-13 px-2 py-0.5 font-bold transition-opacity"
+			class="bg-foreground text-background absolute top-4 right-4 z-13 px-2 py-0.5 transition-opacity"
 			class:opacity-0={isHovered}
 		>
-			<p class="uppercase">New</p>
+			<p class="uppercase font-bold">New</p>
 		</div>
 	{/if}
 

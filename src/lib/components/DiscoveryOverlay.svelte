@@ -148,7 +148,7 @@
 		>
 		<div class="mt-4 mr-2 flex items-center justify-evenly gap-8 overflow-hidden md:mr-4">
 			<button
-				class="cursor-pointer truncate text-sm text-nowrap text-white opacity-50 transition hover:opacity-25 max-md:hidden"
+				class="cursor-pointer truncate text-sm text-nowrap opacity-50 transition hover:opacity-25 max-md:hidden"
 				onclick={() => {
 					localStorage.getItem("playlight_exit_intent_disabled_by_user")
 						? localStorage.removeItem("playlight_exit_intent_disabled_by_user")
@@ -156,7 +156,7 @@
 					exitIntentEnabled = !exitIntentEnabled;
 				}}
 			>
-				<p class="bg-background/50 p-1 px-2">{exitIntentEnabled ? "Ignore exit intent" : "Trigger on exit intent"}</p>
+				<p class="bg-background/50 p-1 px-2 text-white">{exitIntentEnabled ? "Ignore exit intent" : "Trigger on exit intent"}</p>
 			</button>
 			<button
 				class="cursor-pointer text-white transition hover:opacity-50"

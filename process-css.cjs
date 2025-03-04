@@ -37,7 +37,7 @@ function transformCss(css) {
         // Add container prefix to each selector if not already present or if it is a global selector
         const prefixedSelectors = selectors.map(s => {
             // Do not prefix global selectors like :root or html
-            if (s === ':root' || s.includes('#playlight-sdk-container')) {
+            if (s === ':root' || s.includes('#playlight-sdk-container') || s.includes('.playlight-sdk-container')) {
                 return s;
             }
             // Handle html selector specifically
@@ -77,8 +77,8 @@ function transformCss(css) {
 
                 // Add container prefix to each selector
                 const prefixedSelectors = selectors.map(s => {
-                    // Do not prefix global selectors
-                    if (s === ':root' || s.includes('#playlight-sdk-container')) {
+                    // Do not prefix global selectors or selectors that already have the container class
+                    if (s === ':root' || s.includes('#playlight-sdk-container') || s.includes('.playlight-sdk-container')) {
                         return s;
                     }
                     // Handle html selector specifically
@@ -118,7 +118,7 @@ function transformCss(css) {
                             return '#playlight-sdk-container';
                         } else if (selector === ':root') {
                             return selector;
-                        } else if (selector.includes('#playlight-sdk-container')) {
+                        } else if (selector.includes('#playlight-sdk-container') || selector.includes('.playlight-sdk-container')) {
                             return selector;
                         } else {
                             return `#playlight-sdk-container ${selector}`;
