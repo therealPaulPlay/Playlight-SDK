@@ -30,7 +30,10 @@
 }
 
 /* Button styles - these will affect ALL buttons at ANY depth */
-.playlight-sdk-container button {
+.playlight-sdk-container button,
+.playlight-sdk-container button:hover,
+.playlight-sdk-container button:active,
+.playlight-sdk-container button:focus {
   appearance: button;
   cursor: pointer;
   background: none;
@@ -44,6 +47,7 @@
 .playlight-sdk-container a:hover,
 .playlight-sdk-container a:link {
   color: white;
+  font-size: 1rem;
   text-decoration: none !important;
   text-decoration-thickness: 1px;
   cursor: pointer;
@@ -51,10 +55,20 @@
 
 /* Form element styles - these will affect ALL form elements at ANY depth */
 .playlight-sdk-container input,
+.playlight-sdk-container input:focus,
+.playlight-sdk-container input:hover,
+.playlight-sdk-container input:active,
 .playlight-sdk-container select,
+.playlight-sdk-container select:hover,
+.playlight-sdk-container select:focus,
+.playlight-sdk-container select:active,
+.playlight-sdk-container textarea:hover,
+.playlight-sdk-container textarea:focus,
+.playlight-sdk-container textarea:active,
 .playlight-sdk-container textarea {
   appearance: revert;
   background: none;
+  font-size: 1rem;
 }
 
 /* List styles - these will affect ALL lists at ANY depth */
