@@ -88,34 +88,34 @@
 
 @layer base {
   :root {
-    --background: 20 0% 0%;
-    --foreground: 60 9.1% 97.8%;
-    --muted: 12 6.5% 15.1%;
-    --muted-foreground: 24 5.4% 63.9%;
-    --popover: 20 14.3% 4.1%;
-    --popover-foreground: 60 9.1% 97.8%;
-    --card: 20 14.3% 4.1%;
-    --card-foreground: 60 9.1% 97.8%;
-    --border: 12 6.5% 15.1%;
-    --input: 12 6.5% 15.1%;
-    --primary: 60 9.1% 97.8%;
-    --primary-foreground: 24 9.8% 10%;
-    --secondary: 12 6.5% 15.1%;
-    --secondary-foreground: 60 9.1% 97.8%;
-    --accent: 12 6.5% 15.1%;
-    --accent-foreground: 60 9.1% 97.8%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 60 9.1% 97.8%;
-    --ring: 24 5.7% 82.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-    --radius: 0rem;
+    --playlight-background: 20 0% 0%;
+    --playlight-foreground: 60 9.1% 97.8%;
+    --playlight-muted: 12 6.5% 15.1%;
+    --playlight-muted-foreground: 24 5.4% 63.9%;
+    --playlight-popover: 20 14.3% 4.1%;
+    --playlight-popover-foreground: 60 9.1% 97.8%;
+    --playlight-card: 20 14.3% 4.1%;
+    --playlight-card-foreground: 60 9.1% 97.8%;
+    --playlight-border: 12 6.5% 15.1%;
+    --playlight-input: 12 6.5% 15.1%;
+    --playlight-primary: 60 9.1% 97.8%;
+    --playlight-primary-foreground: 24 9.8% 10%;
+    --playlight-secondary: 12 6.5% 15.1%;
+    --playlight-secondary-foreground: 60 9.1% 97.8%;
+    --playlight-accent: 12 6.5% 15.1%;
+    --playlight-accent-foreground: 60 9.1% 97.8%;
+    --playlight-destructive: 0 62.8% 30.6%;
+    --playlight-destructive-foreground: 60 9.1% 97.8%;
+    --playlight-ring: 24 5.7% 82.9%;
+    --playlight-sidebar-background: 240 5.9% 10%;
+    --playlight-sidebar-foreground: 240 4.8% 95.9%;
+    --playlight-sidebar-primary: 224.3 76.3% 48%;
+    --playlight-sidebar-primary-foreground: 0 0% 100%;
+    --playlight-sidebar-accent: 240 3.7% 15.9%;
+    --playlight-sidebar-accent-foreground: 240 4.8% 95.9%;
+    --playlight-sidebar-border: 240 3.7% 15.9%;
+    --playlight-sidebar-ring: 217.2 91.2% 59.8%;
+    --playlight-radius: 0rem;
   }
 }
 

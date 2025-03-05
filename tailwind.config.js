@@ -1,6 +1,5 @@
 import { fontFamily } from "tailwindcss/defaultTheme";
 import tailwindcssAnimate from "tailwindcss-animate";
-
 /** @type {import('tailwindcss').Config} */
 const config = {
 	darkMode: ["class"],
@@ -16,55 +15,55 @@ const config = {
 		},
 		extend: {
 			colors: {
-				border: "hsl(var(--border) / <alpha-value>)",
-				input: "hsl(var(--input) / <alpha-value>)",
-				ring: "hsl(var(--ring) / <alpha-value>)",
-				background: "hsl(var(--background) / <alpha-value>)",
-				foreground: "hsl(var(--foreground) / <alpha-value>)",
+				border: "hsl(var(--playlight-border) / <alpha-value>)",
+				input: "hsl(var(--playlight-input) / <alpha-value>)",
+				ring: "hsl(var(--playlight-ring) / <alpha-value>)",
+				background: "hsl(var(--playlight-background) / <alpha-value>)",
+				foreground: "hsl(var(--playlight-foreground) / <alpha-value>)",
 				primary: {
-					DEFAULT: "hsl(var(--primary) / <alpha-value>)",
-					foreground: "hsl(var(--primary-foreground) / <alpha-value>)"
+					DEFAULT: "hsl(var(--playlight-primary) / <alpha-value>)",
+					foreground: "hsl(var(--playlight-primary-foreground) / <alpha-value>)"
 				},
 				secondary: {
-					DEFAULT: "hsl(var(--secondary) / <alpha-value>)",
-					foreground: "hsl(var(--secondary-foreground) / <alpha-value>)"
+					DEFAULT: "hsl(var(--playlight-secondary) / <alpha-value>)",
+					foreground: "hsl(var(--playlight-secondary-foreground) / <alpha-value>)"
 				},
 				destructive: {
-					DEFAULT: "hsl(var(--destructive) / <alpha-value>)",
-					foreground: "hsl(var(--destructive-foreground) / <alpha-value>)"
+					DEFAULT: "hsl(var(--playlight-destructive) / <alpha-value>)",
+					foreground: "hsl(var(--playlight-destructive-foreground) / <alpha-value>)"
 				},
 				muted: {
-					DEFAULT: "hsl(var(--muted) / <alpha-value>)",
-					foreground: "hsl(var(--muted-foreground) / <alpha-value>)"
+					DEFAULT: "hsl(var(--playlight-muted) / <alpha-value>)",
+					foreground: "hsl(var(--playlight-muted-foreground) / <alpha-value>)"
 				},
 				accent: {
-					DEFAULT: "hsl(var(--accent) / <alpha-value>)",
-					foreground: "hsl(var(--accent-foreground) / <alpha-value>)"
+					DEFAULT: "hsl(var(--playlight-accent) / <alpha-value>)",
+					foreground: "hsl(var(--playlight-accent-foreground) / <alpha-value>)"
 				},
 				popover: {
-					DEFAULT: "hsl(var(--popover) / <alpha-value>)",
-					foreground: "hsl(var(--popover-foreground) / <alpha-value>)"
+					DEFAULT: "hsl(var(--playlight-popover) / <alpha-value>)",
+					foreground: "hsl(var(--playlight-popover-foreground) / <alpha-value>)"
 				},
 				card: {
-					DEFAULT: "hsl(var(--card) / <alpha-value>)",
-					foreground: "hsl(var(--card-foreground) / <alpha-value>)"
+					DEFAULT: "hsl(var(--playlight-card) / <alpha-value>)",
+					foreground: "hsl(var(--playlight-card-foreground) / <alpha-value>)"
 				},
 				sidebar: {
-					DEFAULT: "hsl(var(--sidebar-background))",
-					foreground: "hsl(var(--sidebar-foreground))",
-					primary: "hsl(var(--sidebar-primary))",
-					"primary-foreground": "hsl(var(--sidebar-primary-foreground))",
-					accent: "hsl(var(--sidebar-accent))",
-					"accent-foreground": "hsl(var(--sidebar-accent-foreground))",
-					border: "hsl(var(--sidebar-border))",
-					ring: "hsl(var(--sidebar-ring))",
+					DEFAULT: "hsl(var(--playlight-sidebar-background))",
+					foreground: "hsl(var(--playlight-sidebar-foreground))",
+					primary: "hsl(var(--playlight-sidebar-primary))",
+					"primary-foreground": "hsl(var(--playlight-sidebar-primary-foreground))",
+					accent: "hsl(var(--playlight-sidebar-accent))",
+					"accent-foreground": "hsl(var(--playlight-sidebar-accent-foreground))",
+					border: "hsl(var(--playlight-sidebar-border))",
+					ring: "hsl(var(--playlight-sidebar-ring))",
 				},
 			},
 			borderRadius: {
-				xl: "calc(var(--radius) + 4px)",
-				lg: "var(--radius)",
-				md: "calc(var(--radius) - 2px)",
-				sm: "calc(var(--radius) - 4px)"
+				xl: "calc(var(--playlight-radius) + 4px)",
+				lg: "var(--playlight-radius)",
+				md: "calc(var(--playlight-radius) - 2px)",
+				sm: "calc(var(--playlight-radius) - 4px)"
 			},
 			fontFamily: {
 				sans: ["Geist", ...fontFamily.sans]
@@ -92,5 +91,4 @@ const config = {
 	},
 	plugins: [tailwindcssAnimate],
 };
-
 export default config;
