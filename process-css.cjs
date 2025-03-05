@@ -93,6 +93,15 @@ function transformCss(css) {
 
             // Replace the placeholder with the processed rule
             processedCss = processedCss.replace(placeholder, processedRule);
+        } else if (rule.startsWith('@layer theme')) {
+            // Special handling for @layer theme to replace :root, :host with #playlight-sdk-container
+            let processedRule = rule.replace(
+                /(:root|:host)(\s*,\s*)*(:root|:host)?(\s*)\{/g,
+                '#playlight-sdk-container {'
+            );
+
+            // Replace the placeholder with the processed rule
+            processedCss = processedCss.replace(placeholder, processedRule);
         } else if (rule.startsWith('@layer base')) {
             // Handle @layer base with special processing for html selectors
             let processedRule = rule;
