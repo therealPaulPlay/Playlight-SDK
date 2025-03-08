@@ -9,31 +9,54 @@
 	let videoLoaded = $state(false);
 	let coverImageLoaded = $state(false);
 	let logoImageLoaded = $state(false);
-	let isLoadingVideo = $state(false);
+	let isTouchDevice = $state(false);
+	let cardElement = $state();
 
-	function handleClick() {
+	$effect(() => {
+		isTouchDevice = "ontouchstart" in window;
+	});
+
+	function handleClick(e) {
+		if (isTouchDevice) {
+			e.preventDefault();
+			return;
+		}
+
+		onClick?.(game.id);
+		window.open("https://" + game.domain, "_blank", "noopener");
+	}
+
+	function playGame(e) {
+		e.stopPropagation();
+		e.preventDefault();
 		onClick?.(game.id);
 		window.open("https://" + game.domain, "_blank", "noopener");
 	}
 
 	function handleMouseEnter() {
-		// Play hover sound
-		if (!isHovered) {
+		if (!isHovered && !isTouchDevice) {
 			playSound($projectUrl + "/static/sounds/hover-selection.ogg", 0.25);
 		}
 
-		// Original hover logic
 		isHovered = true;
 		if (videoElement && game.cover_video_url) {
-			isLoadingVideo = true; // Flag that we're attempting to load the video
 			videoElement.play().catch((err) => console.error("Video play error:", err));
 		}
 	}
 
 	function handleMouseLeave() {
+		if (isTouchDevice) return;
+
 		isHovered = false;
-		// Only pause if it's already loaded and playing
-		if (videoElement && videoLoaded) videoElement.pause();
+		if (videoElement && videoLoaded) {
+			videoElement.pause();
+		}
+	}
+
+	function handleDocumentTouch(e) {
+		if (cardElement && !cardElement.contains(e.target)) {
+			isHovered = false;
+		}
 	}
 
 	function isNewGame(createdAtString) {
@@ -44,8 +67,12 @@
 	}
 </script>
 
+<svelte:window ontouchstart={() => (isTouchDevice = true)} />
+<svelte:document ontouchstart={handleDocumentTouch} />
+
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
+	bind:this={cardElement}
 	class="bg-background highlight-border group relative mt-5 mb-[calc(3dvh+1.5vw)] flex aspect-[2/3] h-1/2 max-h-[75vh] min-h-92 cursor-pointer flex-col shadow-xl transition hover:outline-2 hover:brightness-105 lg:h-3/7 {coverImageLoaded
 		? ''
 		: 'animate-pulse'}"
@@ -54,19 +81,13 @@
 	onmouseleave={handleMouseLeave}
 	onblur={handleMouseLeave}
 	ontouchstart={handleMouseEnter}
-	ontouchend={handleMouseLeave}
-	ontouchcancel={handleMouseLeave}
 	role="button"
 	tabindex="0"
 	onclick={handleClick}
 >
-	<!-- Cover Video -->
 	{#if isNewGame(game?.created_at)}
-		<div
-			class="bg-foreground text-background absolute top-4 right-4 z-13 px-2 py-0.5 transition-opacity"
-			class:opacity-0={isHovered}
-		>
-			<p class="uppercase font-bold">New</p>
+		<div class="bg-background absolute top-4 right-4 z-13 px-2 py-0.5 transition-opacity" class:opacity-0={isHovered}>
+			<p class="text-primary font-bold uppercase">New</p>
 		</div>
 	{/if}
 
@@ -82,11 +103,10 @@
 			preload="auto"
 			onloadeddata={() => {
 				videoLoaded = true;
-				isLoadingVideo = false;
 			}}
 		></video>
 	{/if}
-	<!-- Cover Image - now using opacity transition instead of display:none -->
+
 	<img
 		src={game.cover_image_url}
 		alt="cover"
@@ -98,10 +118,19 @@
 		}}
 	/>
 
+	{#if isTouchDevice}
+		<button
+			class="bg-foreground text-background hover:bg-foreground/90 absolute right-4 bottom-4 z-15 flex items-center justify-center rounded-sm px-3 py-1 font-bold uppercase transition-all"
+			class:opacity-0={isHovered}
+			onclick={playGame}
+		>
+			Play
+		</button>
+	{/if}
+
 	{#if isHovered}
 		<div
 			transition:slide
-			id="overlay"
 			class="bg-background/75 text-foreground absolute right-0 bottom-0 left-0 z-11 flex max-h-1/3 flex-col overflow-hidden backdrop-blur-xl"
 		>
 			<div class="hide-scrollbar h-full w-full overflow-y-auto p-3">
@@ -114,7 +143,6 @@
 		</div>
 	{/if}
 
-	<!-- Logo image with opacity transition -->
 	<img
 		src={game.logo_url}
 		alt="game logo"
