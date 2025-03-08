@@ -110,7 +110,7 @@
 	<img
 		src={game.cover_image_url}
 		alt="cover"
-		class="absolute top-0 left-0 z-10 h-full w-full object-cover opacity-0 transition"
+		class="prevent-image-select absolute top-0 left-0 z-10 h-full w-full object-cover opacity-0 transition"
 		class:opacity-100={coverImageLoaded && (!isHovered || !videoLoaded || !game.cover_video_url)}
 		loading="eager"
 		onload={() => {
@@ -146,7 +146,7 @@
 	<img
 		src={game.logo_url}
 		alt="game logo"
-		class="absolute right-0 -bottom-[18%] left-0 z-12 mx-auto aspect-square w-1/5 rounded-full object-center opacity-0 transition group-hover:outline-2"
+		class="absolute right-0 -bottom-[18%] left-0 z-12 mx-auto aspect-square w-1/5 rounded-full object-center opacity-0 transition group-hover:outline-2 prevent-image-select"
 		class:opacity-100={logoImageLoaded}
 		loading="eager"
 		onload={() => {
@@ -167,5 +167,11 @@
 
 	.fade-mask {
 		mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+	}
+
+	/* this also prevents 3d-touch / haptic touch on ios */
+	.prevent-image-select {
+		user-select: none;
+		-webkit-touch-callout: none;
 	}
 </style>

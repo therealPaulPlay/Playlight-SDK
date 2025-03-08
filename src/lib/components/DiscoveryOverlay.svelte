@@ -8,6 +8,8 @@
 	import { onMount } from "svelte";
 	import { discoveryOpen, projectUrl } from "../store.js";
 
+	let { showIntentToggle = true } = $props();
+
 	let selectedCategory = $state();
 	let isLoading = $state(true);
 	let isLoadingMore = $state(false);
@@ -147,17 +149,21 @@
 			><img alt="logo" src={$projectUrl + "/static/images/logo-white-small.png"} class="w-50" /></a
 		>
 		<div class="mt-4 mr-2 flex items-center justify-evenly gap-8 overflow-hidden md:mr-4">
-			<button
-				class="cursor-pointer truncate text-sm text-nowrap opacity-50 transition hover:opacity-25 max-md:hidden"
-				onclick={() => {
-					localStorage.getItem("playlight_exit_intent_disabled_by_user")
-						? localStorage.removeItem("playlight_exit_intent_disabled_by_user")
-						: localStorage.setItem("playlight_exit_intent_disabled_by_user", true);
-					exitIntentEnabled = !exitIntentEnabled;
-				}}
-			>
-				<p class="bg-background/50 p-1 px-2 text-white">{exitIntentEnabled ? "Ignore exit intent" : "Trigger on exit intent"}</p>
-			</button>
+			{#if showIntentToggle}
+				<button
+					class="cursor-pointer truncate text-sm text-nowrap opacity-50 transition hover:opacity-25 max-md:hidden"
+					onclick={() => {
+						localStorage.getItem("playlight_exit_intent_disabled_by_user")
+							? localStorage.removeItem("playlight_exit_intent_disabled_by_user")
+							: localStorage.setItem("playlight_exit_intent_disabled_by_user", true);
+						exitIntentEnabled = !exitIntentEnabled;
+					}}
+				>
+					<p class="bg-background/50 p-1 px-2 text-primary text-sm">
+						{exitIntentEnabled ? "Ignore exit intent" : "Trigger on exit intent"}
+					</p>
+				</button>
+			{/if}
 			<button
 				class="cursor-pointer text-white transition hover:opacity-50"
 				onclick={() => ($discoveryOpen = false)}

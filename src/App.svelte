@@ -25,7 +25,7 @@
 
 <!-- Discovery overlay -->
 {#if $discoveryOpen}
-	<DiscoveryOverlay />
+	<DiscoveryOverlay showIntentToggle={config?.exitIntent?.enabled} />
 {/if}
 
 <!-- Detect user leaving page -->
