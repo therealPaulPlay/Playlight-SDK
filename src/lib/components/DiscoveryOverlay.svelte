@@ -88,7 +88,7 @@
 
 			// Get games (null category = all games)
 			const categoryToUse = fetchAllGames ? null : selectedCategory;
-			const result = await api.getSuggestions(categoryToUse, page, window.location.hostname);
+			const result = await api.getSuggestions(categoryToUse, page);
 			const newGames = result?.games || [];
 
 			// Filter out duplicates
@@ -159,7 +159,7 @@
 						exitIntentEnabled = !exitIntentEnabled;
 					}}
 				>
-					<p class="bg-background/50 p-1 px-2 text-primary text-sm">
+					<p class="bg-background/50 text-primary p-1 px-2 text-sm">
 						{exitIntentEnabled ? "Ignore exit intent" : "Trigger on exit intent"}
 					</p>
 				</button>

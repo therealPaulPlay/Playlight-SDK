@@ -42,53 +42,58 @@ class PlayLightAPI {
         }
     }
 
+    #getHostnameWithoutWWW() {
+    const hostname = window.location.hostname;
+    return hostname.startsWith('www.') ? hostname.substring(4) : hostname;
+}
+
     // Get all categories
     async getCategories() {
-        if (this.cachedCategories) return this.cachedCategories; // Return cached categories if available
-        const data = await this.request('/categories');
-        this.cachedCategories = data;
-        return data;
-    }
+    if (this.cachedCategories) return this.cachedCategories; // Return cached categories if available
+    const data = await this.request('/categories');
+    this.cachedCategories = data;
+    return data;
+}
 
     // Get game suggestions, optionally filtered by category
-    async getSuggestions(category = null, page = 1, withoutFilter) {
-        let endpoint = '/suggestions';
-        if (category) endpoint += "/" + category;
-        if (page) endpoint += "?page=" + page;
-        if (withoutFilter) endpoint += "&without=" + withoutFilter;
-        return await this.request(endpoint);
-    }
+    async getSuggestions(category = null, page = 1) {
+    let endpoint = '/suggestions';
+    if (category) endpoint += "/" + category;
+    if (page) endpoint += "?page=" + page;
+    endpoint += "&without=" + this.#getHostnameWithoutWWW();
+    return await this.request(endpoint);
+}
 
     // Get game suggestions, optionally filtered by category
     async getCurrentGameInfo() {
-        if (this.currentGame) return this.currentGame; // Cached
-        let endpoint = '/game-by-domain/' + window.location.hostname;
-        this.currentGame = await this.request(endpoint);
-        return { ...this.currentGame };
-    }
+    if (this.currentGame) return this.currentGame; // Cached
+    let endpoint = '/game-by-domain/' + this.#getHostnameWithoutWWW();
+    this.currentGame = await this.request(endpoint);
+    return { ...this.currentGame };
+}
 
     // Track discovery overlay open
     async trackOpen() {
-        const currentDomain = window.location.hostname;
-        await this.request('/event/open', {
-            method: 'POST',
-            body: JSON.stringify({
-                domain: currentDomain
-            })
-        });
-    }
+    const currentDomain = this.#getHostnameWithoutWWW();
+    await this.request('/event/open', {
+        method: 'POST',
+        body: JSON.stringify({
+            domain: currentDomain
+        })
+    });
+}
 
     // Track game click (pass id of the game that was clicked on)
     async trackClick(gameId) {
-        const currentDomain = window.location.hostname;
-        await this.request('/event/click', {
-            method: 'POST',
-            body: JSON.stringify({
-                sourceDomain: currentDomain,
-                gameId
-            })
-        });
-    }
+    const currentDomain = this.#getHostnameWithoutWWW();
+    await this.request('/event/click', {
+        method: 'POST',
+        body: JSON.stringify({
+            sourceDomain: currentDomain,
+            gameId
+        })
+    });
+}
 }
 
 // Create and export a singleton instance
