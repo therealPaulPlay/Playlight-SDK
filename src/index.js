@@ -47,19 +47,22 @@ class PlaylightSDK {
      * @private
      */
     #mountPlaylight() {
-        // Create container
-        this.container = document.createElement('div');
-        this.container.id = 'playlight-sdk-container';
-        this.container.className = 'playlight-sdk-container';
-        document.body.appendChild(this.container);
+        try {
+            this.container = document.createElement('div');
+            this.container.id = 'playlight-sdk-container';
+            this.container.className = 'playlight-sdk-container';
+            document.body.appendChild(this.container);
 
-        // Mount (client-side alternative to render)
-        this.app = mount(App, {
-            target: this.container,
-            props: {
-                config: this.config
-            }
-        });
+            // Mount (client-side alternative to render)
+            this.app = mount(App, {
+                target: this.container,
+                props: {
+                    config: this.config
+                }
+            });
+        } catch (error) {
+            console.error("Playlight error occured during mount:", error);
+        }
     }
 
     /**

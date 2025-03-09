@@ -1,38 +1,34 @@
 <script>
-	import { onMount } from "svelte";
-
 	let { enabled = true, onIntent } = $props();
-	let lastMouseY;
-	let lastMoveTimestamp = 0;
-	const moveThreshold = 100; // Time threshold in milliseconds
 
-	onMount(() => {
-		if (typeof window === "undefined") return;
-		lastMouseY = window.innerHeight;
-	});
-</script>
+	let lastTriggeredBar = null; // Track which bar was triggered most recently
+	let triggerTimestamp = 0;
+	const triggerThreshold = 500; // Time threshold in milliseconds between bar triggers
 
-<svelte:document
-	onmousemove={(event) => {
-		lastMouseY = event.clientY;
-		lastMoveTimestamp = Date.now();
-	}}
-/>
-
-<!-- svelte-ignore a11y_mouse_events_have_key_events -->
-<!-- svelte-ignore a11y_no_static_element_interactions -->
-<div
-	class="fixed top-0 right-0 left-0 z-99990 h-2"
-	onmouseover={(event) => {
-		const currentMouseY = event.clientY;
+	function handleTopBarTrigger() {
 		const currentTime = Date.now();
 
-		// Check if the mouse on the page was moved shortly before (to prevent moving into the page from the browser chrome triggering it)
-		// And ensure the mouse is moving upwards and was inside the page before
-		if (currentMouseY < lastMouseY && currentTime - lastMoveTimestamp < moveThreshold) {
+		// If bottom bar was triggered recently before top bar, it's an exit
+		if (lastTriggeredBar === "bottom" && currentTime - triggerTimestamp < triggerThreshold) {
 			if (enabled && !localStorage.getItem("playlight_exit_intent_disabled_by_user")) {
 				onIntent?.();
 			}
 		}
-	}}
-></div>
+
+		lastTriggeredBar = "top";
+		triggerTimestamp = currentTime;
+	}
+
+	function handleBottomBarTrigger() {
+		lastTriggeredBar = "bottom";
+		triggerTimestamp = Date.now();
+	}
+</script>
+
+<!-- svelte-ignore a11y_mouse_events_have_key_events -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<div class="fixed top-0 right-0 left-0 h-2" onmouseover={handleTopBarTrigger}></div>
+
+<!-- svelte-ignore a11y_mouse_events_have_key_events -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<div class="fixed top-2 right-0 left-0 h-2" onmouseover={handleBottomBarTrigger}></div>
