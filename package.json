@@ -1,6 +1,6 @@
 {
 	"name": "playlight-sdk",
-	"version": "0.0.8",
+	"version": "0.0.9",
 	"type": "module",
 	"description": "The SDK for Playlight - a discovery platform, built into your own game.",
 	"main": "dist/playlight-sdk.es.js",

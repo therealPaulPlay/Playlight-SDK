@@ -5,7 +5,9 @@ import { discoveryOpen } from './lib/store.js';
 import api from './lib/api.js';
 import { get } from 'svelte/store';
 
-// Create the main SDK class
+/**
+ * The PlaylightSDK class
+ */
 class PlaylightSDK {
     constructor() {
         this.container = null;
@@ -15,38 +17,55 @@ class PlaylightSDK {
         this.api = api;
     }
 
+    /**
+     * Initialize Playlight
+     * @param {Object} [userConfig] - The playlight configuration object
+     */
     async init(userConfig = {}) {
-        if (this.isInitialized) return;
-
         if (typeof window === 'undefined') {
-            return console.error("Playlight cannot run on the server, as it depends browser APIs.");
+            return console.error("Playlight cannot run on the server, as it depends on browser APIs.");
+        }
+
+        if (this.isInitialized) {
+            console.warn("Playlight SDK already initialized!");
+            if (!document.getElementById("playlight-sdk-container")) this.#mountPlaylight();
+            return;
         }
 
         // Initialize configuration with defaults and user overrides
         this.config = initializeConfig(userConfig);
+        this.#mountPlaylight(); // Create container and mount
 
-        // Create container for Svelte app
+        // Fetch current game info to cache it
+        await this.api.getCurrentGameInfo();
+
+        this.isInitialized = true;
+    }
+
+    /**
+     * Mount the Svelte app to the playlight container
+     * @private
+     */
+    #mountPlaylight() {
+        // Create container
         this.container = document.createElement('div');
         this.container.id = 'playlight-sdk-container';
         this.container.className = 'playlight-sdk-container';
         document.body.appendChild(this.container);
 
-        // Use mount function (client-side equivalent of render)
+        // Mount (client-side alternative to render)
         this.app = mount(App, {
             target: this.container,
             props: {
                 config: this.config
             }
         });
-
-        // Fetch current game info to cache it
-        await this.api.getCurrentGameInfo();
-
-        this.isInitialized = true;
-        return this;
     }
 
-    // Public methods
+    /**
+     * Show or hide the discovery
+     * @param {boolean} value - Whether to show the discovery
+     */
     setDiscovery(value) {
         if (!this.isInitialized) return;
         discoveryOpen.set(value);
