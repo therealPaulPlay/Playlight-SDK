@@ -89,7 +89,7 @@
 			<div class="border-b p-3">
 				<div class="relative">
 					<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-1">
-						<Search size={18} class="text-muted-foreground" />
+						<Search size={18} strokeWidth={2.5} class="text-muted-foreground" />
 					</div>
 					<input
 						type="text"

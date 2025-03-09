@@ -169,7 +169,7 @@
 				onclick={() => ($discoveryOpen = false)}
 				aria-label="Close"
 			>
-				<X size={24} />
+				<X size={24} strokeWidth={2.5} />
 			</button>
 		</div>
 	</div>
@@ -212,7 +212,7 @@
 			target="_blank"
 			class="text-muted-foreground flex items-center gap-1 text-sm transition hover:text-white"
 		>
-			Game Developer? Join Playlight <ExternalLink size={14} style="margin-top: 1px;" />
+			Game Developer? Join Playlight <ExternalLink size={14} />
 		</a>
 	</div>
 </div>
