@@ -8,16 +8,19 @@
 	import { onMount } from "svelte";
 	import { discoveryOpen, projectUrl } from "../store.js";
 	import GameCategorySeperator from "./GameCategorySeperator.svelte";
+	import CurrentGameDisplay from "./CurrentGameDisplay.svelte";
 
 	let { showIntentToggle = true } = $props();
+	let exitIntentEnabled = $state(true);
 
 	let selectedCategory = $state();
 	let isLoading = $state(true);
 	let isLoadingMore = $state(false);
-	let currentGameCategory = $state();
+
+	let currentGame = $state();
 	let games = $state([]);
 	let categories = $state([]);
-	let exitIntentEnabled = $state(true);
+
 	let page = $state(1);
 	let hasMoreGames = $state(true);
 	let loadingRef = $state();
@@ -41,8 +44,7 @@
 	});
 
 	onMount(async () => {
-		const currentGame = await api.getCurrentGameInfo();
-		currentGameCategory = currentGame?.category;
+		currentGame = await api.getCurrentGameInfo();
 		await fetchCategories();
 	});
 
@@ -74,8 +76,8 @@
 		categories = await api.getCategories();
 		if (!selectedCategory && categories?.length > 0) {
 			selectedCategory =
-				currentGameCategory && categories?.includes(currentGameCategory)
-					? currentGameCategory
+				currentGame?.category && categories?.includes(currentGame?.category)
+					? currentGame?.category
 					: categories?.[categories?.length - 1];
 		}
 	}
@@ -180,6 +182,9 @@
 		<Navigation {categories} bind:selectedCategory />
 	</div>
 
+	<!-- Current game display -->
+	<CurrentGameDisplay {currentGame} />
+
 	<!-- Game grid -->
 	<div class="mask-fade no-scrollbar relative h-full w-full overflow-y-auto p-4">
 		{#if isLoading && games.length === 0}
@@ -211,13 +216,13 @@
 	</div>
 
 	<!-- Footer -->
-	<div class="fixed right-0 bottom-0 flex items-center justify-between p-4">
+	<div class="fixed right-4 bottom-4 flex items-center justify-between">
 		<a
 			href="https://playlight.dev"
 			target="_blank"
 			class="text-muted-foreground flex items-center gap-1 text-sm transition hover:text-white"
 		>
-			Game Developer? Join Playlight <ExternalLink size={14} />
+			Join Playlight <ExternalLink size={14} />
 		</a>
 	</div>
 </div>

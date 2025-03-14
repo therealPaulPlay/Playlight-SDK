@@ -4,7 +4,6 @@
 	import { elasticOut } from "svelte/easing";
 	import { flip } from "svelte/animate";
 	import { Search, ChevronDown } from "lucide-svelte";
-	import { playSound } from "../playSound.js";
 	let { categories = [], selectedCategory = $bindable() } = $props();
 
 	// Local state for the component
@@ -62,17 +61,17 @@
 		<!-- Interactive category dropdown trigger -->
 		<button
 			bind:this={titleRef}
-			class="group mx-1 inline-flex cursor-pointer items-center bg-white px-3 py-1 text-black transition hover:rotate-5"
+			class="group mx-1 inline-flex cursor-pointer items-center bg-white px-3 py-1 text-background transition hover:rotate-5"
 			onclick={() => {
 				searchTerm = "";
 				isOpen = !isOpen;
 			}}
 		>
-			<span class="truncate max-w-[40vw] text-2xl font-bold text-black lg:text-4xl">{displayCategory}</span>
+			<span class="truncate max-w-[40vw] text-2xl font-bold text-background lg:text-4xl">{displayCategory}</span>
 			<ChevronDown
 				size={25}
 				strokeWidth={3}
-				class="mt-1 ml-1 text-black {isOpen ? 'rotate-180 transform' : ''} transition-transform duration-200"
+				class="mt-1 ml-1 text-background {isOpen ? 'rotate-180 transform' : ''} transition-transform duration-200"
 			/>
 		</button>
 		<span>games?</span>
@@ -82,7 +81,7 @@
 	{#if isOpen}
 		<div
 			bind:this={dropdownRef}
-			class="bg-background/85 fixed left-1/2 z-50 mt-24 w-30 w-full max-w-xs -translate-x-1/2 transform border shadow-lg backdrop-blur"
+			class="bg-background/85 fixed left-1/2 z-50 mt-24 w-30 w-full max-w-xs -translate-x-1/2 transform border shadow-lg backdrop-blur-xl"
 			transition:fly={{ y: -5, duration: 250 }}
 		>
 			<!-- Search input at the top of dropdown -->
@@ -112,7 +111,7 @@
 							<button
 								class="w-full cursor-pointer px-4 py-2 text-left transition-colors {selectedCategory != category
 									? 'hover:bg-muted-foreground/20'
-									: ''} {selectedCategory == category ? 'bg-white text-black' : 'text-white'}"
+									: ''} {selectedCategory == category ? 'bg-white text-background' : 'text-white'}"
 								onclick={() => {
 									selectedCategory = category;
 									isOpen = false;

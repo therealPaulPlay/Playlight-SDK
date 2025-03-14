@@ -86,7 +86,7 @@
 	onclick={handleClick}
 >
 	{#if isNewGame(game?.created_at)}
-		<div class="bg-background absolute top-4 right-4 z-13 px-2 py-0.5 transition-opacity" class:opacity-0={isHovered}>
+		<div class="bg-background absolute top-4 right-4 z-13 px-2 py-0.5 transition-opacity select-none" class:opacity-0={isHovered}>
 			<p class="text-primary font-bold uppercase">New</p>
 		</div>
 	{/if}
