@@ -18,6 +18,21 @@
 		$discoveryOpen = true;
 		api.trackOpen();
 	}
+
+	// Prevent scroll propagation
+	let originalOverflow;
+	discoveryOpen.subscribe((value) => {
+		try {
+			if (value) {
+				originalOverflow = document.body.style.overflow;
+				document.body.style.overflow = "hidden";
+			} else {
+				document.body.style.overflow = originalOverflow;
+			}
+		} catch (error) {
+			console.error("Failed to toggle body overflow style:", error);
+		}
+	});
 </script>
 
 <!-- Floating button -->

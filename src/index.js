@@ -67,12 +67,12 @@ class PlaylightSDK {
 
     /**
      * Show or hide the discovery
-     * @param {boolean} value - Whether to show the discovery
+     * @param {boolean} [value=true] - Whether to show the discovery
      */
-    setDiscovery(value) {
+    setDiscovery(value = true) {
         if (!this.isInitialized) return;
         discoveryOpen.set(value);
-        if (get(discoveryOpen)) api.trackOpen();
+        if (value) api.trackOpen();
     }
 }
 
