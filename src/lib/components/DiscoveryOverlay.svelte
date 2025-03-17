@@ -142,12 +142,19 @@
 	}}
 />
 
+<!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
 	class="bg-background/75 fixed inset-0 top-0 right-0 bottom-0 left-0 z-99999 flex flex-col justify-center text-white backdrop-blur-md"
+	id="playlight-discovery"
 	transition:blur={{ duration: 250 }}
+	onclick={(e) => {
+		if (e.target === e.currentTarget) $discoveryOpen = false;
+	}}
+	role="menu"
+	tabindex="0"
 >
 	<!-- Header -->
-	<div class="ml-2 flex items-center justify-between p-4">
+	<div class="pointer-events-none ml-2 flex items-center justify-between p-4">
 		<a href="https://playlight.dev" target="_blank"
 			><img alt="logo" src={$projectUrl + "/static/images/logo-white-small.png"} class="w-50" /></a
 		>
@@ -163,7 +170,7 @@
 					}}
 				>
 					<p class="bg-background/50 text-primary p-1 px-2 text-sm">
-						{exitIntentEnabled ? "Ignore exit intent" : "Trigger on exit intent"}
+						{exitIntentEnabled ? "Don't show on exit" : "Do show on exit"}
 					</p>
 				</button>
 			{/if}
@@ -186,7 +193,7 @@
 	<CurrentGameDisplay {currentGame} />
 
 	<!-- Game grid -->
-	<div class="mask-fade no-scrollbar relative h-full w-full overflow-y-auto p-4">
+	<div class="mask-fade no-scrollbar pointer-events-none relative h-full w-full overflow-y-auto p-4">
 		{#if isLoading && games.length === 0}
 			<div class="flex h-4/5 items-center justify-center gap-4">
 				<LoaderCircle class="animate-spin opacity-75" size={50} strokeWidth={2.5} />
