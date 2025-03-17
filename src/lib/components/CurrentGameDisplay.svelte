@@ -106,7 +106,6 @@
 		style="transform: translateY({y}px); opacity: {alpha}; cursor: grab;"
 		role="button"
 		tabindex="0"
-		aria-label="Currently playing game"
 		onmousedown={startDrag}
 		onmousemove={drag}
 		onmouseup={endDrag}
@@ -145,13 +144,15 @@
 {/if}
 
 {#if currentGame && showLatch}
-	<button
-		transition:fly={{ delay: 150, y: 30 }}
-		class="bg-background/85 hover:bg-background/95 fixed bottom-0 z-3 rounded-t-md border px-4 py-1.5 shadow-md backdrop-blur-sm transition max-sm:right-4 max-sm:left-4 sm:left-4 sm:w-72"
-		aria-label="Show currently playing game"
-		onmousedown={restore}
-		ontouchstart={restore}
-	>
-		<div class="bg-muted-foreground mx-auto h-px w-16"></div>
-	</button>
+	<div class="fixed bottom-0 z-3 max-sm:right-4 max-sm:left-4 sm:left-4">
+		<button
+			transition:fly={{ delay: 150, y: 30 }}
+			class="bg-background/85 hover:bg-background/95 rounded-t-md border px-4 py-1.5 shadow-md backdrop-blur-sm transition sm:w-72"
+			aria-label="Show game display"
+			onmousedown={restore}
+			ontouchstart={restore}
+		>
+			<div class="bg-muted-foreground mx-auto h-px w-16"></div>
+		</button>
+	</div>
 {/if}

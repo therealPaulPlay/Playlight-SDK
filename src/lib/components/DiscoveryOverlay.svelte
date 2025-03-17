@@ -178,7 +178,6 @@
 			<button
 				class="cursor-pointer text-white transition hover:opacity-50"
 				onclick={() => ($discoveryOpen = false)}
-				aria-label="Close"
 			>
 				<X size={24} strokeWidth={2.5} />
 			</button>
@@ -225,15 +224,13 @@
 	</div>
 
 	<!-- Footer -->
-	<div class="fixed right-4 bottom-4 flex items-center justify-between">
-		<a
-			href="https://playlight.dev"
-			target="_blank"
-			class="text-muted-foreground flex items-center gap-1 text-sm transition hover:text-white"
-		>
-			Join Playlight <ExternalLink size={14} />
-		</a>
-	</div>
+	<a
+		href="https://playlight.dev"
+		target="_blank"
+		class="text-muted-foreground fixed right-4 bottom-4 flex items-center gap-1 text-sm transition hover:text-white"
+	>
+		Join Playlight <ExternalLink size={14} />
+	</a>
 </div>
 
 <style>
