@@ -134,6 +134,10 @@
 			}
 		}
 	}
+
+	function closeDiscoveryOnEmptyClick(e) {
+		if (e.target === e.currentTarget) $discoveryOpen = false;
+	}
 </script>
 
 <svelte:document
@@ -143,15 +147,12 @@
 />
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
 	class="bg-background/75 fixed inset-0 top-0 right-0 bottom-0 left-0 z-99999 flex flex-col justify-center text-white backdrop-blur-md"
 	id="playlight-discovery"
 	transition:blur={{ duration: 250 }}
-	onclick={(e) => {
-		if (e.target === e.currentTarget) $discoveryOpen = false;
-	}}
-	role="menu"
-	tabindex="0"
+	onclick={closeDiscoveryOnEmptyClick}
 >
 	<!-- Header -->
 	<div class="pointer-events-none ml-2 flex items-center justify-between p-4">
@@ -193,7 +194,8 @@
 	<CurrentGameDisplay {currentGame} />
 
 	<!-- Game grid -->
-	<div class="mask-fade no-scrollbar pointer-events-none relative h-full w-full overflow-y-auto p-4">
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<div class="mask-fade no-scrollbar relative h-full w-full overflow-y-auto p-4" onclick={closeDiscoveryOnEmptyClick}>
 		{#if isLoading && games.length === 0}
 			<div class="flex h-4/5 items-center justify-center gap-4">
 				<LoaderCircle class="animate-spin opacity-75" size={50} strokeWidth={2.5} />
