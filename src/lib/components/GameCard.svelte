@@ -5,10 +5,14 @@
 
 	let { game, onClick } = $props();
 	let isHovered = $state(false);
+	let isFullyHovered = $state(false);
+	let hoverTimeout;
+
 	let videoElement = $state();
 	let videoLoaded = $state(false);
 	let coverImageLoaded = $state(false);
 	let logoImageLoaded = $state(false);
+
 	let isTouchDevice = $state(false);
 	let cardElement = $state();
 
@@ -16,29 +20,14 @@
 		isTouchDevice = "ontouchstart" in window;
 	});
 
-	function handleClick(e) {
-		if (isTouchDevice) {
-			e.preventDefault();
-			return;
-		}
-
-		onClick?.(game.id);
-		window.open("https://" + game.domain, "_blank", "noopener");
-	}
-
-	function playGame(e) {
-		e.stopPropagation();
-		e.preventDefault();
-		onClick?.(game.id);
-		window.open("https://" + game.domain, "_blank", "noopener");
-	}
-
 	function handleMouseEnter() {
 		if (!isHovered && !isTouchDevice) {
 			playSound($projectUrl + "/static/sounds/hover-selection.ogg", 0.25);
 		}
 
 		isHovered = true;
+		clearTimeout(hoverTimeout);
+		hoverTimeout = setTimeout(() => (isFullyHovered = true), 300);
 		if (videoElement && game.cover_video_url) {
 			videoElement.play().catch((err) => console.error("Video play error:", err));
 		}
@@ -47,15 +36,13 @@
 	function handleMouseLeave() {
 		if (isTouchDevice) return;
 
-		isHovered = false;
-		if (videoElement && videoLoaded) {
-			videoElement.pause();
-		}
+		setUnhovered();
+		if (videoElement && videoLoaded) videoElement.pause();
 	}
 
 	function handleDocumentTouch(e) {
 		if (cardElement && !cardElement.contains(e.target)) {
-			isHovered = false;
+			setUnhovered();
 		}
 	}
 
@@ -64,6 +51,12 @@
 		sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 		const createdAt = new Date(createdAtString);
 		return createdAt > sevenDaysAgo;
+	}
+
+	function setUnhovered() {
+		isHovered = false;
+		clearTimeout(hoverTimeout);
+		isFullyHovered = false;
 	}
 </script>
 
@@ -83,10 +76,17 @@
 	ontouchstart={handleMouseEnter}
 	role="button"
 	tabindex="0"
-	onclick={handleClick}
+	onclick={() => {
+		if (isTouchDevice && !isFullyHovered) return;
+		onClick?.(game.id);
+		window.open("https://" + game.domain, "_blank", "noopener");
+	}}
 >
 	{#if isNewGame(game?.created_at)}
-		<div class="bg-background absolute top-4 right-4 z-13 px-2 py-0.5 transition-opacity select-none" class:opacity-0={isHovered}>
+		<div
+			class="bg-background absolute top-4 right-4 z-13 px-2 py-0.5 transition-opacity select-none"
+			class:opacity-0={isHovered}
+		>
 			<p class="text-primary font-bold uppercase">New</p>
 		</div>
 	{/if}
@@ -122,7 +122,11 @@
 		<button
 			class="bg-foreground text-background hover:bg-foreground/90 absolute right-4 bottom-4 z-15 flex items-center justify-center rounded-sm px-3 py-1 font-bold uppercase transition-all"
 			class:opacity-0={isHovered}
-			onclick={playGame}
+			onclick={() => {
+				e.stopPropagation();
+				onClick?.(game.id);
+				window.open("https://" + game.domain, "_blank", "noopener");
+			}}
 		>
 			Play
 		</button>
@@ -146,7 +150,7 @@
 	<img
 		src={game.logo_url}
 		alt="game logo"
-		class="absolute right-0 -bottom-[18%] left-0 z-12 mx-auto aspect-square w-1/5 rounded-full object-center opacity-0 transition group-hover:outline-2 prevent-image-select"
+		class="prevent-image-select absolute right-0 -bottom-[18%] left-0 z-12 mx-auto aspect-square w-1/5 rounded-full object-center opacity-0 transition group-hover:outline-2"
 		class:opacity-100={logoImageLoaded}
 		loading="eager"
 		onload={() => {

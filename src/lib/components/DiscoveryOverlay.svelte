@@ -156,9 +156,7 @@
 >
 	<!-- Header -->
 	<div class="pointer-events-none ml-2 flex items-center justify-between p-4">
-		<a href="https://playlight.dev" target="_blank"
-			><img alt="logo" src={$projectUrl + "/static/images/logo-white-small.png"} class="w-50" /></a
-		>
+		<img alt="logo" src={$projectUrl + "/static/images/logo-white-small.png"} class="w-50 pointer-events-none" />
 		<div class="mt-4 mr-2 flex items-center justify-evenly gap-8 overflow-hidden md:mr-4">
 			{#if showIntentToggle}
 				<button
@@ -175,10 +173,7 @@
 					</p>
 				</button>
 			{/if}
-			<button
-				class="cursor-pointer text-white transition hover:opacity-50"
-				onclick={() => ($discoveryOpen = false)}
-			>
+			<button class="cursor-pointer text-white transition hover:opacity-50" onclick={() => ($discoveryOpen = false)}>
 				<X size={24} strokeWidth={2.5} />
 			</button>
 		</div>
