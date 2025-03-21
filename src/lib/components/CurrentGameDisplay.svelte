@@ -120,7 +120,7 @@
 		<div class="flex w-full items-center gap-2">
 			<img
 				src={currentGame?.logo_url}
-				alt="current game logo"
+				alt="logo"
 				class="bg-muted h-5 w-5 select-none"
 				class:animate-pulse={!logoImageLoaded}
 				onload={() => {
@@ -144,10 +144,10 @@
 {/if}
 
 {#if currentGame && showLatch}
-	<div class="fixed bottom-0 z-3 max-sm:right-4 max-sm:left-4 sm:left-4">
+	<div class="fixed bottom-0 z-3 shadow-xl max-sm:right-4 max-sm:left-4 sm:left-4 sm:w-72">
 		<button
 			transition:fly={{ delay: 150, y: 30 }}
-			class="bg-background/85 hover:bg-background/95 rounded-t-md border px-4 py-1.5 shadow-md backdrop-blur-sm transition sm:w-72"
+			class="bg-background/85 hover:bg-background/95 w-full rounded-t-md border px-4 py-1.5 backdrop-blur-sm transition"
 			aria-label="Show game display"
 			onmousedown={restore}
 			ontouchstart={restore}
