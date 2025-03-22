@@ -81,6 +81,7 @@
 
             <div class="options">
                 <button class="button" id="show-discovery">Open Discovery</button>
+                <button class="button" id="toggle-button">Toggle button</button>
             </div>
         </div>
     </div>
@@ -91,9 +92,19 @@
             const playlightSDK = module.default;
             await playlightSDK.init();
 
-            // Wait for the SDK to be fully loaded
+            // Wait for the SDK to be fully loaded to add event listeners
             document.getElementById('show-discovery').addEventListener('click', () => {
                 playlightSDK?.setDiscovery(true);
+            });
+
+            let buttonToggled = false;
+            document.getElementById('toggle-button').addEventListener('click', () => {
+                playlightSDK?.setConfig({
+                    button: {
+                        visible: buttonToggled
+                    }
+                });
+                buttonToggled = !buttonToggled;
             });
         } catch (error) {
             console.error("Playlight SDK could not be loaded:", error);

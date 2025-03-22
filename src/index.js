@@ -3,7 +3,7 @@ import App from './App.svelte';
 import { initializeConfig } from './lib/config.js';
 import { discoveryOpen } from './lib/store.js';
 import api from './lib/api.js';
-import { get } from 'svelte/store';
+import { writable, get } from 'svelte/store';
 
 /**
  * The PlaylightSDK class
@@ -13,7 +13,7 @@ class PlaylightSDK {
         this.container = null;
         this.app = null;
         this.isInitialized = false;
-        this.config = null;
+        this.config = writable(null);
         this.api = api;
     }
 
@@ -22,9 +22,7 @@ class PlaylightSDK {
      * @param {Object} [userConfig] - The playlight configuration object
      */
     async init(userConfig = {}) {
-        if (typeof window === 'undefined') {
-            return console.error("Playlight cannot run on the server, as it depends on browser APIs.");
-        }
+        if (typeof window === 'undefined') return console.error("Playlight cannot run on the server, as it depends on browser APIs.");
 
         if (this.isInitialized) {
             console.warn("Playlight SDK already initialized!");
@@ -33,7 +31,7 @@ class PlaylightSDK {
         }
 
         // Initialize configuration with defaults and user overrides
-        this.config = initializeConfig(userConfig);
+        this.setConfig(userConfig);
         this.#mountPlaylight(); // Create container and mount
 
         // Fetch current game info to cache it
@@ -73,6 +71,14 @@ class PlaylightSDK {
         if (!this.isInitialized) return;
         discoveryOpen.set(value);
         if (value) api.trackOpen();
+    }
+
+    /**
+     * Update the configuration
+     * @param {Object} [config] - Playlight configuration object
+     */
+    setConfig(config = {}) {
+        this.config?.set(initializeConfig(config));
     }
 }
 

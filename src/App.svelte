@@ -9,10 +9,6 @@
 
 	let { config } = $props();
 
-	// State variables
-	let buttonPosition = $state(config?.button?.position);
-	let buttonVisible = $state(config?.button?.visible);
-
 	// Actions that can be called from outside the component
 	function openDiscovery() {
 		$discoveryOpen = true;
@@ -36,16 +32,16 @@
 </script>
 
 <!-- Floating button -->
-<FloatingButton position={buttonPosition} visible={buttonVisible} onClick={openDiscovery} />
+<FloatingButton position={$config?.button?.position} visible={$config?.button?.visible} onClick={openDiscovery} />
 
 <!-- Discovery overlay -->
 {#if $discoveryOpen}
-	<DiscoveryOverlay showIntentToggle={config?.exitIntent?.enabled} />
+	<DiscoveryOverlay showIntentToggle={$config?.exitIntent?.enabled} />
 {/if}
 
 <!-- Detect user leaving page -->
 <ExitIntentDetector
-	enabled={config?.exitIntent?.enabled}
+	enabled={$config?.exitIntent?.enabled}
 	onIntent={() => {
 		if (!$discoveryOpen) openDiscovery();
 	}}
