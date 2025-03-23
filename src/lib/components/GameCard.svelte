@@ -67,7 +67,7 @@
 	bind:this={cardElement}
 	class="bg-background highlight-border group relative mt-5 mb-[calc(3dvh+1.5vw)] flex aspect-[2/3] h-1/2 max-h-[75vh] cursor-pointer flex-col shadow-xl transition hover:outline-2 lg:h-3/7 {coverImageLoaded
 		? ''
-		: 'animate-pulse'} {compact ? 'min-h-64' : 'min-h-92'}"
+		: 'animate-pulse'} {compact ? 'min-h-62' : 'min-h-92'}"
 	onmouseenter={handleMouseEnter}
 	onfocus={handleMouseEnter}
 	onmouseleave={handleMouseLeave}
@@ -83,7 +83,7 @@
 >
 	{#if isNewGame(game?.created_at)}
 		<div
-			class="bg-background absolute top-4 right-4 z-13 px-2 py-0.5 transition-opacity select-none"
+			class="bg-background absolute top-4 right-4 z-12 px-2 py-0.5 transition-opacity select-none"
 			class:opacity-0={isHovered}
 		>
 			<p class="text-primary font-bold uppercase">New</p>
@@ -149,7 +149,7 @@
 	<img
 		src={game.logo_url}
 		alt="game logo"
-		class="prevent-image-select absolute right-0 -bottom-[18%] left-0 z-12 mx-auto aspect-square w-1/5 rounded-full object-center opacity-0 transition group-hover:outline-2"
+		class="prevent-image-select absolute right-0 -bottom-[18%] left-0 z-10 mx-auto aspect-square w-1/5 rounded-full object-center opacity-0 transition group-hover:outline-2"
 		class:opacity-100={logoImageLoaded}
 		loading="eager"
 		onload={() => {
