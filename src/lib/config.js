@@ -18,11 +18,6 @@ export function initializeConfig(userConfig = {}) {
     return activeConfig;
 }
 
-// Get the current configuration
-export function getConfig() {
-    return activeConfig;
-}
-
 // Helper for deep merging objects
 function deepMerge(target, source) {
     const output = { ...target };

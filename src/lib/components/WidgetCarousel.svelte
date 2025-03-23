@@ -31,8 +31,7 @@
 					: categories?.[categories?.length - 1];
 		}
 
-		// Fetch games with selected category
-		await fetchGames();
+		await fetchGames(); // Fetch games with selected category
 	});
 
 	// Fetch games from API
@@ -111,7 +110,7 @@
 					class="bg-background/85 hover:bg-foreground hover:text-background text-foreground absolute top-1/2 left-2 z-20 -translate-y-1/2 transform border p-1 shadow-xl backdrop-blur-xl transition"
 					onclick={() => containerRef.scrollBy({ left: 2 * -cardWidth, behavior: "smooth" })}
 				>
-					<ChevronLeft size={24} strokeWidth={2.25} />
+					<ChevronLeft size={22} strokeWidth={2.25} />
 				</button>
 			{/if}
 
@@ -121,7 +120,7 @@
 					class="bg-background/85 hover:bg-foreground hover:text-background text-foreground absolute top-1/2 right-2 z-20 -translate-y-1/2 transform border p-1 shadow-xl backdrop-blur-xl transition"
 					onclick={() => containerRef.scrollBy({ left: 2 * cardWidth, behavior: "smooth" })}
 				>
-					<ChevronRight size={24} strokeWidth={2.25} />
+					<ChevronRight size={22} strokeWidth={2.25} />
 				</button>
 			{/if}
 		{/if}
