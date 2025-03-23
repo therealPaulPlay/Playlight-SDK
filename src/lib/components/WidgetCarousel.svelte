@@ -5,6 +5,7 @@
 	import GameCard from "./GameCard.svelte";
 	import api from "../api.js";
 	import { blur } from "svelte/transition";
+	import Button from "./Button.svelte";
 
 	// State
 	let isLoading = $state(true);
@@ -88,18 +89,17 @@
 
 			<!-- View more card -->
 			<div
-				class="bg-background/85 ml-2 my-auto flex min-w-40 flex-wrap items-center justify-center gap-4 p-4 pb-6 shadow-xl backdrop-blur-xl"
+				class="bg-background/85 my-auto ml-2 flex min-w-40 flex-wrap items-center justify-center gap-4 p-4 pb-6 shadow-xl backdrop-blur-xl"
 			>
 				<p class="text-foreground w-full text-center text-lg font-semibold">Fancy more?</p>
-				<button
-					class="bg-foreground hover:bg-background hover:text-primary cursor-pointer px-3 py-2 transition"
+				<Button
 					onclick={() => {
 						$discoveryOpen = true;
 						api.trackOpen();
 					}}
 				>
 					See all
-				</button>
+				</Button>
 			</div>
 		{/if}
 	</div>
@@ -109,20 +109,20 @@
 		{#if hasLeftScroll}
 			<button
 				transition:blur
-				class="bg-background/50 hover:bg-foreground hover:text-background text-foreground absolute top-1/2 left-0 z-20 ml-1 -translate-y-1/2 transform rounded-full p-1 shadow-xl backdrop-blur-xl transition"
+				class="bg-background/85 hover:bg-foreground hover:text-background text-foreground absolute top-1/2 left-0 z-20 ml-1 -translate-y-1/2 transform border p-1 shadow-xl backdrop-blur-xl transition"
 				onclick={() => containerRef.scrollBy({ left: 2 * -cardWidth, behavior: "smooth" })}
 			>
-				<ChevronLeft size={24} />
+				<ChevronLeft size={24} strokeWidth={2.25} />
 			</button>
 		{/if}
 
 		{#if hasRightScroll}
 			<button
 				transition:blur
-				class="bg-background/50 hover:bg-foreground hover:text-background text-foreground absolute top-1/2 right-0 z-20 mr-1 -translate-y-1/2 transform rounded-full p-1 shadow-xl backdrop-blur-xl transition"
+				class="bg-background/85 hover:bg-foreground hover:text-background text-foreground absolute top-1/2 right-0 z-20 mr-1 -translate-y-1/2 transform border p-1 shadow-xl backdrop-blur-xl transition"
 				onclick={() => containerRef.scrollBy({ left: 2 * cardWidth, behavior: "smooth" })}
 			>
-				<ChevronRight size={24} />
+				<ChevronRight size={24} strokeWidth={2.25} />
 			</button>
 		{/if}
 	{/if}

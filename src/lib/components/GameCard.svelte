@@ -1,6 +1,6 @@
 <script>
 	import { slide } from "svelte/transition";
-	import { playSound } from "../playSound.js";
+	import { playSound } from "../utils/playSound.js";
 	import { projectUrl } from "../store.js";
 
 	let { game, onClick, compact = false } = $props();

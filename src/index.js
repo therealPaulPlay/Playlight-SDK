@@ -1,10 +1,10 @@
 import { mount } from 'svelte';
 import App from './App.svelte';
-import WidgetCarousel from './lib/components/WidgetCarousel.svelte';
 import { initializeConfig } from './lib/config.js';
 import { discoveryOpen } from './lib/store.js';
 import api from './lib/api.js';
-import { writable, get } from 'svelte/store';
+import { writable } from 'svelte/store';
+import { initWidgets, setupWidgetObserver } from './lib/utils/loadWidgets.js';
 
 /**
  * The PlaylightSDK class
@@ -23,7 +23,6 @@ class PlaylightSDK {
      */
     async init(userConfig = {}) {
         if (typeof window === 'undefined') return console.error("Playlight cannot run on the server, as it depends on browser APIs.");
-
         if (this.isInitialized) {
             console.warn("Playlight SDK already initialized!");
             if (!document.getElementById("playlight-sdk-container")) this.#mountPlaylight();
@@ -33,8 +32,10 @@ class PlaylightSDK {
         // Initialize configuration with defaults and user overrides
         this.setConfig(userConfig);
         this.#mountPlaylight(); // Create container and mount app
-        this.#initWidgets(); // Initialize any widget containers
-        this.#setupWidgetObserver(); // Watch for new widget containers that might be added to the DOM later
+        
+        // Widgets
+        initWidgets();
+        setupWidgetObserver();
 
         // Fetch current game info to cache it
         await this.api.getCurrentGameInfo();
@@ -62,58 +63,6 @@ class PlaylightSDK {
             });
         } catch (error) {
             console.error("Playlight error occured during mount:", error);
-        }
-    }
-
-    /**
-     * Initialize any existing widget containers on the page
-     * @private
-     */
-    #initWidgets() {
-        const carouselContainers = document?.querySelectorAll('#playlight-widget-carousel'); // Look for any carousel widgets
-        if (carouselContainers?.length > 0) {
-            carouselContainers.forEach(container => {
-                this.#mountCarouselWidget(container);
-            });
-        }
-    }
-
-    /**
-     * Set up an observer to watch for new widget containers added to the DOM
-     * @private
-     */
-    #setupWidgetObserver() {
-        try {
-            const observer = new MutationObserver(() => {
-                this.#initWidgets();
-            });
-
-            // Start observing the entire document for changes with configured parameters
-            observer.observe(document.body, {
-                childList: true,
-                subtree: true
-            });
-        } catch (error) {
-            console.error("Playlight error occurred setting up widget observer:", error);
-        }
-    }
-
-    /**
-     * Mount a carousel widget to a container
-     * @param {HTMLElement} containerElement - The container element
-     * @private
-     */
-    #mountCarouselWidget(containerElement) {
-        try {
-            if (containerElement.dataset.playlightInitialized) return; // Exit if already initialized
-            containerElement.dataset.playlightInitialized = 'true';
-
-            // Mount the carousel widget
-            mount(WidgetCarousel, {
-                target: containerElement,
-            });
-        } catch (error) {
-            console.error("Playlight error occurred mounting carousel widget:", error);
         }
     }
 
