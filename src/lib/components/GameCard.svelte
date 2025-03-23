@@ -3,7 +3,7 @@
 	import { playSound } from "../playSound.js";
 	import { projectUrl } from "../store.js";
 
-	let { game, onClick } = $props();
+	let { game, onClick, compact = false } = $props();
 	let isHovered = $state(false);
 	let isFullyHovered = $state(false);
 	let hoverTimeout;
@@ -35,15 +35,8 @@
 
 	function handleMouseLeave() {
 		if (isTouchDevice) return;
-
 		setUnhovered();
 		if (videoElement && videoLoaded) videoElement.pause();
-	}
-
-	function handleDocumentTouch(e) {
-		if (cardElement && !cardElement.contains(e.target)) {
-			setUnhovered();
-		}
 	}
 
 	function isNewGame(createdAtString) {
@@ -61,14 +54,20 @@
 </script>
 
 <svelte:window ontouchstart={() => (isTouchDevice = true)} />
-<svelte:document ontouchstart={handleDocumentTouch} />
+<svelte:document
+	ontouchstart={(e) => {
+		if (cardElement && !cardElement.contains(e.target)) {
+			setUnhovered();
+		}
+	}}
+/>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
 	bind:this={cardElement}
-	class="bg-background highlight-border group relative mt-5 mb-[calc(3dvh+1.5vw)] flex aspect-[2/3] h-1/2 max-h-[75vh] min-h-92 cursor-pointer flex-col shadow-xl transition hover:outline-2 lg:h-3/7 {coverImageLoaded
+	class="bg-background highlight-border group relative mt-5 mb-[calc(3dvh+1.5vw)] flex aspect-[2/3] h-1/2 max-h-[75vh] cursor-pointer flex-col shadow-xl transition hover:outline-2 lg:h-3/7 {coverImageLoaded
 		? ''
-		: 'animate-pulse'}"
+		: 'animate-pulse'} {compact ? 'min-h-64' : 'min-h-92'}"
 	onmouseenter={handleMouseEnter}
 	onfocus={handleMouseEnter}
 	onmouseleave={handleMouseLeave}

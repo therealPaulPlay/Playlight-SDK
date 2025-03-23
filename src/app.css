@@ -134,8 +134,8 @@
   src: url("/static/fonts/Geist[wght].ttf");
 }
 
-#playlight-sdk-container,
-#playlight-sdk-container * {
+.playlight-sdk-container,
+.playlight-sdk-container * {
   font-family: Geist, sans-serif !important;
   font-synthesis: none !important;
 }

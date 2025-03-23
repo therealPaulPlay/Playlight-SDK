@@ -1,0 +1,140 @@
+<script>
+	import { onMount } from "svelte";
+	import { discoveryOpen } from "../store.js";
+	import { ChevronLeft, ChevronRight, LoaderCircle } from "lucide-svelte";
+	import GameCard from "./GameCard.svelte";
+	import api from "../api.js";
+	import { blur } from "svelte/transition";
+
+	// State
+	let isLoading = $state(true);
+	let games = $state([]);
+	let categories = $state([]);
+	let selectedCategory = $state();
+	let currentPosition = $state(0);
+	let visibleCards = $state(3);
+	let containerRef = $state();
+
+	// Computed values
+	let maxPosition = $derived(Math.max(0, games.length - visibleCards));
+	let canScrollLeft = $derived(currentPosition > 0);
+	let canScrollRight = $derived(currentPosition < maxPosition);
+
+	onMount(async () => {
+		// Fetch categories first
+		categories = await api.getCategories();
+
+		// Select a default category
+		if (categories?.length > 0) {
+			const currentGame = await api.getCurrentGameInfo();
+			selectedCategory =
+				currentGame?.category && categories?.includes(currentGame?.category)
+					? currentGame?.category
+					: categories?.[categories?.length - 1];
+		}
+
+		// Fetch games with selected category
+		await fetchGames();
+	});
+
+	// Fetch games from API
+	async function fetchGames() {
+		try {
+			isLoading = true;
+
+			// First try with category
+			let result = await api.getSuggestions(selectedCategory, 1);
+			let fetchedGames = result?.games || [];
+
+			// If not enough games, try without category
+			if (fetchedGames.length < 10 && selectedCategory) {
+				const moreResult = await api.getSuggestions(null, 1);
+				const moreGames = moreResult?.games || [];
+
+				// Filter out duplicates
+				const uniqueGames = moreGames.filter((newGame) => !fetchedGames.some((existing) => existing.id === newGame.id));
+
+				fetchedGames = [...fetchedGames, ...uniqueGames];
+			}
+
+			// Limit the number of games
+			games = fetchedGames.slice(0, 10);
+		} catch (err) {
+			console.error("Failed to load games for widget:", err);
+		} finally {
+			isLoading = false;
+		}
+	}
+
+	// Navigation functions
+	function scrollLeft() {
+		if (canScrollLeft) {
+			currentPosition = Math.max(0, currentPosition - 1);
+		}
+	}
+
+	function scrollRight() {
+		if (canScrollRight) {
+			currentPosition = Math.min(maxPosition, currentPosition + 1);
+		}
+	}
+</script>
+
+<div class="playlight-sdk-container relative h-full w-full overflow-hidden">
+	<!-- Carousel -->
+	<div bind:this={containerRef} class="relative h-full w-full">
+		{#if isLoading}
+			<div class="flex h-48 items-center justify-center">
+				<LoaderCircle class="animate-spin opacity-75" size={30} strokeWidth={2.5} />
+			</div>
+		{:else}
+			<div
+				class="flex h-full gap-6 overflow-x-auto px-4"
+				style="transform: translateX(-{currentPosition * (100 / visibleCards)}%)"
+			>
+				{#each games as game, i}
+					<GameCard {game} compact={true} onClick={() => api.trackClick(game.id)} />
+				{/each}
+
+				<!-- View more card -->
+				<div
+					class="bg-background/85 my-auto flex h-fit w-full min-w-40 flex-wrap items-center justify-center gap-4 p-4 pb-6 shadow-xl backdrop-blur-xl"
+				>
+					<p class="text-foreground w-full text-center text-lg font-semibold">Fancy more?</p>
+					<button
+						class="bg-foreground hover:bg-background hover:text-primary cursor-pointer px-3 py-2 transition"
+						onclick={() => {
+							$discoveryOpen = true;
+							api.trackOpen();
+						}}
+					>
+						See all
+					</button>
+				</div>
+			</div>
+		{/if}
+	</div>
+
+	<!-- Navigation arrows (only show if needed) -->
+	{#if games.length > visibleCards}
+		{#if canScrollLeft}
+			<button
+				transition:blur
+				class="bg-background/50 hover:bg-foreground hover:text-background text-foreground absolute top-1/2 left-0 ml-1 -translate-y-1/2 transform rounded-full p-1 backdrop-blur-xl transition"
+				onclick={scrollLeft}
+			>
+				<ChevronLeft size={24} />
+			</button>
+		{/if}
+
+		{#if canScrollRight}
+			<button
+				transition:blur
+				class="bg-background/50 hover:bg-foreground hover:text-background text-foreground absolute top-1/2 right-0 mr-1 -translate-y-1/2 transform rounded-full p-1 backdrop-blur-xl transition"
+				onclick={scrollRight}
+			>
+				<ChevronRight size={24} />
+			</button>
+		{/if}
+	{/if}
+</div>
