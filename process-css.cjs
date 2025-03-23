@@ -42,9 +42,9 @@ function transformCss(css) {
             }
             // Handle html selector specifically
             if (s === 'html') {
-                return '#playlight-sdk-container';
+                return '.playlight-sdk-container';
             }
-            return `#playlight-sdk-container ${s}`;
+            return `.playlight-sdk-container ${s}`;
         });
 
         // Prefix Tailwind utility variables in declarations
@@ -94,9 +94,9 @@ function transformCss(css) {
                     }
                     // Handle html selector specifically
                     if (s === 'html') {
-                        return '#playlight-sdk-container';
+                        return '.playlight-sdk-container';
                     }
-                    return `#playlight-sdk-container ${s}`;
+                    return `.playlight-sdk-container ${s}`;
                 });
 
                 // Prefix Tailwind utility variables in declarations
@@ -111,11 +111,11 @@ function transformCss(css) {
             // Replace the placeholder with the processed rule
             processedCss = processedCss.replace(placeholder, processedRule);
         } else if (rule.startsWith('@layer theme')) {
-            // Special handling for @layer theme to replace :root, :host with #playlight-sdk-container
+            // Special handling for @layer theme to replace :root, :host with .playlight-sdk-container
             // and prefix Tailwind utility variables
             let processedRule = rule.replace(
                 /(:root|:host)(\s*,\s*)*(:root|:host)?(\s*)\{/g,
-                '#playlight-sdk-container {'
+                '.playlight-sdk-container {'
             );
 
             // Prefix Tailwind utility variables
@@ -130,8 +130,8 @@ function transformCss(css) {
             // Handle @layer base with special processing for html selectors
             let processedRule = rule;
 
-            // First, directly replace 'html,' with '#playlight-sdk-container,'
-            processedRule = processedRule.replace(/html\s*,/g, '#playlight-sdk-container ,');
+            // First, directly replace 'html,' with '.playlight-sdk-container,'
+            processedRule = processedRule.replace(/html\s*,/g, '.playlight-sdk-container ,');
 
             // Prefix Tailwind utility variables in the entire rule
             processedRule = processedRule.replace(
@@ -154,13 +154,13 @@ function transformCss(css) {
                     // Prefix or replace each selector appropriately
                     const prefixedSelectors = selectorList.map(selector => {
                         if (selector === 'html') {
-                            return '#playlight-sdk-container';
+                            return '.playlight-sdk-container';
                         } else if (selector === ':root') {
                             return selector;
                         } else if (selector.includes('#playlight-sdk-container') || selector.includes('.playlight-sdk-container')) {
                             return selector;
                         } else {
-                            return `#playlight-sdk-container ${selector}`;
+                            return `.playlight-sdk-container ${selector}`;
                         }
                     });
 
@@ -205,4 +205,4 @@ const transformedCss = transformCss(css);
 
 // Write the transformed CSS
 fs.writeFileSync(cssPath, transformedCss);
-console.log('CSS successfully transformed with #playlight-sdk-container prefix and Tailwind variable prefixing');
+console.log('CSS successfully transformed with .playlight-sdk-container prefix and Tailwind variable prefixing');

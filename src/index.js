@@ -3,7 +3,8 @@ import App from './App.svelte';
 import { initializeConfig } from './lib/config.js';
 import { discoveryOpen } from './lib/store.js';
 import api from './lib/api.js';
-import { writable, get } from 'svelte/store';
+import { writable } from 'svelte/store';
+import { initWidgets, setupWidgetObserver } from './lib/utils/loadWidgets.js';
 
 /**
  * The PlaylightSDK class
@@ -11,7 +12,6 @@ import { writable, get } from 'svelte/store';
 class PlaylightSDK {
     constructor() {
         this.container = null;
-        this.app = null;
         this.isInitialized = false;
         this.config = writable(null);
         this.api = api;
@@ -23,7 +23,6 @@ class PlaylightSDK {
      */
     async init(userConfig = {}) {
         if (typeof window === 'undefined') return console.error("Playlight cannot run on the server, as it depends on browser APIs.");
-
         if (this.isInitialized) {
             console.warn("Playlight SDK already initialized!");
             if (!document.getElementById("playlight-sdk-container")) this.#mountPlaylight();
@@ -32,7 +31,11 @@ class PlaylightSDK {
 
         // Initialize configuration with defaults and user overrides
         this.setConfig(userConfig);
-        this.#mountPlaylight(); // Create container and mount
+        this.#mountPlaylight(); // Create container and mount app
+        
+        // Widgets
+        initWidgets();
+        setupWidgetObserver();
 
         // Fetch current game info to cache it
         await this.api.getCurrentGameInfo();
@@ -52,7 +55,7 @@ class PlaylightSDK {
             document.body.appendChild(this.container);
 
             // Mount (client-side alternative to render)
-            this.app = mount(App, {
+            mount(App, {
                 target: this.container,
                 props: {
                     config: this.config

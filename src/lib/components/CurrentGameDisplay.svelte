@@ -102,7 +102,7 @@
 
 {#if currentGame && visible}
 	<div
-		class="bg-background/85 fixed bottom-4 left-4 z-2 flex touch-none flex-wrap items-center gap-1 border-1 p-4 text-start shadow-lg backdrop-blur-lg max-sm:right-4 sm:w-72"
+		class="bg-background/85 fixed bottom-4 left-4 z-2 flex touch-none flex-wrap items-center gap-1 border-1 p-4 text-start shadow-lg backdrop-blur-xl max-sm:right-4 sm:w-72"
 		style="transform: translateY({y}px); opacity: {alpha}; cursor: grab;"
 		role="button"
 		tabindex="0"
