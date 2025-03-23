@@ -51,11 +51,6 @@
 <Toaster />
 
 <style>
-	:global(body) {
-		margin: 0;
-		padding: 0;
-	}
-
 	:global(#playlight-sdk-container) {
 		position: fixed;
 		top: 0;

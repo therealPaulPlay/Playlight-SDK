@@ -11,14 +11,12 @@
 	let games = $state([]);
 	let categories = $state([]);
 	let selectedCategory = $state();
-	let currentPosition = $state(0);
-	let visibleCards = $state(3);
 	let containerRef = $state();
+	let cardWidth = $state(0);
 
 	// Computed values
-	let maxPosition = $derived(Math.max(0, games.length - visibleCards));
-	let canScrollLeft = $derived(currentPosition > 0);
-	let canScrollRight = $derived(currentPosition < maxPosition);
+	let hasLeftScroll = $state(false);
+	let hasRightScroll = $state(true);
 
 	onMount(async () => {
 		// Fetch categories first
@@ -65,73 +63,64 @@
 			isLoading = false;
 		}
 	}
-
-	// Navigation functions
-	function scrollLeft() {
-		if (canScrollLeft) {
-			currentPosition = Math.max(0, currentPosition - 1);
-		}
-	}
-
-	function scrollRight() {
-		if (canScrollRight) {
-			currentPosition = Math.min(maxPosition, currentPosition + 1);
-		}
-	}
 </script>
 
-<div class="playlight-sdk-container relative h-full w-full overflow-hidden">
+<div class="playlight-sdk-container relative h-full w-full">
 	<!-- Carousel -->
-	<div bind:this={containerRef} class="relative h-full w-full">
+	<div
+		bind:this={containerRef}
+		onscroll={(e) => {
+			hasLeftScroll = e.target.scrollLeft > 20;
+			hasRightScroll = e.target.scrollLeft < e.target.scrollWidth - e.target.clientWidth - 20;
+		}}
+		class="relative flex h-full w-full snap-x snap-proximity gap-2 overflow-x-auto"
+	>
 		{#if isLoading}
-			<div class="flex h-48 items-center justify-center">
+			<div class="flex h-48 w-full items-center justify-center">
 				<LoaderCircle class="animate-spin opacity-75" size={30} strokeWidth={2.5} />
 			</div>
 		{:else}
-			<div
-				class="flex h-full gap-6 overflow-x-auto px-4"
-				style="transform: translateX(-{currentPosition * (100 / visibleCards)}%)"
-			>
-				{#each games as game, i}
+			{#each games as game, i}
+				<div class="snap-start px-2" bind:clientWidth={cardWidth}>
 					<GameCard {game} compact={true} onClick={() => api.trackClick(game.id)} />
-				{/each}
-
-				<!-- View more card -->
-				<div
-					class="bg-background/85 my-auto flex h-fit w-full min-w-40 flex-wrap items-center justify-center gap-4 p-4 pb-6 shadow-xl backdrop-blur-xl"
-				>
-					<p class="text-foreground w-full text-center text-lg font-semibold">Fancy more?</p>
-					<button
-						class="bg-foreground hover:bg-background hover:text-primary cursor-pointer px-3 py-2 transition"
-						onclick={() => {
-							$discoveryOpen = true;
-							api.trackOpen();
-						}}
-					>
-						See all
-					</button>
 				</div>
+			{/each}
+
+			<!-- View more card -->
+			<div
+				class="bg-background/85 ml-2 my-auto flex min-w-40 flex-wrap items-center justify-center gap-4 p-4 pb-6 shadow-xl backdrop-blur-xl"
+			>
+				<p class="text-foreground w-full text-center text-lg font-semibold">Fancy more?</p>
+				<button
+					class="bg-foreground hover:bg-background hover:text-primary cursor-pointer px-3 py-2 transition"
+					onclick={() => {
+						$discoveryOpen = true;
+						api.trackOpen();
+					}}
+				>
+					See all
+				</button>
 			</div>
 		{/if}
 	</div>
 
 	<!-- Navigation arrows (only show if needed) -->
-	{#if games.length > visibleCards}
-		{#if canScrollLeft}
+	{#if games.length > 0}
+		{#if hasLeftScroll}
 			<button
 				transition:blur
-				class="bg-background/50 hover:bg-foreground hover:text-background text-foreground absolute top-1/2 left-0 ml-1 -translate-y-1/2 transform rounded-full p-1 backdrop-blur-xl transition"
-				onclick={scrollLeft}
+				class="bg-background/50 hover:bg-foreground hover:text-background text-foreground absolute top-1/2 left-0 z-20 ml-1 -translate-y-1/2 transform rounded-full p-1 shadow-xl backdrop-blur-xl transition"
+				onclick={() => containerRef.scrollBy({ left: 2 * -cardWidth, behavior: "smooth" })}
 			>
 				<ChevronLeft size={24} />
 			</button>
 		{/if}
 
-		{#if canScrollRight}
+		{#if hasRightScroll}
 			<button
 				transition:blur
-				class="bg-background/50 hover:bg-foreground hover:text-background text-foreground absolute top-1/2 right-0 mr-1 -translate-y-1/2 transform rounded-full p-1 backdrop-blur-xl transition"
-				onclick={scrollRight}
+				class="bg-background/50 hover:bg-foreground hover:text-background text-foreground absolute top-1/2 right-0 z-20 mr-1 -translate-y-1/2 transform rounded-full p-1 shadow-xl backdrop-blur-xl transition"
+				onclick={() => containerRef.scrollBy({ left: 2 * cardWidth, behavior: "smooth" })}
 			>
 				<ChevronRight size={24} />
 			</button>
