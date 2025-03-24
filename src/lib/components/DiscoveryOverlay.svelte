@@ -192,7 +192,7 @@
 	<div class="mask-fade no-scrollbar relative h-full w-full overflow-y-auto p-4" onclick={closeDiscoveryOnEmptyClick}>
 		{#if isLoading && games.length === 0}
 			<div class="flex h-4/5 items-center justify-center gap-4">
-				<LoaderCircle class="animate-spin opacity-75" size={50} strokeWidth={2.5} />
+				<LoaderCircle class="animate-spin opacity-75" size={50} strokeWidth={2.25} />
 			</div>
 		{:else if games.length === 0 && !isLoading}
 			<div class="text-muted-foreground flex h-4/5 items-center justify-center gap-4">
