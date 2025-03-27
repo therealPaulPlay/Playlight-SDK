@@ -107,7 +107,7 @@
 			{#if hasLeftScroll}
 				<button
 					transition:blur
-					class="bg-background/85 hover:bg-foreground hover:text-background text-foreground absolute top-1/2 left-2 z-20 -translate-y-1/2 transform border p-1 shadow-xl backdrop-blur-xl transition"
+					class="bg-background/85 hover:bg-foreground hover:text-background text-foreground absolute top-1/2 left-2 z-20 -translate-y-1/2 transform border p-1 shadow-xl backdrop-blur-xl transition max-sm:hidden"
 					onclick={() => containerRef.scrollBy({ left: 2 * -cardWidth, behavior: "smooth" })}
 				>
 					<ChevronLeft size={22} strokeWidth={2.25} />
@@ -117,7 +117,7 @@
 			{#if hasRightScroll}
 				<button
 					transition:blur
-					class="bg-background/85 hover:bg-foreground hover:text-background text-foreground absolute top-1/2 right-2 z-20 -translate-y-1/2 transform border p-1 shadow-xl backdrop-blur-xl transition"
+					class="bg-background/85 hover:bg-foreground hover:text-background text-foreground absolute top-1/2 right-2 z-20 -translate-y-1/2 transform border p-1 shadow-xl backdrop-blur-xl transition max-sm:hidden"
 					onclick={() => containerRef.scrollBy({ left: 2 * cardWidth, behavior: "smooth" })}
 				>
 					<ChevronRight size={22} strokeWidth={2.25} />

@@ -53,25 +53,25 @@
 		easing: elasticOut,
 		start: 0.95,
 	}}
-	class="flex w-full flex-col py-2"
+	class="flex w-full flex-col"
 >
 	<!-- Interactive title that serves as the dropdown trigger -->
-	<h1 class="mb-0! py-2 text-center text-2xl font-bold text-white drop-shadow-xl lg:text-4xl">
+	<h1 class="mb-0! text-center text-2xl font-bold text-white drop-shadow-xl lg:text-4xl">
 		<span>{currentPhrase}</span>
 		<!-- Interactive category dropdown trigger -->
 		<button
 			bind:this={titleRef}
-			class="group mx-1 inline-flex cursor-pointer items-center bg-white px-3 py-1 text-background transition hover:rotate-5"
+			class="group text-background mx-1 inline-flex cursor-pointer items-center bg-white px-3 py-1 transition hover:rotate-5"
 			onclick={() => {
 				searchTerm = "";
 				isOpen = !isOpen;
 			}}
 		>
-			<span class="truncate max-w-[40vw] text-2xl font-bold text-background lg:text-4xl">{displayCategory}</span>
+			<span class="text-background max-w-[40vw] truncate text-2xl font-bold lg:text-4xl">{displayCategory}</span>
 			<ChevronDown
 				size={25}
 				strokeWidth={3}
-				class="mt-1 ml-1 text-background {isOpen ? 'rotate-180 transform' : ''} transition-transform duration-200"
+				class="text-background mt-1 ml-1 {isOpen ? 'rotate-180 transform' : ''} transition-transform duration-200"
 			/>
 		</button>
 		<span>games?</span>
@@ -81,7 +81,7 @@
 	{#if isOpen}
 		<div
 			bind:this={dropdownRef}
-			class="bg-background/85 fixed left-1/2 z-50 mt-24 w-30 w-full max-w-xs -translate-x-1/2 transform border shadow-lg backdrop-blur-xl"
+			class="bg-background/85 fixed left-1/2 z-50 mt-22 w-30 w-full max-w-xs -translate-x-1/2 transform border shadow-lg backdrop-blur-xl"
 			transition:fly={{ y: -5, duration: 250 }}
 		>
 			<!-- Search input at the top of dropdown -->
@@ -111,7 +111,7 @@
 							<button
 								class="w-full cursor-pointer px-4 py-2 text-left transition-colors {selectedCategory != category
 									? 'hover:bg-muted-foreground/20'
-									: ''} {selectedCategory == category ? 'bg-white text-background' : 'text-white'}"
+									: ''} {selectedCategory == category ? 'text-background bg-white' : 'text-white'}"
 								onclick={() => {
 									selectedCategory = category;
 									isOpen = false;

@@ -156,11 +156,15 @@
 >
 	<!-- Header -->
 	<div class="pointer-events-none ml-2 flex items-center justify-between p-4">
-		<img alt="logo" src={$projectUrl + "/static/images/logo-white-small.png"} class="w-50 pointer-events-none" />
-		<div class="mt-4 mr-2 flex items-center justify-evenly gap-8 overflow-hidden md:mr-4">
+		<img
+			alt="logo"
+			src={$projectUrl + "/static/images/logo-white-small.png"}
+			class="pointer-events-none w-50 max-sm:w-40"
+		/>
+		<div class="mt-4 mr-2 flex items-center justify-evenly gap-8 overflow-hidden max-sm:mt-3.5 sm:mr-4">
 			{#if showIntentToggle}
 				<button
-					class="cursor-pointer truncate text-sm text-nowrap opacity-50 transition hover:opacity-25 max-md:hidden"
+					class="cursor-pointer truncate text-sm text-nowrap opacity-50 transition hover:opacity-25 max-sm:hidden"
 					onclick={() => {
 						localStorage.getItem("playlight_exit_intent_disabled_by_user")
 							? localStorage.removeItem("playlight_exit_intent_disabled_by_user")
@@ -169,7 +173,7 @@
 					}}
 				>
 					<p class="bg-background/50 text-primary p-1 px-2 text-sm">
-						{exitIntentEnabled ? "Don't show on exit" : "Do show on exit"}
+						{exitIntentEnabled ? "Don't show on exit" : "Show on exit again"}
 					</p>
 				</button>
 			{/if}
@@ -180,7 +184,7 @@
 	</div>
 
 	<!-- Category selector -->
-	<div class="mx-auto p-2 px-5">
+	<div class="mx-auto px-5 py-6 max-sm:py-1">
 		<Navigation {categories} bind:selectedCategory />
 	</div>
 
@@ -224,7 +228,7 @@
 		target="_blank"
 		class="text-muted-foreground fixed right-4 bottom-4 flex items-center gap-1 text-sm transition hover:text-white"
 	>
-		Join Playlight <ExternalLink size={14} />
+		Game dev? Join Playlight <ExternalLink size={14} />
 	</a>
 </div>
 

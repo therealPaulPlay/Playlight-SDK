@@ -2,6 +2,7 @@
 	import { slide } from "svelte/transition";
 	import { playSound } from "../utils/playSound.js";
 	import { projectUrl } from "../store.js";
+	import { Info } from "lucide-svelte";
 
 	let { game, onClick, compact = false } = $props();
 	let isHovered = $state(false);
@@ -117,20 +118,6 @@
 		}}
 	/>
 
-	{#if isTouchDevice}
-		<button
-			class="bg-foreground text-background hover:bg-foreground/90 absolute right-4 bottom-4 z-15 flex items-center justify-center rounded-sm px-3 py-1 font-bold uppercase transition-all"
-			class:opacity-0={isHovered}
-			onclick={() => {
-				e.stopPropagation();
-				onClick?.(game.id);
-				window.open("https://" + game.domain, "_blank", "noopener");
-			}}
-		>
-			Play
-		</button>
-	{/if}
-
 	{#if isHovered}
 		<div
 			transition:slide
@@ -142,7 +129,19 @@
 					{game.description || "No description."}
 				</p>
 			</div>
-			<div class="fade-mask bg-background/75 pointer-events-none absolute right-0 bottom-0 left-0 h-8"></div>
+			{#if isTouchDevice}
+				<div
+					class="bg-background/25 text-muted-foreground z-12 flex items-center justify-center gap-1 border-t p-1 px-2 text-sm"
+				>
+					<Info size={16} />
+					<p class="text-muted-foreground text-sm">Tap again to open</p>
+				</div>
+			{/if}
+			<div
+				class="fade-mask bg-background/75 pointer-events-none absolute right-0 {isTouchDevice
+					? 'bottom-7'
+					: 'bottom-0'} left-0 h-8"
+			></div>
 		</div>
 	{/if}
 
