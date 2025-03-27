@@ -55,6 +55,9 @@
 
 /* Form element styles - these will affect ALL form elements at ANY depth */
 .playlight-sdk-container input,
+.playlight-sdk-container input[type="text"],
+.playlight-sdk-container input[type="email"],
+.playlight-sdk-container input[type="password"],
 .playlight-sdk-container input:focus,
 .playlight-sdk-container input:hover,
 .playlight-sdk-container input:active,
@@ -69,6 +72,7 @@
   appearance: revert;
   background: none;
   font-size: 1rem;
+  text-align: start;
 }
 
 /* List styles - these will affect ALL lists at ANY depth */
