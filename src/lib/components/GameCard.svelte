@@ -133,7 +133,7 @@
 				<div
 					class="bg-background/25 text-muted-foreground z-12 flex items-center justify-center gap-1 border-t p-1 px-2 text-sm"
 				>
-					<Info size={16} />
+					<Info size={15} />
 					<p class="text-muted-foreground text-sm">Tap again to open</p>
 				</div>
 			{/if}
