@@ -15,8 +15,7 @@
 		onclick={() => {
 			onClick?.();
 		}}
-		id="floating playlight button"
-		aria-label="Open Playlight Discovery"
+		aria-label="open the game discovery"
 	>
 		<p class="z-2 flex items-center overflow-hidden">
 			<Gamepad
@@ -24,7 +23,7 @@
 				strokeWidth={1.75}
 				class="z-2 mr-2 transform transition-all duration-300 group-hover:rotate-12"
 			/>
-			<span class="mr-0.25 inline-block font-bold text-md">More Games</span>
+			<span class="text-md mr-0.25 inline-block font-bold">More Games</span>
 		</p>
 
 		<!-- Simple border bottom animation -->
