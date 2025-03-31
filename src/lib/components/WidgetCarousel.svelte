@@ -64,7 +64,7 @@
 </script>
 
 <div class="playlight-sdk-container">
-	<div class="h-full w-full px-3">
+	<div class="h-full w-full">
 		<!-- Carousel -->
 		<div
 			bind:this={containerRef}
@@ -87,7 +87,7 @@
 
 				<!-- View more card -->
 				<div
-					class="bg-background/85 my-auto mr-3 ml-2 flex min-w-40 snap-center flex-wrap items-center justify-center gap-4 p-4 pb-6 shadow-xl backdrop-blur-xl"
+					class="bg-background/85 my-auto mr-3 mb-30 ml-2 flex min-w-40 snap-center flex-wrap items-center justify-center gap-4 p-4 pb-6 shadow-xl backdrop-blur-xl"
 				>
 					<p class="text-foreground w-full text-center text-lg font-semibold">Fancy more?</p>
 					<Button
@@ -107,7 +107,7 @@
 			{#if hasLeftScroll}
 				<button
 					transition:blur
-					class="bg-background/85 hover:bg-foreground hover:text-background text-foreground absolute top-1/2 left-2 z-20 -translate-y-1/2 transform border p-1 shadow-xl backdrop-blur-xl transition max-sm:hidden"
+					class="bg-background/85 hover:bg-foreground hover:text-background text-foreground absolute top-4/9 left-2 z-20 -translate-y-1/2 transform border p-1 shadow-xl backdrop-blur-xl transition max-sm:hidden"
 					onclick={() => containerRef.scrollBy({ left: 2 * -cardWidth, behavior: "smooth" })}
 				>
 					<ChevronLeft size={22} strokeWidth={2.25} />
@@ -117,7 +117,7 @@
 			{#if hasRightScroll}
 				<button
 					transition:blur
-					class="bg-background/85 hover:bg-foreground hover:text-background text-foreground absolute top-1/2 right-2 z-20 -translate-y-1/2 transform border p-1 shadow-xl backdrop-blur-xl transition max-sm:hidden"
+					class="bg-background/85 hover:bg-foreground hover:text-background text-foreground absolute top-4/9 right-2 z-20 -translate-y-1/2 transform border p-1 shadow-xl backdrop-blur-xl transition max-sm:hidden"
 					onclick={() => containerRef.scrollBy({ left: 2 * cardWidth, behavior: "smooth" })}
 				>
 					<ChevronRight size={22} strokeWidth={2.25} />
