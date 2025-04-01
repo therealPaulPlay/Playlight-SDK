@@ -6,12 +6,11 @@
 	import api from "../api.js";
 	import Navigation from "./Navigation.svelte";
 	import { onMount } from "svelte";
-	import { discoveryOpen, projectUrl } from "../store.js";
+	import { discoveryOpen, exitIntentDisabledByUser, projectUrl } from "../store.js";
 	import GameCategorySeperator from "./GameCategorySeperator.svelte";
 	import CurrentGameDisplay from "./CurrentGameDisplay.svelte";
 
 	let { showIntentToggle = true } = $props();
-	let exitIntentEnabled = $state(true);
 
 	let selectedCategory = $state();
 	let isLoading = $state(true);
@@ -27,11 +26,8 @@
 	let fetchAllGames = $state(false);
 	let observer;
 
-	// Initialization
+	// Initialization - set up scroll observer
 	onMount(() => {
-		exitIntentEnabled = !Boolean(localStorage.getItem("playlight_exit_intent_disabled_by_user"));
-
-		// Setup scroll observer
 		observer = new IntersectionObserver(
 			(entries) => {
 				if (entries[0].isIntersecting && hasMoreGames && !isLoading && !isLoadingMore) {
@@ -67,9 +63,7 @@
 
 	// Observe loading element when it becomes available
 	$effect(() => {
-		if (loadingRef && observer) {
-			observer.observe(loadingRef);
-		}
+		if (loadingRef && observer) observer.observe(loadingRef);
 	});
 
 	async function fetchCategories() {
@@ -162,20 +156,18 @@
 			class="pointer-events-none w-50 max-sm:w-40"
 		/>
 		<div class="mt-4 mr-2 flex items-center justify-evenly gap-8 overflow-hidden max-sm:mt-3.5 sm:mr-4">
-			{#if showIntentToggle}
-				<button
-					class="cursor-pointer truncate text-sm text-nowrap opacity-50 transition hover:opacity-25 max-sm:hidden"
-					onclick={() => {
-						localStorage.getItem("playlight_exit_intent_disabled_by_user")
-							? localStorage.removeItem("playlight_exit_intent_disabled_by_user")
-							: localStorage.setItem("playlight_exit_intent_disabled_by_user", true);
-						exitIntentEnabled = !exitIntentEnabled;
-					}}
-				>
-					<p class="bg-background/50 text-primary p-1 px-2 text-sm">
-						{exitIntentEnabled ? "Don't show on exit" : "Show on exit again"}
-					</p>
-				</button>
+			{#if showIntentToggle && !$exitIntentDisabledByUser}
+				<div transition:blur>
+					<button
+						class="bg-background/50 text-primary cursor-pointer truncate p-1 px-2 text-sm font-normal text-nowrap opacity-50 transition hover:opacity-25 max-sm:hidden"
+						onclick={() => {
+							$exitIntentDisabledByUser = true;
+							$discoveryOpen = false;
+						}}
+					>
+						Don't show on exit
+					</button>
+				</div>
 			{/if}
 			<button class="cursor-pointer text-white transition hover:opacity-50" onclick={() => ($discoveryOpen = false)}>
 				<X size={24} strokeWidth={2.5} />

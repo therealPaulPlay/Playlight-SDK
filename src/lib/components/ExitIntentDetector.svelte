@@ -1,6 +1,6 @@
 <script>
+	import { exitIntentDisabledByUser } from "../store.js";
 	let { enabled = true, onIntent } = $props();
-
 	let didInteract = false;
 	let barElement;
 	let lastMouseInteraction;
@@ -12,7 +12,7 @@
 	}
 
 	function handleBarTrigger() {
-		if (!enabled || localStorage.getItem("playlight_exit_intent_disabled_by_user")) return;
+		if (!enabled || $exitIntentDisabledByUser) return;
 		if (!didInteract) return;
 
 		// Trigger exit intent

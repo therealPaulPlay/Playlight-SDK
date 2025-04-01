@@ -107,20 +107,20 @@
 			{#if hasLeftScroll}
 				<button
 					transition:blur
-					class="bg-background/85 hover:bg-foreground hover:text-background text-foreground absolute top-4/9 left-2 z-20 -translate-y-1/2 transform border p-1 shadow-xl backdrop-blur-xl transition max-sm:hidden"
+					class="bg-background/85 hover:bg-foreground hover:text-background text-foreground absolute top-4/9 left-2 z-20 -translate-y-1/2 transform border p-1 py-4 shadow-xl backdrop-blur-xl transition max-sm:hidden"
 					onclick={() => containerRef.scrollBy({ left: 2 * -cardWidth, behavior: "smooth" })}
 				>
-					<ChevronLeft size={22} strokeWidth={2.25} />
+					<ChevronLeft size={22} strokeWidth={2.75} />
 				</button>
 			{/if}
 
 			{#if hasRightScroll}
 				<button
 					transition:blur
-					class="bg-background/85 hover:bg-foreground hover:text-background text-foreground absolute top-4/9 right-2 z-20 -translate-y-1/2 transform border p-1 shadow-xl backdrop-blur-xl transition max-sm:hidden"
+					class="bg-background/85 hover:bg-foreground hover:text-background text-foreground absolute top-4/9 right-2 z-20 -translate-y-1/2 transform border p-1 py-4 shadow-xl backdrop-blur-xl transition max-sm:hidden"
 					onclick={() => containerRef.scrollBy({ left: 2 * cardWidth, behavior: "smooth" })}
 				>
-					<ChevronRight size={22} strokeWidth={2.25} />
+					<ChevronRight size={22} strokeWidth={2.75} />
 				</button>
 			{/if}
 		{/if}
@@ -131,20 +131,20 @@
 	.fade-edges-mask {
 		mask-image: linear-gradient(
 			to right,
-			transparent 0%,
+			rgba(0, 0, 0, 0.05),
 			rgba(0, 0, 0, 0.326) 2%,
-			rgba(0, 0, 0, 0.554) 4%,
-			rgba(0, 0, 0, 0.74) 6%,
-			rgba(0, 0, 0, 0.86) 8%,
-			rgba(0, 0, 0, 0.954) 10%,
-			black 12%,
-			black 88%,
-			rgba(0, 0, 0, 0.954) 90%,
-			rgba(0, 0, 0, 0.86) 92%,
-			rgba(0, 0, 0, 0.74) 94%,
-			rgba(0, 0, 0, 0.554) 96%,
+			rgba(0, 0, 0, 0.554) 3.5%,
+			rgba(0, 0, 0, 0.74) 5%,
+			rgba(0, 0, 0, 0.86) 6.5%,
+			rgba(0, 0, 0, 0.954) 8%,
+			black 9%,
+			black 91%,
+			rgba(0, 0, 0, 0.954) 92%,
+			rgba(0, 0, 0, 0.86) 93.5%,
+			rgba(0, 0, 0, 0.74) 95%,
+			rgba(0, 0, 0, 0.554) 96.5%,
 			rgba(0, 0, 0, 0.326) 98%,
-			transparent 100%
+			rgba(0, 0, 0, 0.05)
 		);
 	}
 
