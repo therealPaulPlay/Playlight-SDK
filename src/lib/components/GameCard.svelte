@@ -3,8 +3,9 @@
 	import { playSound } from "../utils/playSound.js";
 	import { projectUrl } from "../store.js";
 	import { Info } from "lucide-svelte";
+	import api from "../api.js";
 
-	let { game, onClick, compact = false } = $props();
+	let { game, compact = false } = $props();
 	let isHovered = $state(false);
 	let isFullyHovered = $state(false);
 	let hoverTimeout;
@@ -78,8 +79,8 @@
 	tabindex="0"
 	onclick={() => {
 		if (isTouchDevice && !isFullyHovered) return;
-		onClick?.(game.id);
-		window.open("https://" + game.domain, "_blank", "noopener");
+		api.trackClick(game.id);
+		window.open("https://" + game.domain + "?utm_source=playlight", "_blank", "noopener");
 	}}
 >
 	{#if isNewGame(game?.created_at)}

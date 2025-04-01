@@ -81,7 +81,7 @@
 			{:else}
 				{#each games as game, i}
 					<div class="snap-center px-2" bind:clientWidth={cardWidth}>
-						<GameCard {game} compact={true} onClick={() => api.trackClick(game.id)} />
+						<GameCard {game} compact={true} />
 					</div>
 				{/each}
 

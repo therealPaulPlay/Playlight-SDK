@@ -201,7 +201,7 @@
 					{#if i == firstGameFromAnotherCategoryIndex}
 						<GameCategorySeperator />
 					{/if}
-					<GameCard {game} onClick={() => api.trackClick(game.id)} />
+					<GameCard {game} />
 				{/each}
 
 				<!-- Loading indicator -->
