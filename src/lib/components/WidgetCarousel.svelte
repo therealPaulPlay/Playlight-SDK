@@ -159,10 +159,4 @@
 	.no-scrollbar {
 		scrollbar-width: none;
 	}
-
-	.playlight-sdk-container {
-		height: 100%;
-		width: 100%;
-		overflow: hidden;
-	}
 </style>

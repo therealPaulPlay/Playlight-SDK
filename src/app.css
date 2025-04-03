@@ -19,7 +19,8 @@
   color: white;
   background-color: transparent;
   isolation: isolate;
-  text-size-adjust: 100%;
+  width: 100%;
+  height: 100%;
 }
 
 .playlight-sdk-container p {
