@@ -18,11 +18,11 @@
 	// Computed values
 	let hasLeftScroll = $state(false);
 	let hasRightScroll = $state(true);
+	let maskStyle = $state("");
 
 	onMount(async () => {
-		categories = await api.getCategories(); // Fetch categories first
+		categories = await api.getCategories();
 
-		// Select a default category
 		if (categories?.length > 0) {
 			const currentGame = await api.getCurrentGameInfo();
 			selectedCategory =
@@ -31,8 +31,35 @@
 					: categories?.[categories?.length - 1];
 		}
 
-		await fetchGames(); // Fetch games with selected category
+		await fetchGames();
+		if (containerRef) {
+			const maxScroll = containerRef.scrollWidth - containerRef.clientWidth;
+			updateMask(containerRef.scrollLeft, maxScroll - containerRef.scrollLeft);
+		}
 	});
+
+	function updateMask(scrollLeft, remainingScroll) {
+		const leftFactor = Math.min(scrollLeft / 50, 1);
+		const rightFactor = Math.min(remainingScroll / 50, 1);
+
+		maskStyle = `mask-image: linear-gradient(
+			to right,
+			rgba(0, 0, 0, ${1 - 0.95 * leftFactor}) 0%,
+			rgba(0, 0, 0, ${1 - 0.674 * leftFactor}) 2%,
+			rgba(0, 0, 0, ${1 - 0.446 * leftFactor}) 3.5%,
+			rgba(0, 0, 0, ${1 - 0.26 * leftFactor}) 5%,
+			rgba(0, 0, 0, ${1 - 0.14 * leftFactor}) 6.5%,
+			rgba(0, 0, 0, ${1 - 0.046 * leftFactor}) 8%,
+			black 9%,
+			black 91%,
+			rgba(0, 0, 0, ${0.954 * rightFactor + (1 - rightFactor)}) 92%,
+			rgba(0, 0, 0, ${0.86 * rightFactor + (1 - rightFactor)}) 93.5%,
+			rgba(0, 0, 0, ${0.74 * rightFactor + (1 - rightFactor)}) 95%,
+			rgba(0, 0, 0, ${0.554 * rightFactor + (1 - rightFactor)}) 96.5%,
+			rgba(0, 0, 0, ${0.326 * rightFactor + (1 - rightFactor)}) 98%,
+			rgba(0, 0, 0, ${0.05 * rightFactor + (1 - rightFactor)})
+		)`;
+	}
 
 	// Fetch games from API
 	async function fetchGames() {
@@ -69,10 +96,13 @@
 		<div
 			bind:this={containerRef}
 			onscroll={(e) => {
-				hasLeftScroll = e.target.scrollLeft > 20;
-				hasRightScroll = e.target.scrollLeft < e.target.scrollWidth - e.target.clientWidth - 20;
+				const el = e.target;
+				hasLeftScroll = el.scrollLeft > 20;
+				hasRightScroll = el.scrollLeft < el.scrollWidth - el.clientWidth - 20;
+				updateMask(el.scrollLeft, el.scrollWidth - el.clientWidth - el.scrollLeft);
 			}}
-			class="fade-edges-mask no-scrollbar relative flex h-full w-full snap-x gap-2 overflow-x-auto"
+			class="dynamic-mask no-scrollbar relative flex h-full w-full snap-x gap-2 overflow-x-auto"
+			style={maskStyle}
 		>
 			{#if isLoading}
 				<div class="flex h-62 w-full items-center justify-center">
@@ -128,26 +158,6 @@
 </div>
 
 <style>
-	.fade-edges-mask {
-		mask-image: linear-gradient(
-			to right,
-			rgba(0, 0, 0, 0.05),
-			rgba(0, 0, 0, 0.326) 2%,
-			rgba(0, 0, 0, 0.554) 3.5%,
-			rgba(0, 0, 0, 0.74) 5%,
-			rgba(0, 0, 0, 0.86) 6.5%,
-			rgba(0, 0, 0, 0.954) 8%,
-			black 9%,
-			black 91%,
-			rgba(0, 0, 0, 0.954) 92%,
-			rgba(0, 0, 0, 0.86) 93.5%,
-			rgba(0, 0, 0, 0.74) 95%,
-			rgba(0, 0, 0, 0.554) 96.5%,
-			rgba(0, 0, 0, 0.326) 98%,
-			rgba(0, 0, 0, 0.05)
-		);
-	}
-
 	.no-scrollbar {
 		scrollbar-width: none;
 	}
