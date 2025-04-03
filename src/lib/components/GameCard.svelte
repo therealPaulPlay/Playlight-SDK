@@ -74,11 +74,13 @@
 	onfocus={handleMouseEnter}
 	onmouseleave={handleMouseLeave}
 	onblur={handleMouseLeave}
-	ontouchstart={handleMouseEnter}
 	role="button"
 	tabindex="0"
 	onclick={() => {
-		if (isTouchDevice && !isFullyHovered) return;
+		if (isTouchDevice && !isFullyHovered) {
+			handleMouseEnter();
+			return;
+		}
 		api.trackClick(game.id);
 		window.open("https://" + game.domain + "?utm_source=playlight", "_blank", "noopener");
 	}}
