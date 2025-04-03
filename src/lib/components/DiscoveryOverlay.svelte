@@ -185,7 +185,7 @@
 
 	<!-- Game grid -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div class="mask-fade no-scrollbar relative h-full w-full overflow-y-auto p-4" onclick={closeDiscoveryOnEmptyClick}>
+	<div class="mask-fade relative h-full w-full overflow-y-auto p-4" onclick={closeDiscoveryOnEmptyClick}>
 		{#if isLoading && games.length === 0}
 			<div class="flex h-4/5 items-center justify-center gap-4">
 				<LoaderCircle class="animate-spin opacity-75" size={50} strokeWidth={2.25} />
@@ -249,9 +249,5 @@
 			rgba(0, 0, 0, 0.326) 99%,
 			transparent 100%
 		);
-	}
-
-	.no-scrollbar {
-		scrollbar-width: none;
 	}
 </style>

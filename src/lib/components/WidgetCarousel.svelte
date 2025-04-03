@@ -100,7 +100,7 @@
 			hasRightScroll = el.scrollLeft < el.scrollWidth - el.clientWidth - 20;
 			updateMask(el.scrollLeft, el.scrollWidth - el.clientWidth - el.scrollLeft);
 		}}
-		class="no-scrollbar relative flex h-full w-full snap-x gap-2 overflow-x-auto"
+		class="relative flex h-full w-full snap-x gap-2 overflow-x-auto"
 		style={maskStyle}
 	>
 		{#if isLoading}
@@ -154,9 +154,3 @@
 		{/if}
 	{/if}
 </div>
-
-<style>
-	.no-scrollbar {
-		scrollbar-width: none;
-	}
-</style>
