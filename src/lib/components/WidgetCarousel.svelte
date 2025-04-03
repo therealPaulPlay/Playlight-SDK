@@ -91,70 +91,68 @@
 </script>
 
 <div class="playlight-sdk-container">
-	<div class="h-full w-full">
-		<!-- Carousel -->
-		<div
-			bind:this={containerRef}
-			onscroll={(e) => {
-				const el = e.target;
-				hasLeftScroll = el.scrollLeft > 20;
-				hasRightScroll = el.scrollLeft < el.scrollWidth - el.clientWidth - 20;
-				updateMask(el.scrollLeft, el.scrollWidth - el.clientWidth - el.scrollLeft);
-			}}
-			class="dynamic-mask no-scrollbar relative flex h-full w-full snap-x gap-2 overflow-x-auto"
-			style={maskStyle}
-		>
-			{#if isLoading}
-				<div class="flex h-62 w-full items-center justify-center">
-					<LoaderCircle class="animate-spin opacity-75" size={30} strokeWidth={2.5} />
+	<!-- Carousel -->
+	<div
+		bind:this={containerRef}
+		onscroll={(e) => {
+			const el = e.target;
+			hasLeftScroll = el.scrollLeft > 20;
+			hasRightScroll = el.scrollLeft < el.scrollWidth - el.clientWidth - 20;
+			updateMask(el.scrollLeft, el.scrollWidth - el.clientWidth - el.scrollLeft);
+		}}
+		class="no-scrollbar relative flex h-full w-full snap-x gap-2 overflow-x-auto"
+		style={maskStyle}
+	>
+		{#if isLoading}
+			<div class="flex h-62 w-full items-center justify-center">
+				<LoaderCircle class="animate-spin opacity-75" size={30} strokeWidth={2.5} />
+			</div>
+		{:else}
+			{#each games as game, i}
+				<div class="snap-center px-2" bind:clientWidth={cardWidth}>
+					<GameCard {game} compact={true} />
 				</div>
-			{:else}
-				{#each games as game, i}
-					<div class="snap-center px-2" bind:clientWidth={cardWidth}>
-						<GameCard {game} compact={true} />
-					</div>
-				{/each}
+			{/each}
 
-				<!-- View more card -->
-				<div
-					class="bg-background/85 my-auto mr-3 mb-30 ml-2 flex min-w-40 snap-center flex-wrap items-center justify-center gap-4 p-4 pb-6 shadow-xl backdrop-blur-xl"
+			<!-- View more card -->
+			<div
+				class="bg-background/85 my-auto mr-3 mb-30 ml-2 flex min-w-40 snap-center flex-wrap items-center justify-center gap-4 p-4 pb-6 shadow-xl backdrop-blur-xl"
+			>
+				<p class="text-foreground w-full text-center text-lg font-semibold">Fancy more?</p>
+				<Button
+					onclick={() => {
+						$discoveryOpen = true;
+						api.trackOpen();
+					}}
 				>
-					<p class="text-foreground w-full text-center text-lg font-semibold">Fancy more?</p>
-					<Button
-						onclick={() => {
-							$discoveryOpen = true;
-							api.trackOpen();
-						}}
-					>
-						See all
-					</Button>
-				</div>
-			{/if}
-		</div>
-
-		<!-- Navigation arrows (only show if needed) -->
-		{#if games.length > 0}
-			{#if hasLeftScroll}
-				<button
-					transition:blur
-					class="bg-background/85 hover:bg-foreground hover:text-background text-foreground absolute top-4/9 left-2 z-20 -translate-y-1/2 transform border p-1 py-4 shadow-xl backdrop-blur-xl transition max-sm:hidden"
-					onclick={() => containerRef.scrollBy({ left: 2 * -cardWidth, behavior: "smooth" })}
-				>
-					<ChevronLeft size={22} strokeWidth={2.75} />
-				</button>
-			{/if}
-
-			{#if hasRightScroll}
-				<button
-					transition:blur
-					class="bg-background/85 hover:bg-foreground hover:text-background text-foreground absolute top-4/9 right-2 z-20 -translate-y-1/2 transform border p-1 py-4 shadow-xl backdrop-blur-xl transition max-sm:hidden"
-					onclick={() => containerRef.scrollBy({ left: 2 * cardWidth, behavior: "smooth" })}
-				>
-					<ChevronRight size={22} strokeWidth={2.75} />
-				</button>
-			{/if}
+					See all
+				</Button>
+			</div>
 		{/if}
 	</div>
+
+	<!-- Navigation arrows (only show if needed) -->
+	{#if games.length > 0}
+		{#if hasLeftScroll}
+			<button
+				transition:blur
+				class="bg-background/85 hover:bg-foreground hover:text-background text-foreground absolute top-4/9 left-2 z-20 -translate-y-1/2 transform border p-1 py-4 shadow-xl backdrop-blur-xl transition max-sm:hidden"
+				onclick={() => containerRef.scrollBy({ left: 2 * -cardWidth, behavior: "smooth" })}
+			>
+				<ChevronLeft size={22} strokeWidth={2.75} />
+			</button>
+		{/if}
+
+		{#if hasRightScroll}
+			<button
+				transition:blur
+				class="bg-background/85 hover:bg-foreground hover:text-background text-foreground absolute top-4/9 right-2 z-20 -translate-y-1/2 transform border p-1 py-4 shadow-xl backdrop-blur-xl transition max-sm:hidden"
+				onclick={() => containerRef.scrollBy({ left: 2 * cardWidth, behavior: "smooth" })}
+			>
+				<ChevronRight size={22} strokeWidth={2.75} />
+			</button>
+		{/if}
+	{/if}
 </div>
 
 <style>
@@ -165,5 +163,6 @@
 	.playlight-sdk-container {
 		height: 100%;
 		width: 100%;
+		overflow: hidden;
 	}
 </style>
