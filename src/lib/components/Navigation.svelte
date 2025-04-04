@@ -4,7 +4,7 @@
 	import { elasticOut } from "svelte/easing";
 	import { flip } from "svelte/animate";
 	import { Search, ChevronDown } from "lucide-svelte";
-	let { categories = [], selectedCategory = $bindable() } = $props();
+	let { categories = [], selectedCategory = $bindable(), onCategoryChange } = $props();
 
 	// Local state for the component
 	let isOpen = $state(false);
@@ -34,17 +34,17 @@
 		lastRandomIndex = randomIndex;
 	}
 
-	// Close dropdown when clicking outside
-	function handleClickOutside(event) {
-		if (dropdownRef && !dropdownRef.contains(event.target) && titleRef && !titleRef.contains(event.target)) {
-			isOpen = false;
-		}
-	}
-
 	onMount(updateRandomPhrase);
 </script>
 
-<svelte:document onclick={handleClickOutside} />
+<svelte:document
+	onclick={(event) => {
+		// Close dropdown on outside click
+		if (dropdownRef && !dropdownRef.contains(event.target) && titleRef && !titleRef.contains(event.target)) {
+			isOpen = false;
+		}
+	}}
+/>
 
 <div
 	transition:scale={{
@@ -115,6 +115,7 @@
 								onclick={() => {
 									selectedCategory = category;
 									isOpen = false;
+									onCategoryChange?.();
 								}}
 								animate:flip={{ duration: 150 }}
 							>

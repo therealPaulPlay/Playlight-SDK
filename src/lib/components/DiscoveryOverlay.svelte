@@ -13,7 +13,7 @@
 	let { showIntentToggle = true } = $props();
 
 	let selectedCategory = $state();
-	let isLoading = $state(true);
+	let isLoading = $state(false);
 	let isLoadingMore = $state(false);
 
 	let currentGame = $state();
@@ -22,7 +22,7 @@
 
 	let page = $state(1);
 	let hasMoreGames = $state(true);
-	let loadingRef = $state();
+	let bottomDetector = $state();
 	let fetchAllGames = $state(false);
 	let observer;
 
@@ -30,7 +30,7 @@
 	onMount(() => {
 		observer = new IntersectionObserver(
 			(entries) => {
-				if (entries[0].isIntersecting && hasMoreGames && !isLoading && !isLoadingMore) {
+				if (entries[0].isIntersecting && hasMoreGames) {
 					fetchGames();
 				}
 			},
@@ -39,32 +39,25 @@
 		return () => observer?.disconnect();
 	});
 
+	// Observe loading element when it becomes available
+	$effect(() => {
+		if (bottomDetector && observer) observer.observe(bottomDetector);
+	});
+
 	onMount(async () => {
 		currentGame = await api.getCurrentGameInfo();
 		await fetchCategories();
+		await loadNewFeed();
 	});
 
-	// Handle category change
-	$effect(() => {
-		if (!selectedCategory) return;
-
+	async function loadNewFeed() {
 		games = [];
 		page = 1;
 		hasMoreGames = true;
 		fetchAllGames = false;
-		isLoading = true;
-
-		// Delay fetch to prevent rapid requests
-		setTimeout(async () => {
-			await fetchGames();
-			if (games.length < 10) await fetchGames();
-		}, 100);
-	});
-
-	// Observe loading element when it becomes available
-	$effect(() => {
-		if (loadingRef && observer) observer.observe(loadingRef);
-	});
+		await fetchGames();
+		if (games.length < 10) await fetchGames();
+	}
 
 	async function fetchCategories() {
 		categories = await api.getCategories();
@@ -77,27 +70,26 @@
 	}
 
 	async function fetchGames() {
-		if (isLoading && page > 1) return;
-		if (isLoadingMore) return;
-
+		if (isLoading || isLoadingMore) return; // If already fetching, exit
 		try {
 			page === 1 ? (isLoading = true) : (isLoadingMore = true);
 
 			// Get games (null category = all games)
 			const categoryToUse = fetchAllGames ? null : selectedCategory;
 			const result = await api.getSuggestions(categoryToUse, page);
-			const newGames = result?.games || [];
+			const returnedGames = result?.games || [];
 
 			// Filter out duplicates
-			const uniqueGames = newGames.filter((newGame) => !games.some((existingGame) => existingGame.id === newGame.id));
+			const uniqueGames = returnedGames.filter(
+				(newGame) => !games.some((existingGame) => existingGame.id === newGame.id),
+			);
 			games = [...games, ...uniqueGames];
 
-			if (newGames.length < 10) {
+			if (returnedGames.length < 10) {
 				if (!fetchAllGames && selectedCategory) {
-					// Try with all games
 					fetchAllGames = true;
 					page = 1;
-					setTimeout(() => fetchGames(), 100);
+					fetchGames();
 				} else {
 					hasMoreGames = false;
 				}
@@ -110,22 +102,6 @@
 		} finally {
 			isLoading = false;
 			isLoadingMore = false;
-
-			// For Chrome: manually check if element is still in view and should trigger another load
-			if (hasMoreGames && loadingRef) {
-				setTimeout(() => {
-					const rect = loadingRef.getBoundingClientRect();
-					const isVisible =
-						rect.top >= -200 && // Include rootMargin
-						rect.left >= 0 &&
-						rect.bottom <= window.innerHeight + 200 && // Include rootMargin
-						rect.right <= window.innerWidth;
-
-					if (isVisible && !isLoading && !isLoadingMore) {
-						fetchGames();
-					}
-				}, 150);
-			}
 		}
 	}
 
@@ -177,7 +153,7 @@
 
 	<!-- Category selector -->
 	<div class="mx-auto px-5 py-6 max-sm:py-1">
-		<Navigation {categories} bind:selectedCategory />
+		<Navigation {categories} onCategoryChange={loadNewFeed} bind:selectedCategory />
 	</div>
 
 	<!-- Current game display -->
@@ -204,10 +180,12 @@
 					<GameCard {game} />
 				{/each}
 
-				<!-- Loading indicator -->
-				<div bind:this={loadingRef} class="flex h-10 w-full justify-center">
+				<!-- Bottom detector with loading icon -->
+				<div bind:this={bottomDetector} class="flex min-h-10 w-full justify-center">
 					{#if isLoadingMore}
-						<LoaderCircle class="animate-spin opacity-75" size={30} strokeWidth={2.5} />
+						<div class="flex h-30 items-center">
+							<LoaderCircle class="animate-spin opacity-75" size={40} strokeWidth={2.5} />
+						</div>
 					{/if}
 				</div>
 			</div>
