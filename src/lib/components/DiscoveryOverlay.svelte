@@ -135,7 +135,7 @@
 			{#if showIntentToggle && !$exitIntentDisabledByUser}
 				<div transition:blur>
 					<button
-						class="bg-background/50 text-primary cursor-pointer truncate p-1 px-2 text-sm font-normal text-nowrap opacity-50 transition hover:opacity-25 max-sm:hidden"
+						class="bg-background/25 text-muted-foreground cursor-pointer truncate p-1 px-2 text-sm font-normal text-nowrap transition hover:opacity-50 max-sm:hidden"
 						onclick={() => {
 							$exitIntentDisabledByUser = true;
 							$discoveryOpen = false;
