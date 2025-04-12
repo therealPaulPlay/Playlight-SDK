@@ -1,6 +1,5 @@
 <script>
 	import { blur } from "svelte/transition";
-	import { toast } from "svelte-sonner";
 	import { X, ExternalLink, LoaderCircle } from "lucide-svelte";
 	import GameCard from "./GameCard.svelte";
 	import api from "../api.js";
@@ -61,48 +60,39 @@
 
 	async function fetchCategories() {
 		categories = await api.getCategories();
-		if (!selectedCategory && categories?.length > 0) {
-			selectedCategory =
-				currentGame?.category && categories?.includes(currentGame?.category)
-					? currentGame?.category
-					: categories?.[categories?.length - 1];
-		}
+		selectedCategory = currentGame?.category || categories?.[categories?.length - 1];
 	}
 
 	async function fetchGames() {
 		if (isLoading || isLoadingMore) return; // If already fetching, exit
-		try {
-			page === 1 ? (isLoading = true) : (isLoadingMore = true);
+		page === 1 ? (isLoading = true) : (isLoadingMore = true);
 
-			// Get games (null category = all games)
-			const categoryToUse = fetchAllGames ? null : selectedCategory;
-			const result = await api.getSuggestions(categoryToUse, page);
-			const returnedGames = result?.games || [];
+		// Get games (null category = all games)
+		const categoryToUse = fetchAllGames ? null : selectedCategory;
+		const result = await api.getSuggestions(categoryToUse, page);
+		const returnedGames = result?.games || [];
 
-			// Filter out duplicates
-			const uniqueGames = returnedGames.filter(
-				(newGame) => !games.some((existingGame) => existingGame.id === newGame.id),
-			);
-			games = [...games, ...uniqueGames];
+		// Filter out duplicates
+		const uniqueGames = returnedGames.filter(
+			(newGame) => !games.some((existingGame) => existingGame.id === newGame.id),
+		);
+		games = [...games, ...uniqueGames];
 
-			if (returnedGames.length < 10) {
-				if (!fetchAllGames && selectedCategory) {
-					fetchAllGames = true;
-					page = 1;
-					fetchGames();
-				} else {
-					hasMoreGames = false;
-				}
+		if (returnedGames.length < 10) {
+			if (!fetchAllGames && selectedCategory) {
+				fetchAllGames = true;
+				page = 1;
+				fetchGames();
 			} else {
-				page += 1;
+				hasMoreGames = false;
 			}
-		} catch (err) {
-			console.error(err);
-			toast.error("Failed to load games: " + err);
-		} finally {
-			isLoading = false;
-			isLoadingMore = false;
+		} else {
+			page += 1;
 		}
+
+		// Disable loading state
+		isLoading = false;
+		isLoadingMore = false;
 	}
 
 	function closeDiscoveryOnEmptyClick(e) {
@@ -167,8 +157,8 @@
 				<LoaderCircle class="animate-spin opacity-75" size={50} strokeWidth={2.25} />
 			</div>
 		{:else if games.length === 0 && !isLoading}
-			<div class="text-muted-foreground flex h-4/5 items-center justify-center gap-4">
-				<p>No games found that match the filter.</p>
+			<div class="flex h-4/5 items-center justify-center gap-4">
+				<p class="text-white">No games found that match the filter.</p>
 			</div>
 		{:else}
 			<div class="mx-auto flex h-full flex-wrap content-start justify-center gap-10 lg:max-w-4/5">

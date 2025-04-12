@@ -37,8 +37,8 @@
 
 	function handleMouseLeave() {
 		if (isTouchDevice) return;
-		setUnhovered();
 		if (videoElement && videoLoaded) videoElement.pause();
+		setUnhovered();
 	}
 
 	function isNewGame(createdAtString) {
@@ -58,9 +58,7 @@
 <svelte:window ontouchstart={() => (isTouchDevice = true)} />
 <svelte:document
 	ontouchstart={(e) => {
-		if (cardElement && !cardElement.contains(e.target)) {
-			setUnhovered();
-		}
+		if (cardElement && !cardElement.contains(e.target)) setUnhovered();
 	}}
 />
 
@@ -90,7 +88,7 @@
 			class="bg-background absolute top-4 right-4 z-12 px-2 py-0.5 transition-opacity select-none"
 			class:opacity-0={isHovered}
 		>
-			<p class="text-primary font-bold uppercase">New</p>
+			<p class="font-bold text-white uppercase">New</p>
 		</div>
 	{/if}
 
@@ -124,7 +122,7 @@
 	{#if isHovered}
 		<div
 			transition:slide
-			class="bg-background/75 text-foreground absolute right-0 bottom-0 left-0 z-11 flex max-h-1/3 flex-col overflow-hidden backdrop-blur-xl"
+			class="bg-background/75 absolute right-0 bottom-0 left-0 z-11 flex max-h-1/3 flex-col overflow-hidden text-white backdrop-blur-xl"
 		>
 			<div class="h-full w-full overflow-y-auto p-3">
 				<h3 class="mb-2 truncate text-center text-lg font-bold">{game.name}</h3>

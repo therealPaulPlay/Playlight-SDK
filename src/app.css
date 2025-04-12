@@ -113,14 +113,6 @@
     --playlight-destructive: 0 62.8% 30.6%;
     --playlight-destructive-foreground: 60 9.1% 97.8%;
     --playlight-ring: 24 5.7% 82.9%;
-    --playlight-sidebar-background: 240 5.9% 10%;
-    --playlight-sidebar-foreground: 240 4.8% 95.9%;
-    --playlight-sidebar-primary: 224.3 76.3% 48%;
-    --playlight-sidebar-primary-foreground: 0 0% 100%;
-    --playlight-sidebar-accent: 240 3.7% 15.9%;
-    --playlight-sidebar-accent-foreground: 240 4.8% 95.9%;
-    --playlight-sidebar-border: 240 3.7% 15.9%;
-    --playlight-sidebar-ring: 217.2 91.2% 59.8%;
     --playlight-radius: 0rem;
   }
 }
@@ -131,7 +123,7 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-white;
   }
 }
 

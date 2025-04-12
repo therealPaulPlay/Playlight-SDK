@@ -127,7 +127,7 @@
 					logoImageLoaded = true;
 				}}
 			/>
-			<p class="text-foreground max-w-2/3 truncate text-lg font-bold">{currentGame?.name || "Default name"}</p>
+			<p class="text-white max-w-2/3 truncate text-lg font-bold">{currentGame?.name || "Default name"}</p>
 			<div class="mt-0.5 ml-auto flex items-center gap-2">
 				<p class="text-muted-foreground text-sm">{likeCount}</p>
 				<button

@@ -10,7 +10,6 @@
 	// State
 	let isLoading = $state(true);
 	let games = $state([]);
-	let categories = $state([]);
 	let selectedCategory = $state();
 	let containerRef = $state();
 	let cardWidth = $state(0);
@@ -21,17 +20,12 @@
 	let maskStyle = $state("");
 
 	onMount(async () => {
-		categories = await api.getCategories();
-
-		if (categories?.length > 0) {
-			const currentGame = await api.getCurrentGameInfo();
-			selectedCategory =
-				currentGame?.category && categories?.includes(currentGame?.category)
-					? currentGame?.category
-					: categories?.[categories?.length - 1];
-		}
+		const categories = await api.getCategories();
+		const currentGame = await api.getCurrentGameInfo();
+		selectedCategory = currentGame?.category || categories?.[categories?.length - 1];
 
 		await fetchGames();
+
 		if (containerRef) {
 			const maxScroll = containerRef.scrollWidth - containerRef.clientWidth;
 			updateMask(containerRef.scrollLeft, maxScroll - containerRef.scrollLeft);
@@ -63,30 +57,25 @@
 
 	// Fetch games from API
 	async function fetchGames() {
-		try {
-			isLoading = true;
+		isLoading = true;
 
-			// First try with category
-			let result = await api.getSuggestions(selectedCategory, 1);
-			let fetchedGames = result?.games || [];
+		// First try with category
+		let result = await api.getSuggestions(selectedCategory, 1);
+		let fetchedGames = result?.games || [];
 
-			// If not enough games, try without category
-			if (fetchedGames.length < 10 && selectedCategory) {
-				const moreResult = await api.getSuggestions(null, 1);
-				const moreGames = moreResult?.games || [];
+		// If not enough games, try without category
+		if (fetchedGames.length < 10 && selectedCategory) {
+			const moreResult = await api.getSuggestions(null, 1);
+			const moreGames = moreResult?.games || [];
 
-				// Filter out duplicates
-				const uniqueGames = moreGames.filter((newGame) => !fetchedGames.some((existing) => existing.id === newGame.id));
-				fetchedGames = [...fetchedGames, ...uniqueGames];
-			}
-
-			// Limit the number of games
-			games = fetchedGames.slice(0, 10);
-		} catch (err) {
-			console.error("Failed to load games for widget:", err);
-		} finally {
-			isLoading = false;
+			// Filter out duplicates
+			const uniqueGames = moreGames.filter((newGame) => !fetchedGames.some((existing) => existing.id === newGame.id));
+			fetchedGames = [...fetchedGames, ...uniqueGames];
 		}
+
+		// Limit the number of games
+		games = fetchedGames.slice(0, 10);
+		isLoading = false;
 	}
 </script>
 
@@ -118,7 +107,7 @@
 			<div
 				class="bg-background/85 my-auto mr-3 mb-30 ml-2 flex min-w-40 snap-center flex-wrap items-center justify-center gap-4 p-4 pb-6 shadow-xl backdrop-blur-xl"
 			>
-				<p class="text-foreground w-full text-center text-lg font-semibold">Fancy more?</p>
+				<p class="w-full text-center text-lg font-semibold text-white">Fancy more?</p>
 				<Button
 					onclick={() => {
 						$discoveryOpen = true;
@@ -136,7 +125,7 @@
 		{#if hasLeftScroll}
 			<button
 				transition:blur
-				class="bg-background/85 hover:bg-foreground hover:text-background text-foreground absolute top-4/9 left-2 z-20 -translate-y-1/2 transform border p-1 py-4 shadow-xl backdrop-blur-xl transition max-sm:hidden"
+				class="bg-background/85 hover:bg-white absolute top-4/9 left-2 z-20 -translate-y-1/2 transform border p-1 py-4 text-white shadow-xl backdrop-blur-xl transition hover:text-black max-sm:hidden"
 				onclick={() => containerRef.scrollBy({ left: 2 * -cardWidth, behavior: "smooth" })}
 			>
 				<ChevronLeft size={22} strokeWidth={2.75} />
@@ -146,7 +135,7 @@
 		{#if hasRightScroll}
 			<button
 				transition:blur
-				class="bg-background/85 hover:bg-foreground hover:text-background text-foreground absolute top-4/9 right-2 z-20 -translate-y-1/2 transform border p-1 py-4 shadow-xl backdrop-blur-xl transition max-sm:hidden"
+				class="bg-background/85 hover:bg-white absolute top-4/9 right-2 z-20 -translate-y-1/2 transform border p-1 py-4 text-white shadow-xl backdrop-blur-xl transition hover:text-black max-sm:hidden"
 				onclick={() => containerRef.scrollBy({ left: 2 * cardWidth, behavior: "smooth" })}
 			>
 				<ChevronRight size={22} strokeWidth={2.75} />

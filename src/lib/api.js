@@ -49,7 +49,7 @@ class PlayLightAPI {
 
     // Get all categories
     async getCategories() {
-        if (this.cachedCategories) return this.cachedCategories; // Return cached categories if available
+        if (this.cachedCategories) return this.cachedCategories; // Cached
         const data = await this.request('/categories');
         this.cachedCategories = data;
         return data;

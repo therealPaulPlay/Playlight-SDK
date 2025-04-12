@@ -11,6 +11,7 @@
 
 	// Actions that can be called from outside the component
 	function openDiscovery() {
+		if ($discoveryOpen) return;
 		$discoveryOpen = true;
 		api.trackOpen();
 	}
@@ -40,12 +41,7 @@
 {/if}
 
 <!-- Detect user leaving page -->
-<ExitIntentDetector
-	enabled={$config?.exitIntent?.enabled}
-	onIntent={() => {
-		if (!$discoveryOpen) openDiscovery();
-	}}
-/>
+<ExitIntentDetector enabled={$config?.exitIntent?.enabled} onIntent={openDiscovery} />
 
 <!-- Toaster for notifications -->
 <Toaster />

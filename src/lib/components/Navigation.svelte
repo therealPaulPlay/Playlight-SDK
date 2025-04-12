@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from "svelte";
-	import { fly, scale } from "svelte/transition";
-	import { elasticOut } from "svelte/easing";
+	import { fade, scale } from "svelte/transition";
+	import { backInOut, sineOut } from "svelte/easing";
 	import { flip } from "svelte/animate";
 	import { Search, ChevronDown } from "lucide-svelte";
 	let { categories = [], selectedCategory = $bindable(), onCategoryChange } = $props();
@@ -20,37 +20,24 @@
 
 	// Random leading phrases - only change when explicitly selecting a new category
 	const leadingPhrases = ["Looking for", "Interested in", "Searching for", "Fancy some", "What about these"];
+	let currentPhrase = $state(leadingPhrases[0]); // Current random phrase
 
-	// Current random phrase
-	let currentPhrase = $state(leadingPhrases[0]);
-
-	// Change leading phrase randomly only when explicitly selecting a category
-	let lastRandomIndex;
-	function updateRandomPhrase() {
-		let randomIndex;
-		randomIndex = Math.floor(Math.random() * leadingPhrases?.length);
-		while (randomIndex == lastRandomIndex) randomIndex = Math.floor(Math.random() * leadingPhrases?.length);
-		currentPhrase = leadingPhrases[randomIndex];
-		lastRandomIndex = randomIndex;
-	}
-
-	onMount(updateRandomPhrase);
+	onMount(() => {
+		currentPhrase = leadingPhrases[Math.floor(Math.random() * leadingPhrases?.length)]; // Set random phrase
+	});
 </script>
 
 <svelte:document
 	onclick={(event) => {
-		// Close dropdown on outside click
 		if (dropdownRef && !dropdownRef.contains(event.target) && titleRef && !titleRef.contains(event.target)) {
-			isOpen = false;
+			isOpen = false; // Close dropdown on outside click
 		}
 	}}
 />
 
 <div
 	transition:scale={{
-		duration: 600,
-		delay: 50,
-		easing: elasticOut,
+		easing: backInOut,
 		start: 0.95,
 	}}
 	class="flex w-full flex-col"
@@ -61,17 +48,17 @@
 		<!-- Interactive category dropdown trigger -->
 		<button
 			bind:this={titleRef}
-			class="group text-background mx-1 inline-flex cursor-pointer items-center bg-white px-3 py-1 transition hover:rotate-5"
+			class="group mx-1 inline-flex cursor-pointer items-center bg-white px-3 py-1 text-black transition hover:rotate-5"
 			onclick={() => {
 				searchTerm = "";
 				isOpen = !isOpen;
 			}}
 		>
-			<span class="text-background max-w-[40vw] truncate text-2xl font-bold lg:text-4xl">{displayCategory}</span>
+			<span class="max-w-[40vw] truncate text-2xl font-bold text-black lg:text-4xl">{displayCategory}</span>
 			<ChevronDown
 				size={25}
 				strokeWidth={3}
-				class="text-background mt-1 ml-1 {isOpen ? 'rotate-180 transform' : ''} transition-transform duration-200"
+				class="mt-1 ml-1 text-black {isOpen ? 'rotate-180 transform' : ''} transition-transform duration-200"
 			/>
 		</button>
 		<span>games?</span>
@@ -82,7 +69,8 @@
 		<div
 			bind:this={dropdownRef}
 			class="bg-background/85 fixed left-1/2 z-50 mt-22 w-30 w-full max-w-xs -translate-x-1/2 transform border shadow-lg backdrop-blur-xl"
-			transition:fly={{ y: -5, duration: 250 }}
+			in:fade={{ duration: 150, easing: sineOut }}
+			out:fade={{ duration: 200, easing: sineOut }}
 		>
 			<!-- Search input at the top of dropdown -->
 			<div class="border-b p-3">
@@ -111,7 +99,7 @@
 							<button
 								class="w-full cursor-pointer px-4 py-2 text-left transition-colors {selectedCategory != category
 									? 'hover:bg-muted-foreground/20'
-									: ''} {selectedCategory == category ? 'text-background bg-white' : 'text-white'}"
+									: ''} {selectedCategory == category ? 'bg-white text-black' : 'text-white'}"
 								onclick={() => {
 									selectedCategory = category;
 									isOpen = false;
