@@ -1,8 +1,6 @@
-/* Resets to prevent host page overrides */
+/* Resets to prevent host page overrides (fonts are set further down) */
 .playlight-sdk-container,
 .playlight-sdk-container * {
-  font-family: Geist, sans-serif !important;
-  font-synthesis: none !important;
   box-sizing: border-box !important;
   margin: 0;
   padding: 0;
@@ -24,11 +22,13 @@
   height: 100%;
 }
 
-.playlight-sdk-container p {
-  font-weight: normal;
-  color: inherit;
-  font-size: 1rem;
-  color: black;
+.playlight-sdk-container p,
+.playlight-sdk-container span,
+.playlight-sdk-container button {
+  font-weight: unset;
+  color: unset;
+  font-size: unset;
+  line-height: unset;
 }
 
 /* Button styles - these will affect ALL buttons at ANY depth */
@@ -39,8 +39,6 @@
   appearance: button;
   cursor: pointer;
   background: none;
-  color: black;
-  font-size: 1rem;
 }
 
 /* Link styles - using multiple selectors to target ALL links at ANY depth */
@@ -48,8 +46,8 @@
 .playlight-sdk-container a:visited,
 .playlight-sdk-container a:hover,
 .playlight-sdk-container a:link {
-  color: black;
-  font-size: 1rem;
+  color: unset;
+  font-size: unset;
   text-decoration: none !important;
   text-decoration-thickness: 1px;
   cursor: pointer;
@@ -73,7 +71,7 @@
 .playlight-sdk-container textarea {
   appearance: revert;
   background: none;
-  font-size: 1rem;
+  font-size: unset;
   text-align: start;
 }
 
@@ -136,4 +134,6 @@
 .playlight-sdk-container * {
   font-family: Geist, sans-serif !important;
   font-synthesis: none !important;
+  -webkit-font-smoothing: auto;
+  -moz-osx-font-smoothing: auto;
 }

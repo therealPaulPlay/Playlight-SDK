@@ -3,7 +3,7 @@
 </script>
 
 <button
-	class="bg-white hover:bg-background hover:text-white text-md cursor-pointer px-3 py-2 font-bold uppercase transition text-nowrap inline-flex items-center {extraClasses}"
+	class="hover:bg-background text-md inline-flex cursor-pointer items-center bg-white px-3 py-2 font-bold text-nowrap text-black uppercase transition hover:text-white {extraClasses}"
 	{onclick}
 >
 	{@render children?.()}
