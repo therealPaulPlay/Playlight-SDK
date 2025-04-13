@@ -48,7 +48,7 @@
 .playlight-sdk-container a:visited,
 .playlight-sdk-container a:hover,
 .playlight-sdk-container a:link {
-  color: white;
+  color: black;
   font-size: 1rem;
   text-decoration: none !important;
   text-decoration-thickness: 1px;

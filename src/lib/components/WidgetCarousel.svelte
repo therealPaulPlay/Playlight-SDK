@@ -73,7 +73,7 @@
 			fetchedGames = [...fetchedGames, ...uniqueGames];
 		}
 
-		// Limit the number of games
+		// Limit the number of games to 10
 		games = fetchedGames.slice(0, 10);
 		isLoading = false;
 	}
@@ -105,7 +105,7 @@
 
 			<!-- View more card -->
 			<div
-				class="bg-background/85 my-auto mr-3 mb-30 ml-2 flex min-w-40 snap-center flex-wrap items-center justify-center gap-4 p-4 pb-6 shadow-xl backdrop-blur-xl"
+				class="bg-background/85 my-auto mr-3 mb-30 ml-2 flex min-w-40 snap-center flex-wrap items-center justify-center gap-4 p-4 pb-6 shadow-lg backdrop-blur-xl"
 			>
 				<p class="w-full text-center text-lg font-semibold text-white">Fancy more?</p>
 				<Button
@@ -125,7 +125,7 @@
 		{#if hasLeftScroll}
 			<button
 				transition:blur
-				class="bg-background/85 hover:bg-white absolute top-4/9 left-2 z-20 -translate-y-1/2 transform border p-1 py-4 text-white shadow-xl backdrop-blur-xl transition hover:text-black max-sm:hidden"
+				class="bg-background/85 absolute top-4/9 left-2 z-20 -translate-y-1/2 transform border p-1 py-4 text-white shadow-lg backdrop-blur-xl transition hover:bg-white hover:text-black max-sm:hidden"
 				onclick={() => containerRef.scrollBy({ left: 2 * -cardWidth, behavior: "smooth" })}
 			>
 				<ChevronLeft size={22} strokeWidth={2.75} />
@@ -135,7 +135,7 @@
 		{#if hasRightScroll}
 			<button
 				transition:blur
-				class="bg-background/85 hover:bg-white absolute top-4/9 right-2 z-20 -translate-y-1/2 transform border p-1 py-4 text-white shadow-xl backdrop-blur-xl transition hover:text-black max-sm:hidden"
+				class="bg-background/85 absolute top-4/9 right-2 z-20 -translate-y-1/2 transform border p-1 py-4 text-white shadow-lg backdrop-blur-xl transition hover:bg-white hover:text-black max-sm:hidden"
 				onclick={() => containerRef.scrollBy({ left: 2 * cardWidth, behavior: "smooth" })}
 			>
 				<ChevronRight size={22} strokeWidth={2.75} />

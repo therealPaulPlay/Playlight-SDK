@@ -37,11 +37,11 @@
 
 <!-- Discovery overlay -->
 {#if $discoveryOpen}
-	<DiscoveryOverlay showIntentToggle={$config?.exitIntent?.enabled} />
+	<DiscoveryOverlay />
 {/if}
 
 <!-- Detect user leaving page -->
-<ExitIntentDetector enabled={$config?.exitIntent?.enabled} onIntent={openDiscovery} />
+<ExitIntentDetector enabled={$config?.exitIntent?.enabled} immediate={$config?.exitIntent?.immediate} onIntent={openDiscovery} />
 
 <!-- Toaster for notifications -->
 <Toaster />

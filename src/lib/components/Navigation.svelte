@@ -29,7 +29,7 @@
 
 <svelte:document
 	onclick={(event) => {
-		if (dropdownRef && !dropdownRef.contains(event.target) && titleRef && !titleRef.contains(event.target)) {
+		if (dropdownRef && !dropdownRef?.contains(event.target) && !titleRef?.contains(event.target)) {
 			isOpen = false; // Close dropdown on outside click
 		}
 	}}
@@ -43,7 +43,7 @@
 	class="flex w-full flex-col"
 >
 	<!-- Interactive title that serves as the dropdown trigger -->
-	<h1 class="mb-0! text-center text-2xl font-bold text-white drop-shadow-xl lg:text-4xl">
+	<h1 class="mb-0! text-center text-2xl font-bold text-white drop-shadow-xl sm:text-4xl">
 		<span>{currentPhrase}</span>
 		<!-- Interactive category dropdown trigger -->
 		<button
@@ -54,7 +54,7 @@
 				isOpen = !isOpen;
 			}}
 		>
-			<span class="max-w-[40vw] truncate text-2xl font-bold text-black lg:text-4xl">{displayCategory}</span>
+			<span class="max-w-[40vw] truncate text-2xl font-bold text-black sm:text-4xl">{displayCategory}</span>
 			<ChevronDown
 				size={25}
 				strokeWidth={3}

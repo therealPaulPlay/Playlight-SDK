@@ -5,25 +5,30 @@
 	import api from "../api.js";
 	import Navigation from "./Navigation.svelte";
 	import { onMount } from "svelte";
-	import { discoveryOpen, exitIntentDisabledByUser, projectUrl } from "../store.js";
+	import { discoveryOpen, projectUrl } from "../store.js";
 	import GameCategorySeperator from "./GameCategorySeperator.svelte";
 	import CurrentGameDisplay from "./CurrentGameDisplay.svelte";
 
-	let { showIntentToggle = true } = $props();
-
-	let selectedCategory = $state();
-	let isLoading = $state(false);
+	// States
+	let isLoading = $state(true);
 	let isLoadingMore = $state(false);
+	let loadMoreMargin = $state(300);
 
+	// Info
 	let currentGame = $state();
-	let games = $state([]);
 	let categories = $state([]);
+	let selectedCategory = $state();
 
+	// Fetch games params
+	let games = $state([]);
 	let page = $state(1);
 	let hasMoreGames = $state(true);
-	let bottomDetector = $state();
 	let fetchAllGames = $state(false);
+
+	// Elements
 	let observer;
+	let bottomDetector = $state();
+	let scrollContainer = $state();
 
 	// Initialization - set up scroll observer
 	onMount(() => {
@@ -33,19 +38,21 @@
 					fetchGames();
 				}
 			},
-			{ rootMargin: "200px" },
+			{ rootMargin: `${loadMoreMargin}px`, root: scrollContainer },
 		);
 		return () => observer?.disconnect();
 	});
 
-	// Observe loading element when it becomes available
+	// Observe bottom detector element when it becomes available
 	$effect(() => {
 		if (bottomDetector && observer) observer.observe(bottomDetector);
 	});
 
 	onMount(async () => {
 		currentGame = await api.getCurrentGameInfo();
-		await fetchCategories();
+		categories = await api.getCategories();
+		selectedCategory = currentGame?.category || categories?.[categories?.length - 1];
+		isLoading = false; // Initial loading done, but loading will be set to true again by fetchGames
 		await loadNewFeed();
 	});
 
@@ -55,12 +62,6 @@
 		hasMoreGames = true;
 		fetchAllGames = false;
 		await fetchGames();
-		if (games.length < 10) await fetchGames();
-	}
-
-	async function fetchCategories() {
-		categories = await api.getCategories();
-		selectedCategory = currentGame?.category || categories?.[categories?.length - 1];
 	}
 
 	async function fetchGames() {
@@ -71,6 +72,7 @@
 		const categoryToUse = fetchAllGames ? null : selectedCategory;
 		const result = await api.getSuggestions(categoryToUse, page);
 		const returnedGames = result?.games || [];
+		const pageSize = result?.pageSize || 15;
 
 		// Filter out duplicates
 		const uniqueGames = returnedGames.filter(
@@ -78,11 +80,10 @@
 		);
 		games = [...games, ...uniqueGames];
 
-		if (returnedGames.length < 10) {
+		if (returnedGames.length < pageSize) {
 			if (!fetchAllGames && selectedCategory) {
 				fetchAllGames = true;
 				page = 1;
-				fetchGames();
 			} else {
 				hasMoreGames = false;
 			}
@@ -93,6 +94,12 @@
 		// Disable loading state
 		isLoading = false;
 		isLoadingMore = false;
+
+		// Check if detector is still in view and should trigger another load
+		if (hasMoreGames && bottomDetector) {
+			const rect = bottomDetector.getBoundingClientRect();
+			if (rect.bottom <= window.innerHeight + loadMoreMargin) fetchGames();
+		}
 	}
 
 	function closeDiscoveryOnEmptyClick(e) {
@@ -115,26 +122,13 @@
 	onclick={closeDiscoveryOnEmptyClick}
 >
 	<!-- Header -->
-	<div class="pointer-events-none ml-2 flex items-center justify-between p-4">
+	<div class="pointer-events-none flex items-center justify-between p-4">
 		<img
 			alt="logo"
 			src={$projectUrl + "/static/images/logo-white-small.png"}
-			class="pointer-events-none w-50 max-sm:w-40"
+			class="pointer-events-none ml-3 w-50 max-sm:w-40"
 		/>
-		<div class="mt-4 mr-2 flex items-center justify-evenly gap-8 overflow-hidden max-sm:mt-3.5 sm:mr-4">
-			{#if showIntentToggle && !$exitIntentDisabledByUser}
-				<div transition:blur>
-					<button
-						class="bg-background/25 text-muted-foreground cursor-pointer truncate p-1 px-2 text-sm font-normal text-nowrap transition hover:opacity-50 max-sm:hidden"
-						onclick={() => {
-							$exitIntentDisabledByUser = true;
-							$discoveryOpen = false;
-						}}
-					>
-						Don't show on exit
-					</button>
-				</div>
-			{/if}
+		<div class="mt-3.5 mr-4 flex items-center justify-evenly gap-8 overflow-hidden max-sm:mt-3">
 			<button class="cursor-pointer text-white transition hover:opacity-50" onclick={() => ($discoveryOpen = false)}>
 				<X size={24} strokeWidth={2.5} />
 			</button>
@@ -142,7 +136,7 @@
 	</div>
 
 	<!-- Category selector -->
-	<div class="mx-auto px-5 py-6 max-sm:py-1">
+	<div class="mx-auto px-6 max-sm:py-1 sm:pt-2 sm:pb-6">
 		<Navigation {categories} onCategoryChange={loadNewFeed} bind:selectedCategory />
 	</div>
 
@@ -151,13 +145,17 @@
 
 	<!-- Game grid -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div class="mask-fade relative h-full w-full overflow-y-auto p-4" onclick={closeDiscoveryOnEmptyClick}>
+	<div
+		class="mask-fade show-scrollbar relative h-full w-full overflow-y-auto p-4"
+		bind:this={scrollContainer}
+		onclick={closeDiscoveryOnEmptyClick}
+	>
 		{#if isLoading && games.length === 0}
 			<div class="flex h-4/5 items-center justify-center gap-4">
 				<LoaderCircle class="animate-spin opacity-75" size={50} strokeWidth={2.25} />
 			</div>
 		{:else if games.length === 0 && !isLoading}
-			<div class="flex h-4/5 items-center justify-center gap-4">
+			<div class="pointer-events-none flex h-4/5 items-center justify-center gap-4">
 				<p class="text-white">No games found that match the filter.</p>
 			</div>
 		{:else}
@@ -217,5 +215,9 @@
 			rgba(0, 0, 0, 0.326) 99%,
 			transparent 100%
 		);
+	}
+
+	.show-scrollbar {
+		scrollbar-width: auto !important;
 	}
 </style>
