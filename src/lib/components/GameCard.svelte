@@ -18,10 +18,6 @@
 	let isTouchDevice = $state(false);
 	let cardElement = $state();
 
-	$effect(() => {
-		isTouchDevice = "ontouchstart" in window;
-	});
-
 	function handleMouseEnter() {
 		if (!isHovered && !isTouchDevice) {
 			playSound($projectUrl + "/static/sounds/hover-selection.ogg", 0.25);
