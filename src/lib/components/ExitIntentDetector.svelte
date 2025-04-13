@@ -99,7 +99,7 @@
 							<img
 								src={game.logo_url}
 								alt=""
-								class="bg-foreground group-hover:outline-background relative h-7 w-7 outline outline-4 outline-white transition-colors select-none"
+								class="group-hover:outline-background relative h-7 w-7 bg-stone-200 outline outline-4 outline-white transition-colors select-none"
 							/>
 						</div>
 					{/each}
