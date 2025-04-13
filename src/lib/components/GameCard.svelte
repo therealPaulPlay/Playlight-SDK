@@ -18,23 +18,21 @@
 	let isTouchDevice = $state(false);
 	let cardElement = $state();
 
-	function handleMouseEnter() {
-		if (!isHovered && !isTouchDevice) {
-			playSound($projectUrl + "/static/sounds/hover-selection.ogg", 0.25);
-		}
-
+	function handleHover() {
+		if (!isHovered && !isTouchDevice) playSound($projectUrl + "/static/sounds/hover-selection.ogg", 0.25);
 		isHovered = true;
 		clearTimeout(hoverTimeout);
 		hoverTimeout = setTimeout(() => (isFullyHovered = true), 300);
 		if (videoElement && game.cover_video_url) {
-			videoElement.play().catch((err) => console.error("Video play error:", err));
+			videoElement.play().catch((err) => console.error("Video play error:", err)); // Play video
 		}
 	}
 
-	function handleMouseLeave() {
-		if (isTouchDevice) return;
+	function handleUnhover() {
 		if (videoElement && videoLoaded) videoElement.pause();
-		setUnhovered();
+		isHovered = false;
+		clearTimeout(hoverTimeout);
+		isFullyHovered = false;
 	}
 
 	function isNewGame(createdAtString) {
@@ -43,19 +41,14 @@
 		const createdAt = new Date(createdAtString);
 		return createdAt > sevenDaysAgo;
 	}
-
-	function setUnhovered() {
-		isHovered = false;
-		clearTimeout(hoverTimeout);
-		isFullyHovered = false;
-	}
 </script>
 
-<svelte:window ontouchstart={() => (isTouchDevice = true)} />
 <svelte:document
 	ontouchstart={(e) => {
-		if (cardElement && !cardElement.contains(e.target)) setUnhovered();
+		if (cardElement && !cardElement.contains(e.target)) handleUnhover();
 	}}
+	onpointerdown={(event) => (isTouchDevice = event.pointerType === "touch")}
+	onpointermove={(event) => (isTouchDevice = event.pointerType === "touch")}
 />
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -64,15 +57,15 @@
 	class="bg-background highlight-border group relative mt-5 mb-[calc(3dvh+1.5vw)] flex aspect-[2/3] h-1/2 max-h-[75vh] cursor-pointer flex-col shadow-xl transition hover:outline-2 lg:h-3/7 {coverImageLoaded
 		? ''
 		: 'animate-pulse'} {compact ? 'min-h-62' : 'min-h-92'}"
-	onmouseenter={handleMouseEnter}
-	onfocus={handleMouseEnter}
-	onmouseleave={handleMouseLeave}
-	onblur={handleMouseLeave}
+	onmouseenter={handleHover}
+	onfocus={handleHover}
+	onmouseleave={handleUnhover}
+	onblur={handleUnhover}
 	role="button"
 	tabindex="0"
 	onclick={() => {
 		if (isTouchDevice && !isFullyHovered) {
-			handleMouseEnter();
+			handleHover();
 			return;
 		}
 		api.trackClick(game.id);
