@@ -2,6 +2,7 @@
 	import api from "../api";
 	import { ThumbsUp } from "lucide-svelte";
 	import { fly } from "svelte/transition";
+	import { likedInThisSession } from "../store";
 
 	let { currentGame } = $props();
 	let logoImageLoaded = $state(false);
@@ -15,7 +16,7 @@
 	let startY = 0;
 
 	$effect(() => {
-		if (currentGame?.id) {
+		if (currentGame?.id != null) {
 			isLiked = localStorage.getItem(`playlight_${currentGame.id}_liked`) !== null;
 			likeCount = currentGame?.likes || 0;
 		}
@@ -85,8 +86,8 @@
 
 		// Optimistically update UI
 		const newLikedState = !isLiked;
-		isLiked = !isLiked;
-		likeCount += newLikedState ? 1 : -1;
+		$likedInThisSession = newLikedState;
+		isLiked = !isLiked; // Toggle liked state
 
 		// Save to localStorage
 		newLikedState
@@ -96,7 +97,7 @@
 		const success = await api.toggleLike(currentGame.id, newLikedState);
 
 		// Revert like count on error
-		if (!success) likeCount += !newLikedState ? 1 : -1;
+		if (!success) $likedInThisSession = !newLikedState;
 	}
 </script>
 
@@ -127,9 +128,9 @@
 					logoImageLoaded = true;
 				}}
 			/>
-			<p class="text-white max-w-2/3 truncate text-lg font-bold">{currentGame?.name || "Default name"}</p>
+			<p class="max-w-2/3 truncate text-lg font-bold text-white">{currentGame?.name || "Default name"}</p>
 			<div class="mt-0.5 ml-auto flex items-center gap-2">
-				<p class="text-muted-foreground text-sm">{likeCount}</p>
+				<p class="text-muted-foreground text-sm">{$likedInThisSession ? likeCount + 1 : likeCount}</p>
 				<button
 					class="text-muted-foreground cursor-pointer transition hover:text-white"
 					style="color: {isLiked ? 'white !important' : ''};"
