@@ -59,9 +59,7 @@
 		? ''
 		: 'animate-pulse'} {compact ? 'min-h-62' : 'min-h-92'}"
 	onmouseenter={handleHover}
-	onfocus={handleHover}
 	onmouseleave={handleUnhover}
-	onblur={handleUnhover}
 	role="button"
 	tabindex="0"
 	onclick={() => {
