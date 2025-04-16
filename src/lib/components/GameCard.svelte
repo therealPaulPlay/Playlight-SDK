@@ -4,6 +4,7 @@
 	import { projectUrl } from "../store.js";
 	import { Info } from "lucide-svelte";
 	import api from "../api.js";
+	import GameBadge from "./GameBadge.svelte";
 
 	let { game, compact = false } = $props();
 	let isHovered = $state(false);
@@ -72,13 +73,10 @@
 		window.open("https://" + game.domain + "?utm_source=playlight", "_blank", "noopener");
 	}}
 >
-	{#if isNewGame(game?.created_at)}
-		<div
-			class="bg-background absolute top-4 right-4 z-12 px-2 py-0.5 transition-opacity select-none"
-			class:opacity-0={isHovered}
-		>
-			<p class="font-bold text-white uppercase">New</p>
-		</div>
+	{#if game?.featured}
+		<GameBadge {isHovered} text="Featured" />
+	{:else if isNewGame(game?.created_at)}
+		<GameBadge {isHovered} text="New" />
 	{/if}
 
 	{#if game.cover_video_url}

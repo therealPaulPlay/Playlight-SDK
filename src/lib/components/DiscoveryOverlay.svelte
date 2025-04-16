@@ -61,6 +61,8 @@
 		page = 1;
 		hasMoreGames = true;
 		fetchAllGames = false;
+		if (currentGame?.featured_game && selectedCategory == currentGame?.category)
+			games.push({ ...currentGame.featured_game, featured: true });
 		await fetchGames();
 	}
 
@@ -161,8 +163,8 @@
 		{:else}
 			<div class="mx-auto flex h-full flex-wrap content-start justify-center gap-10 lg:max-w-4/5">
 				{#each games as game, i}
-					{@const firstGameFromAnotherCategoryIndex = games.findIndex((e) => e.category !== selectedCategory)}
-					{#if i == firstGameFromAnotherCategoryIndex}
+					{@const firstGameFromDiffCategory = games.findIndex((e) => e.category !== selectedCategory && !e.featured)}
+					{#if i == firstGameFromDiffCategory}
 						<GameCategorySeperator />
 					{/if}
 					<GameCard {game} />
