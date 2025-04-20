@@ -40,7 +40,7 @@
 	// Prompts ------------------------------------------------------------------------------------------------------
 	let barPrompts = [
 		"The cure for boredom.",
-		"Playtime’s just getting started.",
+		"Ready for what’s next?",
 		"Why stop the fun now?",
 		"Games don’t play themselves.",
 		"A new adventure awaits.",
