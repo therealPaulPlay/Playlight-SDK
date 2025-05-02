@@ -66,7 +66,13 @@
 {#if enabled}
 	<!-- svelte-ignore a11y_mouse_events_have_key_events -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div class="fixed top-0 right-0 left-0 h-4" bind:this={detectorElement} onmouseover={handleBarTrigger}></div>
+	<div
+		class="fixed top-0 right-0 left-0 h-4"
+		bind:this={detectorElement}
+		onpointerover={(e) => {
+			if (e.pointerType !== "touch") handleBarTrigger();
+		}}
+	></div>
 {/if}
 
 {#if showIntentBar}
@@ -79,9 +85,9 @@
 		role="menu"
 		tabindex="0"
 		transition:fly={{ y: -100, easing: backOut, duration: 500 }}
-		class="bg-background/85 fixed top-4 right-4 left-4 z-99998 mx-auto flex w-fit flex-wrap items-center gap-4 border-1 p-4 shadow-lg backdrop-blur-xl"
+		class="bg-background/85 fixed top-4 right-4 left-4 z-99998 mx-auto flex w-fit max-w-[calc(100%-2rem)] flex-wrap items-center gap-4 overflow-hidden border-1 p-4 shadow-lg backdrop-blur-xl"
 	>
-		<p class="text-lg font-semibold text-nowrap text-white">
+		<p class="truncate text-lg font-semibold text-nowrap text-white">
 			{barPrompts[Math.floor(Math.random() * barPrompts.length)]}
 		</p>
 		<Button

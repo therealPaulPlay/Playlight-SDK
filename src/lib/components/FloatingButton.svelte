@@ -17,7 +17,7 @@
 		}}
 		aria-label="open the game discovery"
 	>
-		<p class="z-2 flex items-center overflow-hidden">
+		<p class="z-2 flex items-center overflow-hidden text-nowrap">
 			<Gamepad
 				size={26}
 				strokeWidth={1.75}
