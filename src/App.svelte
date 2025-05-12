@@ -41,10 +41,16 @@
 {/if}
 
 <!-- Detect user leaving page -->
-<ExitIntentDetector enabled={$config?.exitIntent?.enabled} immediate={$config?.exitIntent?.immediate} onIntent={openDiscovery} />
+<ExitIntentDetector
+	enabled={$config?.exitIntent?.enabled}
+	immediate={$config?.exitIntent?.immediate}
+	onIntent={openDiscovery}
+/>
 
-<!-- Toaster for notifications -->
-<Toaster />
+{#if $discoveryOpen}
+	<!-- Toaster for notifications -->
+	<Toaster />
+{/if}
 
 <style>
 	:global(#playlight-sdk-container) {
