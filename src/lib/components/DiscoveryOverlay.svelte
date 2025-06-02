@@ -161,7 +161,7 @@
 				<p class="text-white">No games found that match the filter.</p>
 			</div>
 		{:else}
-			<div class="mx-auto flex h-full flex-wrap content-start justify-center gap-10 lg:max-w-4/5">
+			<div class="pointer-events-none mx-auto flex h-fit flex-wrap content-start justify-center gap-10 lg:max-w-4/5">
 				{#each games as game, i}
 					{@const firstGameFromDiffCategory = games.findIndex((e) => e.category !== selectedCategory && !e.featured)}
 					{#if i == firstGameFromDiffCategory}
@@ -171,7 +171,7 @@
 				{/each}
 
 				<!-- Bottom detector with loading icon -->
-				<div bind:this={bottomDetector} class="flex min-h-10 w-full justify-center">
+				<div bind:this={bottomDetector} class="pointer-events-none flex min-h-10 w-full justify-center">
 					{#if isLoadingMore}
 						<div class="flex h-30 items-center">
 							<LoaderCircle class="animate-spin opacity-75" size={40} strokeWidth={2.5} />
