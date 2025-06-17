@@ -86,7 +86,7 @@
 			muted
 			playsinline
 			loop
-			preload="auto"
+			fetchpriority="low"
 			onloadeddata={() => {
 				videoLoaded = true;
 			}}
@@ -98,7 +98,7 @@
 		alt="cover"
 		class="prevent-image-select absolute top-0 left-0 z-10 h-full w-full object-cover opacity-0 transition"
 		class:opacity-100={coverImageLoaded && (!isHovered || !videoLoaded || !game.cover_video_url)}
-		loading="eager"
+		fetchpriority="high"
 		onload={() => {
 			coverImageLoaded = true;
 		}}
@@ -131,12 +131,16 @@
 		</div>
 	{/if}
 
+	<!-- Skeleton for circular image -->
+	<div
+		class="prevent-image-select bg-background absolute right-0 -bottom-[18%] left-0 z-9 mx-auto aspect-square w-1/5 animate-pulse rounded-full shadow-xl"
+	></div>
 	<img
 		src={game.logo_url}
 		alt="game logo"
-		class="prevent-image-select absolute right-0 -bottom-[18%] left-0 z-10 mx-auto aspect-square w-1/5 rounded-full object-center opacity-0 shadow-xl transition group-hover:outline-2"
+		class="prevent-image-select absolute right-0 -bottom-[18%] left-0 z-10 mx-auto aspect-square w-1/5 rounded-full object-center opacity-0 transition group-hover:outline-2"
 		class:opacity-100={logoImageLoaded}
-		loading="eager"
+		fetchpriority="high"
 		onload={() => {
 			logoImageLoaded = true;
 		}}
