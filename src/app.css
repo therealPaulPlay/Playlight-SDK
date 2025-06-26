@@ -7,7 +7,8 @@
   border: none;
   border-radius: 0;
   scrollbar-width: none;
-  touch-action: manipulation; /* Prevent double-tap to zoom */
+  touch-action: manipulation;
+  /* Prevent double-tap to zoom */
 }
 
 /* Container base styles */
@@ -40,6 +41,7 @@
   appearance: button;
   cursor: pointer;
   background: none;
+  box-shadow: none;
 }
 
 /* Link styles - using multiple selectors to target ALL links at ANY depth */
@@ -74,6 +76,7 @@
   background: none;
   font-size: unset;
   text-align: start;
+  box-shadow: none;
 }
 
 /* List styles - these will affect ALL lists at ANY depth */
