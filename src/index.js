@@ -2,14 +2,18 @@ import { mount } from 'svelte';
 import App from './App.svelte';
 import { initializeConfig } from './lib/config.js';
 import { discoveryOpen } from './lib/store.js';
+import { eventCallbacks } from './lib/utils/trigger-event.js';
 import api from './lib/api.js';
 import { writable } from 'svelte/store';
-import { initWidgets, setupWidgetObserver } from './lib/utils/loadWidgets.js';
+import { initWidgets, setupWidgetObserver } from './lib/utils/load-widgets.js';
 
 /**
  * The PlaylightSDK class
  */
 class PlaylightSDK {
+    /**
+     * Create new Playlight instance
+     */
     constructor() {
         this.container = null;
         this.isInitialized = false;
@@ -32,7 +36,7 @@ class PlaylightSDK {
         // Initialize configuration with defaults and user overrides
         this.setConfig(userConfig);
         this.#mountPlaylight(); // Create container and mount app
-        
+
         // Widgets
         initWidgets();
         setupWidgetObserver();
@@ -74,6 +78,18 @@ class PlaylightSDK {
         if (!this.isInitialized) return;
         discoveryOpen.set(value);
         if (value) api.trackOpen();
+    }
+
+    /**
+     * Register an event callback
+     * @param {string} event - Event name
+     * @param {Function} callback - Callback function
+     */
+    onEvent(event, callback) {
+        const validEvents = ["discoveryOpen", "discoveryClose", "exitIntent"];
+        if (!validEvents.includes(event)) return console.warn(`Invalid event type "${event}!"`);
+        if (!eventCallbacks.has(event)) eventCallbacks.set(event, []);
+        eventCallbacks.get(event).push(callback);
     }
 
     /**

@@ -1,6 +1,6 @@
 <script>
 	import { slide } from "svelte/transition";
-	import { playSound } from "../utils/playSound.js";
+	import { playSound } from "../utils/play-sound.js";
 	import { projectUrl } from "../store.js";
 	import { Info } from "lucide-svelte";
 	import api from "../api.js";

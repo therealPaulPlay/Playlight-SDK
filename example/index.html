@@ -103,6 +103,18 @@
             const playlightSDK = module.default;
             await playlightSDK.init();
 
+            playlightSDK.onEvent("discoveryOpen", () => {
+                console.log("Discovery opened!");
+            });
+
+            playlightSDK.onEvent("discoveryClose", () => {
+                console.log("Discovery closed!");
+            });
+
+            playlightSDK.onEvent("exitIntent", () => {
+                console.log("Exit intent triggered!");
+            });
+
             // Wait for the SDK to be fully loaded to add event listeners
             document.getElementById('show-discovery').addEventListener('click', () => {
                 playlightSDK?.setDiscovery(true);

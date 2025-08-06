@@ -6,6 +6,7 @@
 	import { Toaster } from "svelte-sonner";
 	import ExitIntentDetector from "./lib/components/ExitIntentDetector.svelte";
 	import { discoveryOpen } from "./lib/store.js";
+	import { triggerEvent } from "./lib/utils/trigger-event";
 
 	let { config } = $props();
 
@@ -21,9 +22,11 @@
 	discoveryOpen.subscribe((value) => {
 		try {
 			if (value) {
+				triggerEvent("discoveryOpen");
 				originalOverflow = document.body.style.overflow;
 				document.body.style.overflow = "hidden";
 			} else {
+				triggerEvent("discoveryClose");
 				document.body.style.overflow = originalOverflow;
 			}
 		} catch (error) {

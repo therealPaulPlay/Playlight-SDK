@@ -3,6 +3,7 @@
 	import Button from "../components/Button.svelte";
 	import { fly, slide } from "svelte/transition";
 	import { backOut } from "svelte/easing";
+	import { triggerEvent } from "../utils/trigger-event.js";
 	let { enabled = true, onIntent, immediate = false } = $props();
 
 	// Elements
@@ -29,8 +30,10 @@
 				hideIntentBarTimeout = null;
 				if (!immediate) {
 					loadInitialSuggestions();
+					triggerEvent("exitIntent");
 					showIntentBar = true;
 				} else {
+					triggerEvent("exitIntent");
 					onIntent?.();
 				}
 			}
