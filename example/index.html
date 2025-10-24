@@ -83,16 +83,18 @@
 </head>
 
 <body>
-    <div class="container">
-        <div class="game-container">
-            <p>This is a simple example showing the Playlight SDK running on a page.</p>
+    <div>
+        <div class="container">
+            <div class="game-container">
+                <p>This is a simple example showing the Playlight SDK running on a page.</p>
 
-            <div class="playlight-widget-carousel carousel-widget-test"></div>
+                <div class="playlight-widget-carousel carousel-widget-test"></div>
 
-            <div class="options">
-                <button class="button" id="show-discovery">Open discovery</button>
-                <button class="button" id="button-toggle-button">Toggle button</button>
-                <button class="button" id="discovery-toggle-button">Toggle discovery</button>
+                <div class="options">
+                    <button class="button" id="show-discovery">Open discovery</button>
+                    <button class="button" id="button-toggle-sidebar">Toggle sidebar</button>
+                    <button class="button" id="discovery-toggle-button">Toggle discovery</button>
+                </div>
             </div>
         </div>
     </div>
@@ -118,16 +120,6 @@
             // Wait for the SDK to be fully loaded to add event listeners
             document.getElementById('show-discovery').addEventListener('click', () => {
                 playlightSDK?.setDiscovery(true);
-            });
-
-            let buttonToggled = false;
-            document.getElementById('button-toggle-button').addEventListener('click', () => {
-                playlightSDK?.setConfig({
-                    button: {
-                        visible: buttonToggled
-                    }
-                });
-                buttonToggled = !buttonToggled;
             });
 
             let discoveryToggled = false;

@@ -1,11 +1,10 @@
-import { mount } from 'svelte';
-import App from './App.svelte';
 import { initializeConfig } from './lib/config.js';
-import { discoveryOpen } from './lib/store.js';
+import { discoveryOpen, sidebarVisible } from './lib/store.js';
 import { eventCallbacks } from './lib/utils/trigger-event.js';
 import api from './lib/api.js';
-import { writable } from 'svelte/store';
-import { initWidgets, setupWidgetObserver } from './lib/utils/load-widgets.js';
+import { get, writable } from 'svelte/store';
+import { initWidgets, setupWidgetObserver } from './lib/utils/mount-widgets.js';
+import { mountPlaylight, setupSidebarLayout, removeSidebarLayout } from './lib/utils/mount-components.js';
 
 /**
  * The PlaylightSDK class
@@ -15,7 +14,6 @@ class PlaylightSDK {
      * Create new Playlight instance
      */
     constructor() {
-        this.container = null;
         this.isInitialized = false;
         this.config = writable(null);
         this.api = api;
@@ -27,15 +25,18 @@ class PlaylightSDK {
      */
     async init(userConfig = {}) {
         if (typeof window === 'undefined') return console.error("Playlight cannot run on the server, as it depends on browser APIs.");
-        if (this.isInitialized) {
-            console.warn("Playlight SDK already initialized!");
-            if (!document.getElementById("playlight-sdk-container")) this.#mountPlaylight();
-            return;
-        }
+        if (this.isInitialized) return console.warn("Playlight SDK already initialized!");
 
         // Initialize configuration with defaults and user overrides
         this.setConfig(userConfig);
-        this.#mountPlaylight(); // Create container and mount app
+        mountPlaylight(this.config); // Create container and mount app
+
+        // Subscribe to sidebar visibility changes
+        if (get(sidebarVisible)) setupSidebarLayout();
+        sidebarVisible.subscribe((visible) => {
+            if (visible) setupSidebarLayout();
+            else removeSidebarLayout();
+        });
 
         // Widgets
         initWidgets();
@@ -45,29 +46,6 @@ class PlaylightSDK {
         await this.api.getCurrentGameInfo();
 
         this.isInitialized = true;
-    }
-
-    /**
-     * Mount the Svelte app to the playlight container
-     * @private
-     */
-    #mountPlaylight() {
-        try {
-            this.container = document.createElement('div');
-            this.container.id = 'playlight-sdk-container';
-            this.container.className = 'playlight-sdk-container';
-            document.body.appendChild(this.container);
-
-            // Mount (client-side alternative to render)
-            mount(App, {
-                target: this.container,
-                props: {
-                    config: this.config
-                }
-            });
-        } catch (error) {
-            console.error("Playlight error occured during mount:", error);
-        }
     }
 
     /**
@@ -105,9 +83,7 @@ class PlaylightSDK {
 const playlightSDK = new PlaylightSDK();
 
 // Expose SDK as global var for iife (legacy) usage
-if (typeof window !== 'undefined') {
-    window.playlightSDK = playlightSDK;
-}
+if (typeof window !== 'undefined') window.playlightSDK = playlightSDK;
 
 // Export for module usage
 export default playlightSDK;

@@ -79,7 +79,7 @@
 	}
 </script>
 
-<div class="playlight-sdk-container">
+<div class="playlight-sdk playlight-sdk-widget">
 	<!-- Carousel -->
 	<div
 		bind:this={containerRef}

@@ -1,6 +1,6 @@
 /* Resets to prevent host page overrides (fonts are set further down) */
-.playlight-sdk-container,
-.playlight-sdk-container * {
+.playlight-sdk,
+.playlight-sdk * {
   box-sizing: border-box !important;
   margin: 0;
   padding: 0;
@@ -11,8 +11,8 @@
   /* Prevent double-tap to zoom */
 }
 
-/* Container base styles */
-.playlight-sdk-container {
+/* Base SDK styles */
+.playlight-sdk {
   position: relative;
   font-size: 1rem;
   line-height: 1.5;
@@ -20,13 +20,11 @@
   color: white;
   background-color: transparent;
   isolation: isolate;
-  width: 100%;
-  height: 100%;
 }
 
-.playlight-sdk-container p,
-.playlight-sdk-container span,
-.playlight-sdk-container button {
+.playlight-sdk p,
+.playlight-sdk span,
+.playlight-sdk button {
   font-weight: unset;
   color: unset;
   font-size: unset;
@@ -34,10 +32,10 @@
 }
 
 /* Button styles - these will affect ALL buttons at ANY depth */
-.playlight-sdk-container button,
-.playlight-sdk-container button:hover,
-.playlight-sdk-container button:active,
-.playlight-sdk-container button:focus {
+.playlight-sdk button,
+.playlight-sdk button:hover,
+.playlight-sdk button:active,
+.playlight-sdk button:focus {
   appearance: button;
   cursor: pointer;
   background: none;
@@ -45,10 +43,10 @@
 }
 
 /* Link styles - using multiple selectors to target ALL links at ANY depth */
-.playlight-sdk-container a,
-.playlight-sdk-container a:visited,
-.playlight-sdk-container a:hover,
-.playlight-sdk-container a:link {
+.playlight-sdk a,
+.playlight-sdk a:visited,
+.playlight-sdk a:hover,
+.playlight-sdk a:link {
   color: unset;
   font-size: unset;
   text-decoration: none !important;
@@ -57,21 +55,21 @@
 }
 
 /* Form element styles - these will affect ALL form elements at ANY depth */
-.playlight-sdk-container input,
-.playlight-sdk-container input[type="text"],
-.playlight-sdk-container input[type="email"],
-.playlight-sdk-container input[type="password"],
-.playlight-sdk-container input:focus,
-.playlight-sdk-container input:hover,
-.playlight-sdk-container input:active,
-.playlight-sdk-container select,
-.playlight-sdk-container select:hover,
-.playlight-sdk-container select:focus,
-.playlight-sdk-container select:active,
-.playlight-sdk-container textarea:hover,
-.playlight-sdk-container textarea:focus,
-.playlight-sdk-container textarea:active,
-.playlight-sdk-container textarea {
+.playlight-sdk input,
+.playlight-sdk input[type="text"],
+.playlight-sdk input[type="email"],
+.playlight-sdk input[type="password"],
+.playlight-sdk input:focus,
+.playlight-sdk input:hover,
+.playlight-sdk input:active,
+.playlight-sdk select,
+.playlight-sdk select:hover,
+.playlight-sdk select:focus,
+.playlight-sdk select:active,
+.playlight-sdk textarea:hover,
+.playlight-sdk textarea:focus,
+.playlight-sdk textarea:active,
+.playlight-sdk textarea {
   appearance: revert;
   background: none;
   font-size: unset;
@@ -80,13 +78,13 @@
 }
 
 /* List styles - these will affect ALL lists at ANY depth */
-.playlight-sdk-container ul,
-.playlight-sdk-container ol {
+.playlight-sdk ul,
+.playlight-sdk ol {
   list-style: none;
 }
 
 /* Table styles - these will affect ALL tables at ANY depth */
-.playlight-sdk-container table {
+.playlight-sdk table {
   border-collapse: collapse;
 }
 
@@ -134,10 +132,43 @@
   src: url("/static/fonts/Geist[wght].ttf");
 }
 
-.playlight-sdk-container,
-.playlight-sdk-container * {
+.playlight-sdk,
+.playlight-sdk * {
   font-family: Geist, sans-serif !important;
   font-synthesis: none !important;
   -webkit-font-smoothing: auto;
   -moz-osx-font-smoothing: auto;
+}
+
+/* Main container specific styles */
+.playlight-sdk-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 99999;
+  pointer-events: none;
+}
+
+.playlight-sdk-container * {
+  pointer-events: auto;
+}
+
+/* Sidebar layout styles */
+.playlight-sdk-flex-body {
+  display: flex !important;
+  flex-direction: row !important;
+}
+
+.playlight-sdk-content-wrapper {
+  flex: 1;
+  overflow: auto;
+  contain: paint;
+}
+
+/* Widget specific styles */
+.playlight-sdk-widget {
+  width: 100%;
+  height: 100%;
 }
