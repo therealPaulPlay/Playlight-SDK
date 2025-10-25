@@ -28,7 +28,7 @@ discoveryOpen.subscribe((v) => {
 export const likedInThisSession = writable(false);
 
 // Sidebar
-export const sidebarVisible = writable(true);
+export const sidebarVisible = writable(false);
 
 sidebarVisible.subscribe((visible) => {
     if (visible) setupSidebarLayout();

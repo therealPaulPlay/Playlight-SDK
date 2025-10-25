@@ -4,7 +4,7 @@ import { eventCallbacks } from './lib/utils/trigger-event.js';
 import api from './lib/api.js';
 import { get, writable } from 'svelte/store';
 import { initWidgets, setupWidgetObserver } from './lib/utils/mount-widgets.js';
-import { mountPlaylight, setupSidebarLayout } from './lib/utils/mount-components.js';
+import { mountPlaylight } from './lib/utils/mount-components.js';
 
 /**
  * The PlaylightSDK class
@@ -31,7 +31,7 @@ class PlaylightSDK {
         mountPlaylight(this.config); // Create container and mount app
 
         // Display sidebar if initially set to visible
-        if (get(sidebarVisible)) setupSidebarLayout();
+        sidebarVisible.set(true);
 
         // Widgets
         initWidgets();
