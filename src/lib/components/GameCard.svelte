@@ -3,8 +3,7 @@
 	import { playSound } from "../utils/play-sound.js";
 	import { projectUrl } from "../store.js";
 	import { Info } from "lucide-svelte";
-	import api from "../api.js";
-	import GameBadge from "./GameBadge.svelte";
+	import { openGame } from "../utils/open-game.js";
 
 	let { game, compact = false, small = false } = $props();
 
@@ -53,6 +52,16 @@
 	onpointermove={(event) => (isTouchDevice = event.pointerType === "touch")}
 />
 
+<!-- Badge like NEW or FEATURED -->
+{#snippet gameBadge(isHovered, text)}
+	<div
+		class="bg-background absolute top-4 right-4 z-12 px-2 py-0.5 transition-opacity select-none"
+		class:opacity-0={isHovered}
+	>
+		<p class="font-bold text-white uppercase">{text}</p>
+	</div>
+{/snippet}
+
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
 	bind:this={cardElement}
@@ -68,21 +77,20 @@
 			handleHover();
 			return;
 		}
-		api.trackClick(game.id);
-		window.open("https://" + game.domain + "?utm_source=playlight", "_blank", "noopener");
+		openGame(game.domain, game.id);
 	}}
 >
 	{#if game?.featured}
-		<GameBadge {isHovered} text="Featured" />
+		{@render gameBadge(isHovered, "Featured")}
 	{:else if isNewGame(game?.created_at)}
-		<GameBadge {isHovered} text="New" />
+		{@render gameBadge(isHovered, "New")}
 	{/if}
 
 	{#if game.cover_video_url}
 		<video
 			bind:this={videoElement}
 			src={game.cover_video_url}
-			class="absolute top-0 left-0 z-5 w-full object-cover opacity-0"
+			class="absolute top-0 left-0 z-5 aspect-[2/3] w-full object-cover opacity-0"
 			class:opacity-100={isHovered && videoLoaded && game.cover_video_url}
 			muted
 			playsinline
@@ -97,7 +105,7 @@
 	<img
 		src={game.cover_image_url}
 		alt="cover"
-		class="prevent-image-select absolute top-0 left-0 z-10 w-full object-cover opacity-0 transition"
+		class="prevent-image-select absolute top-0 left-0 z-10 aspect-[2/3] w-full object-cover opacity-0 transition"
 		class:opacity-100={coverImageLoaded && (!isHovered || !videoLoaded || !game.cover_video_url)}
 		fetchpriority="high"
 		onload={() => {

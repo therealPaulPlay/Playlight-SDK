@@ -106,11 +106,11 @@
             await playlightSDK.init();
 
             playlightSDK.onEvent("discoveryOpen", () => {
-                console.log("Discovery opened!");
+                console.log("Discovery open event!");
             });
 
             playlightSDK.onEvent("discoveryClose", () => {
-                console.log("Discovery closed!");
+                console.log("Discovery close event!");
             });
 
             playlightSDK.onEvent("exitIntent", () => {

@@ -1,19 +1,20 @@
 <script>
 	import { onMount } from "svelte";
-	import { projectUrl } from "../store";
+	import { discoveryOpen, projectUrl } from "../store";
 	import { fetchRecommendedGames } from "../utils/fetch-recommended-games";
 	import api from "../api.js";
 	import { LoaderCircle, Gamepad2, Dices } from "lucide-svelte";
 	import GameCard from "./GameCard.svelte";
 	import CurrentGameDisplay from "./CurrentGameDisplay.svelte";
 	import Button from "./Button.svelte";
+	import { openGame } from "../utils/open-game";
 
 	let isLoading = $state(false);
 	let currentGame = $state();
 	let games = $state([]);
 
-	let leftGames = $derived(games.filter((_, i) => i % 2 === 0));
-	let rightGames = $derived(games.filter((_, i) => i % 2 === 1));
+	let leftGames = $derived(games?.filter((_, i) => i % 2 === 0) || []);
+	let rightGames = $derived(games?.filter((_, i) => i % 2 === 1) || []);
 
 	onMount(async () => {
 		isLoading = true;
@@ -29,38 +30,54 @@
 	<img alt="logo" src={$projectUrl + "/static/images/logo-white-small.png"} class="pointer-events-none mt-5 w-50" />
 
 	<!-- Recommended games -->
-	<div class="max-h-2/3 grow-1 overflow-y-auto mask-y-from-90% mask-y-to-100% p-6 py-12">
+	<div class="grow-1 overflow-hidden mask-y-from-90% mask-y-to-100% p-6 py-12">
 		{#if isLoading}
 			<div class="flex h-full w-full items-center justify-center">
 				<LoaderCircle class="animate-spin opacity-75" size={30} strokeWidth={2.5} />
 			</div>
-		{:else}
-			<div class="grid grid-cols-2 gap-6">
+		{:else if games?.length}
+			<div class="scroll-container grid grid-cols-2 gap-6">
 				<div class="flex flex-col gap-6">
-					{#each leftGames as game, i}
-						<GameCard {game} small={true} />
-					{/each}
+					<div class="animate-scroll-column flex flex-col gap-6">
+						{#each [...leftGames, ...leftGames, ...leftGames] as game}
+							<GameCard {game} small={true} />
+						{/each}
+					</div>
 				</div>
 				<div class="mt-15 flex flex-col gap-6">
-					{#each rightGames as game, i}
-						<GameCard {game} small={true} />
-					{/each}
+					<div class="animate-scroll-column-offset flex flex-col gap-6">
+						{#each [...rightGames, ...rightGames, ...rightGames] as game}
+							<GameCard {game} small={true} />
+						{/each}
+					</div>
 				</div>
+			</div>
+		{:else}
+			<div class="flex h-full w-full items-center justify-center">
+				<p class="text-muted-foreground">Error – See console</p>
 			</div>
 		{/if}
 	</div>
 
 	<!-- CTA buttons -->
-	<div class="mt-2 flex w-full flex-col items-center gap-3 px-4">
-		<Button class="w-full">
-			View all games <Gamepad2 />
+	<div class="flex w-full flex-col items-center gap-3 px-4">
+		<Button class="w-full" onclick={() => ($discoveryOpen = true)}>
+			View all games <Gamepad2 style="margin-top: -1px;" />
 		</Button>
 		<div class="flex w-full items-center gap-4">
 			<div class="bg-border h-px grow-1"></div>
 			<p class="text-muted-foreground text-sm">Or</p>
 			<div class="bg-border h-px grow-1"></div>
 		</div>
-		<Button class="w-full" variant="secondary">
+		<Button
+			class="w-full"
+			variant="secondary"
+			onclick={() => {
+				const randomIndex = Math.floor(Math.random() * games?.length);
+				const randomGame = games?.[randomIndex];
+				openGame(randomGame?.domain, randomGame?.id);
+			}}
+		>
 			Random game <Dices style="margin-top: -2px;" />
 		</Button>
 	</div>
@@ -70,3 +87,26 @@
 		<CurrentGameDisplay {currentGame} />
 	</div>
 </div>
+
+<style>
+	@keyframes scroll-column {
+		0% {
+			transform: translateY(calc(-100% / 3));
+		}
+		100% {
+			transform: translateY(calc((-100% / 3) * 2));
+		}
+	}
+
+	.animate-scroll-column,
+	.animate-scroll-column-offset {
+		animation: scroll-column 90s linear infinite;
+		transition: opacity 200ms;
+	}
+
+	.scroll-container:hover .animate-scroll-column,
+	.scroll-container:hover .animate-scroll-column-offset {
+		animation-play-state: paused;
+		opacity: 1;
+	}
+</style>

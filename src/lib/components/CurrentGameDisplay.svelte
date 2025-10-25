@@ -41,16 +41,22 @@
 		<p class="text-muted-foreground text-sm select-none">Currently playing</p>
 	</div>
 	<div class="flex w-full items-center gap-2">
-		<img
-			src={currentGame?.logo_url}
-			alt="logo"
-			class="bg-muted h-5 w-5 select-none text-[0px]!"
-			class:animate-pulse={!logoImageLoaded}
-			onload={() => {
-				logoImageLoaded = true;
-			}}
-		/>
-		<p class="max-w-2/3 truncate text-lg font-bold text-white" class:opacity-50={!currentGame?.name}>{currentGame?.name || "Loading..."}</p>
+		{#if currentGame?.logo_url}
+			<img
+				src={currentGame?.logo_url}
+				alt="logo"
+				class="bg-muted size-5 text-[0px]! select-none"
+				class:animate-pulse={!logoImageLoaded}
+				onload={() => {
+					logoImageLoaded = true;
+				}}
+			/>
+		{:else}
+			<div class="bg-muted size-5"></div>
+		{/if}
+		<p class="max-w-35 truncate text-lg font-bold text-white" class:opacity-50={!currentGame?.name}>
+			{currentGame?.name || "Unavailable"}
+		</p>
 		<div class="mt-0.5 ml-auto flex items-center gap-2">
 			<p class="text-muted-foreground text-sm">{$likedInThisSession ? likeCount + 1 : likeCount}</p>
 			<button

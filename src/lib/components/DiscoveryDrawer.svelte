@@ -3,6 +3,7 @@
 	import CurrentGameDisplay from "./CurrentGameDisplay.svelte";
 
 	let { currentGame } = $props();
+	
 	let visible = $state(true);
 	let showLatch = $state(false);
 	let y = $state(0);

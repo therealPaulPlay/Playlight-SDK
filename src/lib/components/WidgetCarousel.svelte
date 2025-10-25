@@ -86,14 +86,7 @@
 				class="bg-background/85 my-auto mr-3 mb-30 ml-2 flex min-w-40 snap-center flex-wrap items-center justify-center gap-4 p-4 pb-6 shadow-lg backdrop-blur-xl"
 			>
 				<p class="w-full text-center text-lg font-semibold text-white">Fancy more?</p>
-				<Button
-					onclick={() => {
-						$discoveryOpen = true;
-						api.trackOpen();
-					}}
-				>
-					See all
-				</Button>
+				<Button onclick={() => ($discoveryOpen = true)}>See all</Button>
 			</div>
 		{/if}
 	</div>

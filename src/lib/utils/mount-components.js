@@ -37,7 +37,7 @@ export function setupSidebarLayout() {
 			(child) =>
 				child.tagName !== 'SCRIPT' &&
 				child.tagName !== 'STYLE' &&
-				!child.id?.startsWith('playlight-')
+				!child.id?.startsWith('playlight-sdk')
 		);
 
 		// Store original body styles

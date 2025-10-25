@@ -4,7 +4,7 @@ import { eventCallbacks } from './lib/utils/trigger-event.js';
 import api from './lib/api.js';
 import { get, writable } from 'svelte/store';
 import { initWidgets, setupWidgetObserver } from './lib/utils/mount-widgets.js';
-import { mountPlaylight, setupSidebarLayout, removeSidebarLayout } from './lib/utils/mount-components.js';
+import { mountPlaylight, setupSidebarLayout } from './lib/utils/mount-components.js';
 
 /**
  * The PlaylightSDK class
@@ -16,12 +16,11 @@ class PlaylightSDK {
     constructor() {
         this.isInitialized = false;
         this.config = writable(null);
-        this.api = api;
     }
 
     /**
      * Initialize Playlight
-     * @param {Object} [userConfig] - The playlight configuration object
+     * @param {object} [userConfig] - The playlight configuration object
      */
     async init(userConfig = {}) {
         if (typeof window === 'undefined') return console.error("Playlight cannot run on the server, as it depends on browser APIs.");
@@ -31,21 +30,18 @@ class PlaylightSDK {
         this.setConfig(userConfig);
         mountPlaylight(this.config); // Create container and mount app
 
-        // Subscribe to sidebar visibility changes
+        // Display sidebar if initially set to visible
         if (get(sidebarVisible)) setupSidebarLayout();
-        sidebarVisible.subscribe((visible) => {
-            if (visible) setupSidebarLayout();
-            else removeSidebarLayout();
-        });
 
         // Widgets
         initWidgets();
         setupWidgetObserver();
 
-        // Fetch current game info to cache it
-        await this.api.getCurrentGameInfo();
-
+        // Set initialized
         this.isInitialized = true;
+
+        // Fetch current game info to cache it
+        await api.getCurrentGameInfo();
     }
 
     /**
@@ -55,13 +51,12 @@ class PlaylightSDK {
     setDiscovery(value = true) {
         if (!this.isInitialized) return;
         discoveryOpen.set(value);
-        if (value) api.trackOpen();
     }
 
     /**
      * Register an event callback
      * @param {string} event - Event name
-     * @param {Function} callback - Callback function
+     * @param {object} callback - Callback function
      */
     onEvent(event, callback) {
         const validEvents = ["discoveryOpen", "discoveryClose", "exitIntent"];
@@ -72,7 +67,7 @@ class PlaylightSDK {
 
     /**
      * Update the configuration
-     * @param {Object} [config] - Playlight configuration object
+     * @param {object} [config] - Playlight configuration object
      */
     setConfig(config = {}) {
         this.config?.set(initializeConfig(config));

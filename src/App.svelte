@@ -1,37 +1,11 @@
 <script>
 	import "./app.css";
 	import DiscoveryOverlay from "./lib/components/DiscoveryOverlay.svelte";
-	import api from "./lib/api";
 	import { Toaster } from "svelte-sonner";
 	import ExitIntentDetector from "./lib/components/ExitIntentDetector.svelte";
-	import { discoveryOpen } from "./lib/store.js";
-	import { triggerEvent } from "./lib/utils/trigger-event";
+	import { discoveryOpen, sidebarVisible } from "./lib/store.js";
 
 	let { config } = $props();
-
-	// Actions that can be called from outside the component
-	function openDiscovery() {
-		if ($discoveryOpen) return;
-		$discoveryOpen = true;
-		api.trackOpen();
-	}
-
-	// Prevent scroll propagation
-	let originalOverflow;
-	discoveryOpen.subscribe((value) => {
-		try {
-			if (value) {
-				triggerEvent("discoveryOpen");
-				originalOverflow = document.body.style.overflow;
-				document.body.style.overflow = "hidden";
-			} else {
-				triggerEvent("discoveryClose");
-				document.body.style.overflow = originalOverflow;
-			}
-		} catch (error) {
-			console.error("Failed to toggle body overflow style:", error);
-		}
-	});
 </script>
 
 <!-- Discovery overlay -->
@@ -43,10 +17,12 @@
 <ExitIntentDetector
 	enabled={$config?.exitIntent?.enabled}
 	immediate={$config?.exitIntent?.immediate}
-	onIntent={openDiscovery}
+	onIntent={() => {
+		if (!$discoveryOpen) $discoveryOpen = true;
+	}}
 />
 
-{#if $discoveryOpen}
+{#if $discoveryOpen || $sidebarVisible}
 	<!-- Toaster for notifications -->
 	<Toaster />
 {/if}

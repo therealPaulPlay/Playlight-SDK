@@ -4,6 +4,7 @@
 	import { backInOut, sineOut } from "svelte/easing";
 	import { flip } from "svelte/animate";
 	import { Search, ChevronDown } from "lucide-svelte";
+
 	let { categories = [], selectedCategory = $bindable(), onCategoryChange } = $props();
 
 	// Local state for the component

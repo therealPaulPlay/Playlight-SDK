@@ -126,7 +126,7 @@
 
 @font-face {
   font-family: Geist;
-  src: url("/static/fonts/Geist[wght].ttf");
+  src: url("/static/fonts/geist-variable-weight.woff2");
 }
 
 .playlight-sdk,
