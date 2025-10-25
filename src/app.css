@@ -4,8 +4,9 @@
   box-sizing: border-box !important;
   margin: 0;
   padding: 0;
-  border: none;
   border-radius: 0;
+  border: none;
+  border-color: hsl(var(--playlight-border)) !important;
   scrollbar-width: none;
   touch-action: manipulation;
   /* Prevent double-tap to zoom */
@@ -118,10 +119,6 @@
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-
   body {
     @apply bg-background text-white;
   }
@@ -155,7 +152,7 @@
   pointer-events: auto;
 }
 
-/* Sidebar layout styles */
+/* Layout styles */
 .playlight-sdk-flex-body {
   display: flex !important;
   flex-direction: row !important;
@@ -171,4 +168,9 @@
 .playlight-sdk-widget {
   width: 100%;
   height: 100%;
+}
+
+/* Sidebar styles */
+.playlight-sdk-container-sidebar {
+  box-shadow: 0 0 75px rgba(0, 0, 0, 0.5);
 }

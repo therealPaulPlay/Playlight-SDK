@@ -6,7 +6,8 @@
 	import api from "../api.js";
 	import GameBadge from "./GameBadge.svelte";
 
-	let { game, compact = false } = $props();
+	let { game, compact = false, small = false } = $props();
+
 	let isHovered = $state(false);
 	let isFullyHovered = $state(false);
 	let hoverTimeout;
@@ -55,15 +56,15 @@
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
 	bind:this={cardElement}
-	class="bg-background highlight-border group relative mt-5 mb-[calc(3dvh+1.5vw)] flex aspect-[2/3] cursor-pointer flex-col shadow-xl transition hover:outline-2 {coverImageLoaded
+	class="bg-background highlight-border group relative flex aspect-[2/3] cursor-pointer flex-col shadow-xl transition hover:outline-2 {coverImageLoaded
 		? ''
-		: 'animate-pulse'} {compact ? 'h-62' : 'h-92'}"
+		: 'animate-pulse'} {small ? 'h-42' : compact ? 'h-62' : 'h-92'} {small ? '' : ' mt-5 mb-[calc(3dvh+1.5vw)]'}"
 	onmouseenter={handleHover}
 	onmouseleave={handleUnhover}
 	role="button"
 	tabindex="0"
 	onclick={() => {
-		if (isTouchDevice && !isFullyHovered) {
+		if (isTouchDevice && !isFullyHovered && !small) {
 			handleHover();
 			return;
 		}
@@ -81,7 +82,7 @@
 		<video
 			bind:this={videoElement}
 			src={game.cover_video_url}
-			class="absolute top-0 left-0 z-5 h-full w-full object-cover opacity-0"
+			class="absolute top-0 left-0 z-5 w-full object-cover opacity-0"
 			class:opacity-100={isHovered && videoLoaded && game.cover_video_url}
 			muted
 			playsinline
@@ -96,7 +97,7 @@
 	<img
 		src={game.cover_image_url}
 		alt="cover"
-		class="prevent-image-select absolute top-0 left-0 z-10 h-full w-full object-cover opacity-0 transition"
+		class="prevent-image-select absolute top-0 left-0 z-10 w-full object-cover opacity-0 transition"
 		class:opacity-100={coverImageLoaded && (!isHovered || !videoLoaded || !game.cover_video_url)}
 		fetchpriority="high"
 		onload={() => {
@@ -104,7 +105,7 @@
 		}}
 	/>
 
-	{#if isHovered}
+	{#if isHovered && !small}
 		<div
 			transition:slide
 			class="bg-background/75 absolute right-0 bottom-0 left-0 z-11 flex max-h-1/3 flex-col overflow-hidden text-white backdrop-blur-xl"
@@ -131,20 +132,22 @@
 		</div>
 	{/if}
 
-	<!-- Skeleton for circular image -->
-	<div
-		class="prevent-image-select bg-background absolute right-0 -bottom-[18%] left-0 z-9 mx-auto aspect-square w-1/5 animate-pulse rounded-full shadow-xl"
-	></div>
-	<img
-		src={game.logo_url}
-		alt="game logo"
-		class="prevent-image-select absolute right-0 -bottom-[18%] left-0 z-10 mx-auto aspect-square w-1/5 rounded-full object-center opacity-0 transition group-hover:outline-2"
-		class:opacity-100={logoImageLoaded}
-		fetchpriority="high"
-		onload={() => {
-			logoImageLoaded = true;
-		}}
-	/>
+	{#if !small}
+		<!-- Skeleton for circular image -->
+		<div
+			class="prevent-image-select bg-background absolute right-0 -bottom-[18%] left-0 z-9 mx-auto aspect-square w-1/5 animate-pulse rounded-full shadow-xl"
+		></div>
+		<img
+			src={game.logo_url}
+			alt="game logo"
+			class="prevent-image-select absolute right-0 -bottom-[18%] left-0 z-10 mx-auto aspect-square w-1/5 rounded-full object-center opacity-0 transition group-hover:outline-2"
+			class:opacity-100={logoImageLoaded}
+			fetchpriority="high"
+			onload={() => {
+				logoImageLoaded = true;
+			}}
+		/>
+	{/if}
 </div>
 
 <style>

@@ -6,11 +6,11 @@
 	import api from "../api.js";
 	import { blur } from "svelte/transition";
 	import Button from "./Button.svelte";
+	import { fetchRecommendedGames } from "../utils/fetch-recommended-games.js";
 
 	// State
 	let isLoading = $state(true);
 	let games = $state([]);
-	let selectedCategory = $state();
 	let containerRef = $state();
 	let cardWidth = $state(0);
 
@@ -20,11 +20,12 @@
 	let maskStyle = $state("");
 
 	onMount(async () => {
+		isLoading = true;
 		const categories = await api.getCategories();
 		const currentGame = await api.getCurrentGameInfo();
-		selectedCategory = currentGame?.category || categories?.[categories?.length - 1];
-
-		await fetchGames();
+		const selectedCategory = currentGame?.category || categories?.[categories?.length - 1];
+		games = await fetchRecommendedGames(selectedCategory);
+		isLoading = false;
 
 		if (containerRef) {
 			const maxScroll = containerRef.scrollWidth - containerRef.clientWidth;
@@ -53,29 +54,6 @@
 			rgba(0, 0, 0, ${0.326 * rightFactor + (1 - rightFactor)}) 98%,
 			rgba(0, 0, 0, ${0.05 * rightFactor + (1 - rightFactor)})
 		)`;
-	}
-
-	// Fetch games from API
-	async function fetchGames() {
-		isLoading = true;
-
-		// First try with category
-		let result = await api.getSuggestions(selectedCategory, 1);
-		let fetchedGames = result?.games || [];
-
-		// If not enough games, try without category
-		if (fetchedGames.length < 10 && selectedCategory) {
-			const moreResult = await api.getSuggestions(null, 1);
-			const moreGames = moreResult?.games || [];
-
-			// Filter out duplicates
-			const uniqueGames = moreGames.filter((newGame) => !fetchedGames.some((existing) => existing.id === newGame.id));
-			fetchedGames = [...fetchedGames, ...uniqueGames];
-		}
-
-		// Limit the number of games to 10
-		games = fetchedGames.slice(0, 10);
-		isLoading = false;
 	}
 </script>
 

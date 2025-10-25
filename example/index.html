@@ -93,7 +93,7 @@
                 <div class="options">
                     <button class="button" id="show-discovery">Open discovery</button>
                     <button class="button" id="button-toggle-sidebar">Toggle sidebar</button>
-                    <button class="button" id="discovery-toggle-button">Toggle discovery</button>
+                    <button class="button" id="exit-intent-toggle-button">Toggle exit intent</button>
                 </div>
             </div>
         </div>
@@ -123,7 +123,7 @@
             });
 
             let discoveryToggled = false;
-            document.getElementById('discovery-toggle-button').addEventListener('click', () => {
+            document.getElementById('exit-intent-toggle-button').addEventListener('click', () => {
                 playlightSDK?.setConfig({
                     exitIntent: {
                         enabled: discoveryToggled

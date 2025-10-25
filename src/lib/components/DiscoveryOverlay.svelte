@@ -6,8 +6,7 @@
 	import Navigation from "./Navigation.svelte";
 	import { onMount } from "svelte";
 	import { discoveryOpen, projectUrl } from "../store.js";
-	import GameCategorySeperator from "./GameCategorySeperator.svelte";
-	import CurrentGameDisplay from "./CurrentGameDisplay.svelte";
+	import DiscoveryDrawer from "./DiscoveryDrawer.svelte";
 
 	// States
 	let isLoading = $state(true);
@@ -115,6 +114,23 @@
 	}}
 />
 
+<!-- Separator to signal that games are from different category -->
+{#snippet categorySeperator()}
+	<div class="-mx-10 mt-5 flex h-92 w-10 flex-col">
+		<div class="flex h-full items-center justify-center">
+			<div class="flex h-full w-full flex-col items-center justify-between">
+				<div class="bg-muted-foreground h-1/5 w-px min-[1920px]:h-1/4 opacity-60"></div>
+				<div
+					class="text-muted-foreground origin-center -rotate-90 transform text-sm whitespace-nowrap select-none"
+				>
+					From other categories
+				</div>
+				<div class="bg-muted-foreground h-1/5 w-px min-[1920px]:h-1/4 opacity-60"></div>
+			</div>
+		</div>
+	</div>
+{/snippet}
+
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
@@ -143,7 +159,7 @@
 	</div>
 
 	<!-- Current game display -->
-	<CurrentGameDisplay {currentGame} />
+	<DiscoveryDrawer {currentGame} />
 
 	<!-- Game grid -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -165,7 +181,7 @@
 				{#each games as game, i}
 					{@const firstGameFromDiffCategory = games.findIndex((e) => e.category !== selectedCategory && !e.featured)}
 					{#if i == firstGameFromDiffCategory}
-						<GameCategorySeperator />
+						{@render categorySeperator()}
 					{/if}
 					<GameCard {game} />
 				{/each}
