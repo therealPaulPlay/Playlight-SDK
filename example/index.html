@@ -44,6 +44,8 @@
             padding: 0.75rem 1.5rem;
             cursor: pointer;
             margin: 0.5rem;
+            font-weight: 500;
+            color: white;
         }
 
         .button:hover {
@@ -56,12 +58,6 @@
             justify-content: center;
             gap: 0.5rem;
             margin-top: 2rem;
-        }
-
-        /* test overrides */
-        button {
-            font-weight: 500;
-            color: white;
         }
 
         a {
@@ -85,6 +81,22 @@
             margin-inline: auto;
             line-height: 100px;
         }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.25);
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-inner {
+            width: 300px;
+            height: 300px;
+            background-color: white;
+            color: black;
+        }
     </style>
 </head>
 
@@ -102,7 +114,9 @@
             </div>
         </div>
     </div>
-    
+
+    <button class="button" onclick="openModal()">Open modal</button>
+
     <details class="expandable-details">
         <summary>Scrollable content test</summary>
         <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore
@@ -144,6 +158,13 @@
             dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam</p>
     </details>
 
+    <div class="modal" id="modal">
+        <div class="modal-inner">
+            <p>Hey!</p>
+            <button onclick="closeModal()" class="button">Close</button>
+        </div>
+    </div>
+
     <script type="module">
         try {
             const module = await import("../dist/playlight-sdk.es.js");
@@ -176,8 +197,16 @@
                 });
                 discoveryToggled = !discoveryToggled;
             });
+
         } catch (error) {
             console.error("Playlight SDK could not be loaded:", error);
+        }
+
+        window.closeModal = () => {
+            document.getElementById("modal").style.display = "none";
+        }
+        window.openModal = () => {
+            document.getElementById("modal").style.display = "flex";
         }
     </script>
 </body>

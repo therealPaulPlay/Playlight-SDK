@@ -8,6 +8,7 @@
 	import CurrentGameDisplay from "./CurrentGameDisplay.svelte";
 	import Button from "./Button.svelte";
 	import { openGame } from "../utils/open-game";
+	import { blur } from "svelte/transition";
 
 	let isLoading = $state(false);
 	let collapsed = $state(false);
@@ -25,10 +26,50 @@
 		games = await fetchRecommendedGames(selectedCategory);
 		isLoading = false;
 	});
+
+	// Draggable button state
+	let buttonY = $state(80); // Start slightly below top
+	let isDragging = $state(false);
+	let dragStartY = $state(0);
+	let buttonStartY = $state(0);
+	let buttonElement = $state(null);
+
+	function handleDragStart(clientY) {
+		isDragging = true;
+		dragStartY = clientY;
+		buttonStartY = buttonY;
+	}
+
+	function handleMouseMove(e) {
+		if (!isDragging) return;
+		handleDragMove(e.clientY);
+	}
+
+	function handleTouchMove(e) {
+		if (!isDragging) return;
+		e.preventDefault();
+		handleDragMove(e.touches[0].clientY);
+	}
+
+	function handleDragMove(clientY) {
+		if (!isDragging) return;
+
+		const deltaY = clientY - dragStartY;
+		const newY = buttonStartY + deltaY;
+		const buttonHeight = buttonElement?.offsetHeight; // Get actual button height
+		buttonY = Math.max(0, Math.min(window.innerHeight - buttonHeight, newY)); // Constrain to screen bounds (0 to window height minus button height)
+	}
 </script>
 
+<svelte:window
+	onmousemove={handleMouseMove}
+	onmouseup={() => (isDragging = false)}
+	ontouchmove={handleTouchMove}
+	ontouchend={() => (isDragging = false)}
+/>
+
 <div
-	class="flex h-dvh {collapsed
+	class="relative z-1 flex h-dvh {collapsed
 		? 'w-0 opacity-50 blur'
 		: 'w-75'} flex-col items-center gap-12 overflow-hidden border-l bg-black text-white transition-[width_filter_opacity_display]"
 >
@@ -107,8 +148,22 @@
 </div>
 
 {#if collapsed}
-	<div class="bg-white shadow-xl text-black p-2 absolute right-0 top-0">
-		<GripVertical />
+	<div
+		transition:blur
+		bind:this={buttonElement}
+		role="button"
+		tabindex="0"
+		class="fixed right-0 flex items-center gap-2 bg-white p-2 text-black shadow-xl {isDragging
+			? 'cursor-grabbing'
+			: 'cursor-grab'}"
+		style:top={buttonY + "px"}
+		onmousedown={(e) => handleDragStart(e.clientY)}
+		ontouchstart={(e) => handleDragStart(e.touches[0].clientY)}
+	>
+		<GripVertical class="text-muted-foreground aspect-square" />
+		<Button variant="ghost" onclick={() => (collapsed = false)}>
+			<img alt="icon" src="/static/images/icon-small.png" class="aspect-square w-8" />
+		</Button>
 	</div>
 {/if}
 

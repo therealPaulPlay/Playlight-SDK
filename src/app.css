@@ -41,6 +41,7 @@
   cursor: pointer;
   background: none;
   box-shadow: none;
+  opacity: unset;
 }
 
 /* Link styles - using multiple selectors to target ALL links at ANY depth */
