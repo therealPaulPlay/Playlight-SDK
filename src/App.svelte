@@ -3,9 +3,7 @@
 	import DiscoveryOverlay from "./lib/components/DiscoveryOverlay.svelte";
 	import { Toaster } from "svelte-sonner";
 	import ExitIntentDetector from "./lib/components/ExitIntentDetector.svelte";
-	import { discoveryOpen, sidebarVisible } from "./lib/store.js";
-
-	let { config } = $props();
+	import { config, discoveryOpen, sidebarVisible } from "./lib/store.js";
 </script>
 
 <!-- Discovery overlay -->

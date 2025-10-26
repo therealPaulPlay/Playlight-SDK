@@ -1,8 +1,7 @@
 import { initializeConfig } from './lib/config.js';
-import { discoveryOpen, sidebarVisible } from './lib/store.js';
+import { config, discoveryOpen, userIsFromPlaylight } from './lib/store.js';
 import { eventCallbacks } from './lib/utils/trigger-event.js';
 import api from './lib/api.js';
-import { get, writable } from 'svelte/store';
 import { initWidgets, setupWidgetObserver } from './lib/utils/mount-widgets.js';
 import { mountPlaylight } from './lib/utils/mount-components.js';
 
@@ -15,7 +14,6 @@ class PlaylightSDK {
      */
     constructor() {
         this.isInitialized = false;
-        this.config = writable(null);
     }
 
     /**
@@ -28,14 +26,14 @@ class PlaylightSDK {
 
         // Initialize configuration with defaults and user overrides
         this.setConfig(userConfig);
-        mountPlaylight(this.config); // Create container and mount app
-
-        // Display sidebar if initially set to visible
-        sidebarVisible.set(true);
+        mountPlaylight(); // Create container and mount app
 
         // Widgets
         initWidgets();
         setupWidgetObserver();
+
+        // Set user state
+        userIsFromPlaylight.set(new URLSearchParams(window.location.search).get('utm_source') === 'playlight');
 
         // Set initialized
         this.isInitialized = true;
@@ -67,18 +65,16 @@ class PlaylightSDK {
 
     /**
      * Update the configuration
-     * @param {object} [config] - Playlight configuration object
+     * @param {object} [configParam] - Playlight configuration object
      */
-    setConfig(config = {}) {
-        this.config?.set(initializeConfig(config));
+    setConfig(configParam = {}) {
+        config.set(initializeConfig(configParam));
     }
 }
 
-// Create instance and expose it globally
+// Create instance
 const playlightSDK = new PlaylightSDK();
-
-// Expose SDK as global var for iife (legacy) usage
-if (typeof window !== 'undefined') window.playlightSDK = playlightSDK;
+if (typeof window !== 'undefined') window.playlightSDK = playlightSDK; // Expose SDK as global var for iife (legacy) usage
 
 // Export for module usage
 export default playlightSDK;

@@ -109,8 +109,8 @@
 
             <div class="options">
                 <button class="button" id="show-discovery">Open discovery</button>
-                <button class="button" id="button-toggle-sidebar">Toggle sidebar</button>
-                <button class="button" id="exit-intent-toggle-button">Toggle exit intent</button>
+                <button class="button" id="toggle-sidebar">Toggle sidebar</button>
+                <button class="button" id="toggle-exit-intent">Toggle exit intent</button>
             </div>
         </div>
     </div>
@@ -188,15 +188,29 @@
                 playlightSDK?.setDiscovery(true);
             });
 
-            let discoveryToggled = false;
-            document.getElementById('exit-intent-toggle-button').addEventListener('click', () => {
+            let discoveryToggled = true;
+            document.getElementById('toggle-exit-intent').addEventListener('click', () => {
+                discoveryToggled = !discoveryToggled;
+                applyConfig();
+            });
+
+            let sidebarToggled = false;
+            document.getElementById('toggle-sidebar').addEventListener('click', () => {
+                sidebarToggled = !sidebarToggled;
+                applyConfig();
+            });
+
+            function applyConfig() {
                 playlightSDK?.setConfig({
                     exitIntent: {
                         enabled: discoveryToggled
+                    },
+                    sidebar: {
+                        enableBeta: true, /* TODO remove once stable */
+                        forceShow: sidebarToggled
                     }
                 });
-                discoveryToggled = !discoveryToggled;
-            });
+            }
 
         } catch (error) {
             console.error("Playlight SDK could not be loaded:", error);

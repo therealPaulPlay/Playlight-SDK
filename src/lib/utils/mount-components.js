@@ -11,7 +11,7 @@ let isLayoutSetup = false;
 let originalBodyStyles = {};
 
 // Mount the main Playlight app
-export function mountPlaylight(config) {
+export function mountPlaylight() {
 	try {
 		appContainer = document.createElement('div');
 		appContainer.id = 'playlight-sdk-container';
@@ -20,7 +20,6 @@ export function mountPlaylight(config) {
 
 		mount(App, {
 			target: appContainer,
-			props: { config }
 		});
 	} catch (error) {
 		console.error("Playlight error occurred during mount:", error);

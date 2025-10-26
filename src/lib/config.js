@@ -3,6 +3,10 @@ const defaultConfig = {
     exitIntent: {
         enabled: true,
         immediate: false
+    },
+    sidebar: {
+        enableBeta: false,
+        forceShow: false
     }
 };
 
