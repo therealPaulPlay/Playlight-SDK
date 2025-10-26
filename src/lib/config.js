@@ -6,7 +6,7 @@ const defaultConfig = {
     },
     sidebar: {
         enableBeta: false,
-        forceShow: false
+        forceVisible: false
     }
 };
 

@@ -40,7 +40,7 @@ discoveryOpen.subscribe((v) => {
 });
 
 config.subscribe((value) => {
-    if (value?.sidebar?.forceShow || (get(userIsFromPlaylight) && value?.sidebar?.enableBeta)) sidebarVisible.set(true);
+    if (value?.sidebar?.forceVisible || (get(userIsFromPlaylight) && value?.sidebar?.enableBeta)) sidebarVisible.set(true);
     else sidebarVisible.set(false);
 });
 
