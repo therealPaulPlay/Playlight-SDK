@@ -7,8 +7,27 @@ let appContainer = null;
 let sidebarContainer = null;
 let sidebarComponent = null;
 let contentWrapper = null;
-let isLayoutSetup = false;
-let originalBodyStyles = {};
+let isSidebarLayoutSetup = false;
+let originalWindowInnerWidth = null;
+
+// Polyfill window.innerWidth to return content wrapper width when sidebar is active
+function setupWindowDimensionPolyfill() {
+	originalWindowInnerWidth = Object.getOwnPropertyDescriptor(Window.prototype, 'innerWidth');
+	Object.defineProperty(window, 'innerWidth', {
+		get: function () {
+			return isSidebarLayoutSetup && contentWrapper ? contentWrapper.clientWidth : originalWindowInnerWidth.get.call(this);
+		},
+		configurable: true
+	});
+}
+
+// Restore original window.innerWidth
+function restoreWindowDimensionPolyfill() {
+	if (originalWindowInnerWidth) {
+		Object.defineProperty(window, 'innerWidth', originalWindowInnerWidth);
+		originalWindowInnerWidth = null;
+	}
+}
 
 // Mount the main Playlight app
 export function mountPlaylight() {
@@ -28,7 +47,7 @@ export function mountPlaylight() {
 
 // Setup DOM layout and mount sidebar
 export function setupSidebarLayout() {
-	if (isLayoutSetup) return;
+	if (isSidebarLayoutSetup) return;
 
 	try {
 		const body = document.body;
@@ -38,11 +57,6 @@ export function setupSidebarLayout() {
 				child.tagName !== 'STYLE' &&
 				!child.id?.startsWith('playlight-sdk')
 		);
-
-		// Store original body styles
-		originalBodyStyles = {
-			cssText: body.style.cssText
-		};
 
 		// Wrap content if needed
 		if (bodyChildren.length !== 1) {
@@ -55,10 +69,6 @@ export function setupSidebarLayout() {
 			contentWrapper = bodyChildren[0];
 			contentWrapper.classList.add('playlight-sdk-content-wrapper');
 		}
-
-		// Transfer body's inline styles to wrapper
-		contentWrapper.style.cssText = originalBodyStyles.cssText;
-		body.style.cssText = '';
 
 		// Create and mount sidebar
 		sidebarContainer = document.createElement('div');
@@ -73,7 +83,10 @@ export function setupSidebarLayout() {
 		// Apply layout class to body
 		body.classList.add('playlight-sdk-flex-body');
 
-		isLayoutSetup = true;
+		// Polyfill window.innerWidth to account for sidebar width
+		setupWindowDimensionPolyfill();
+
+		isSidebarLayoutSetup = true;
 	} catch (error) {
 		console.error("Playlight error occurred during sidebar setup:", error);
 	}
@@ -81,7 +94,7 @@ export function setupSidebarLayout() {
 
 // Remove sidebar layout and unmount sidebar
 export function removeSidebarLayout() {
-	if (!isLayoutSetup) return;
+	if (!isSidebarLayoutSetup) return;
 
 	try {
 		const body = document.body;
@@ -107,17 +120,16 @@ export function removeSidebarLayout() {
 			contentWrapper.classList.remove('playlight-sdk-content-wrapper');
 		}
 
-		// Restore body styles
-		body.style.cssText = originalBodyStyles.cssText;
-
 		// Remove body class
 		body.classList.remove('playlight-sdk-flex-body');
+
+		// Restore window dimension polyfill
+		restoreWindowDimensionPolyfill();
 
 		// Reset state
 		sidebarContainer = null;
 		contentWrapper = null;
-		originalBodyStyles = {};
-		isLayoutSetup = false;
+		isSidebarLayoutSetup = false;
 	} catch (error) {
 		console.error("Playlight error occurred during sidebar removal:", error);
 	}

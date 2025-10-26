@@ -161,7 +161,6 @@
 
 .playlight-sdk-content-wrapper {
   flex: 1;
-  overflow: auto;
   contain: paint;
 }
 
