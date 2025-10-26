@@ -3,13 +3,14 @@
 	import { discoveryOpen, projectUrl } from "../store";
 	import { fetchRecommendedGames } from "../utils/fetch-recommended-games";
 	import api from "../api.js";
-	import { LoaderCircle, Gamepad2, Dices } from "lucide-svelte";
+	import { LoaderCircle, Gamepad2, Dices, ChevronsRight, GripVertical } from "lucide-svelte";
 	import GameCard from "./GameCard.svelte";
 	import CurrentGameDisplay from "./CurrentGameDisplay.svelte";
 	import Button from "./Button.svelte";
 	import { openGame } from "../utils/open-game";
 
 	let isLoading = $state(false);
+	let collapsed = $state(false);
 	let currentGame = $state();
 	let games = $state([]);
 
@@ -26,7 +27,11 @@
 	});
 </script>
 
-<div class="flex h-screen w-75 flex-col items-center gap-12 border-l bg-black text-white">
+<div
+	class="flex h-dvh {collapsed
+		? 'w-0 opacity-50 blur'
+		: 'w-75'} flex-col items-center gap-12 overflow-hidden border-l bg-black text-white transition-[width_filter_opacity_display]"
+>
 	<img alt="logo" src={$projectUrl + "/static/images/logo-white-small.png"} class="pointer-events-none mt-5 w-50" />
 
 	<!-- Recommended games -->
@@ -83,10 +88,29 @@
 	</div>
 
 	<!-- Currently playing -->
-	<div class="mt-auto border-t p-6">
-		<CurrentGameDisplay {currentGame} />
+	<div class="w-full">
+		<div class="mt-auto border-y p-6">
+			<CurrentGameDisplay {currentGame} />
+		</div>
+
+		<!-- Collapse -->
+		<div class="flex justify-end p-0">
+			<Button
+				variant="secondary"
+				class="text-muted-foreground border-l outline-none!"
+				onclick={() => (collapsed = true)}
+			>
+				<ChevronsRight />
+			</Button>
+		</div>
 	</div>
 </div>
+
+{#if collapsed}
+	<div class="bg-white shadow-xl text-black p-2 absolute right-0 top-0">
+		<GripVertical />
+	</div>
+{/if}
 
 <style>
 	@keyframes scroll-column {

@@ -79,25 +79,70 @@
             background-color: rgba(0, 0, 0, 0.2);
             padding: 5px;
         }
+
+        .expandable-details {
+            max-width: 800px;
+            margin-inline: auto;
+            line-height: 100px;
+        }
     </style>
 </head>
 
 <body>
-    <div>
-        <div class="container">
-            <div class="game-container">
-                <p>This is a simple example showing the Playlight SDK running on a page.</p>
+    <div class="container">
+        <div class="game-container">
+            <p>This is a simple example showing the Playlight SDK running on a page.</p>
 
-                <div class="playlight-widget-carousel carousel-widget-test"></div>
+            <div class="playlight-widget-carousel carousel-widget-test"></div>
 
-                <div class="options">
-                    <button class="button" id="show-discovery">Open discovery</button>
-                    <button class="button" id="button-toggle-sidebar">Toggle sidebar</button>
-                    <button class="button" id="exit-intent-toggle-button">Toggle exit intent</button>
-                </div>
+            <div class="options">
+                <button class="button" id="show-discovery">Open discovery</button>
+                <button class="button" id="button-toggle-sidebar">Toggle sidebar</button>
+                <button class="button" id="exit-intent-toggle-button">Toggle exit intent</button>
             </div>
         </div>
     </div>
+    
+    <details class="expandable-details">
+        <summary>Scrollable content test</summary>
+        <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore
+            et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea
+            rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum
+            dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore
+            magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet
+            clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit
+            amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna
+            aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita
+            kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+
+            Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum
+            dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent
+            luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet,
+            consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam
+            erat volutpat.
+
+            Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip
+            ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie
+            consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim
+            qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi.
+
+            Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat
+            facer possim assum. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh
+            euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis
+            nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+
+            Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum
+            dolore eu feugiat nulla facilisis.
+
+            At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
+            sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed
+            diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero
+            eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est
+            Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, At accusam aliquyam
+            diam diam dolore dolores duo eirmod eos erat, et nonumy sed tempor et et invidunt justo labore Stet
+            clita ea et gubergren, kasd magna no rebum. sanctus sea sed takimata ut vero voluptua. est Lorem ipsum
+            dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam</p>
+    </details>
 
     <script type="module">
         try {
@@ -114,7 +159,7 @@
             });
 
             playlightSDK.onEvent("exitIntent", () => {
-                console.log("Exit intent triggered!");
+                console.log("Exit intent triggered event!");
             });
 
             // Wait for the SDK to be fully loaded to add event listeners
