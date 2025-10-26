@@ -72,7 +72,6 @@ export function setupSidebarLayout() {
 
 		// Create and mount sidebar
 		sidebarContainer = document.createElement('div');
-		sidebarContainer.id = 'playlight-sdk-container-sidebar';
 		sidebarContainer.className = 'playlight-sdk playlight-sdk-container-sidebar';
 		body.appendChild(sidebarContainer);
 
