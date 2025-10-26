@@ -38,7 +38,7 @@
 
 <div class="flex flex-wrap gap-1 text-start">
 	<div class="w-full">
-		<p class="text-muted-foreground text-sm select-none">Currently playing</p>
+		<p class="text-muted-foreground text-sm select-none text-nowrap">Currently playing</p>
 	</div>
 	<div class="flex w-full items-center gap-2">
 		{#if currentGame?.logo_url}

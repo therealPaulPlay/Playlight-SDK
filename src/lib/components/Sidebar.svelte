@@ -1,9 +1,10 @@
 <script>
 	import { onMount } from "svelte";
+	import { on } from "svelte/events";
 	import { discoveryOpen, projectUrl } from "../store";
 	import { fetchRecommendedGames } from "../utils/fetch-recommended-games";
 	import api from "../api.js";
-	import { LoaderCircle, Gamepad2, Dices, ChevronsRight, GripVertical } from "lucide-svelte";
+	import { LoaderCircle, Gamepad2, Dices, ChevronsRight, GripVertical, X } from "lucide-svelte";
 	import GameCard from "./GameCard.svelte";
 	import CurrentGameDisplay from "./CurrentGameDisplay.svelte";
 	import Button from "./Button.svelte";
@@ -25,6 +26,11 @@
 		const selectedCategory = currentGame?.category || categories?.[categories?.length - 1];
 		games = await fetchRecommendedGames(selectedCategory);
 		isLoading = false;
+	});
+
+	onMount(() => {
+		if (window.innerWidth <= 768) collapsed = true; // Default to collapsed sidebar on mobile
+		return on(window, "touchmove", handleTouchMove, { passive: false }); // Add non-passive touch listener to prevent scrolling during drag
 	});
 
 	// Draggable button state
@@ -64,16 +70,32 @@
 <svelte:window
 	onmousemove={handleMouseMove}
 	onmouseup={() => (isDragging = false)}
-	ontouchmove={handleTouchMove}
 	ontouchend={() => (isDragging = false)}
 />
 
 <div
-	class="relative z-1 flex h-dvh {collapsed
-		? 'w-0 opacity-50 blur'
-		: 'w-75'} flex-col items-center gap-12 overflow-hidden border-l bg-black text-white transition-[width_filter_opacity_display]"
+	class="fixed z-1 flex h-dvh overflow-y-auto max-md:top-0 max-md:right-0 max-md:bottom-0 md:relative md:ml-auto {collapsed
+		? 'w-0 opacity-50'
+		: 'w-full md:w-75'} flex-col items-center gap-12 border-l bg-black text-white transition-[width,opacity] duration-150 ease-out"
 >
-	<img alt="logo" src={$projectUrl + "/static/images/logo-white-small.png"} class="pointer-events-none mt-5 w-50" />
+	<div class="w-full">
+		<!-- Mobile close-->
+		<div class="mx-auto flex justify-end border-b p-0 md:hidden">
+			<Button
+				variant="secondary"
+				class="text-muted-foreground border-l outline-none!"
+				onclick={() => (collapsed = true)}
+			>
+				<X />
+			</Button>
+		</div>
+		<!-- Logo -->
+		<img
+			alt="logo"
+			src={$projectUrl + "/static/images/logo-white-small.png"}
+			class="pointer-events-none mx-auto mt-5 w-50"
+		/>
+	</div>
 
 	<!-- Recommended games -->
 	<div class="grow-1 overflow-hidden mask-y-from-90% mask-y-to-100% p-6 py-12">
@@ -135,7 +157,7 @@
 		</div>
 
 		<!-- Collapse -->
-		<div class="flex justify-end p-0">
+		<div class="flex justify-end p-0 max-md:hidden">
 			<Button
 				variant="secondary"
 				class="text-muted-foreground border-l outline-none!"
