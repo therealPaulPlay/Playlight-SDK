@@ -184,7 +184,7 @@
 	>
 		<GripVertical class="text-muted-foreground aspect-square" />
 		<Button variant="ghost" onclick={() => (collapsed = false)}>
-			<img alt="icon" src="/static/images/icon-small.png" class="aspect-square w-8" />
+			<img alt="icon" src={$projectUrl + "/static/images/icon-small.png"} class="aspect-square w-8" />
 		</Button>
 	</div>
 {/if}
