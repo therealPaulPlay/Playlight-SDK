@@ -76,7 +76,7 @@
 <div
 	class="fixed z-1 flex h-dvh overflow-y-auto max-md:top-0 max-md:right-0 max-md:bottom-0 md:relative md:ml-auto {collapsed
 		? 'w-0 opacity-50'
-		: 'w-full md:w-75'} flex-col items-center gap-12 border-l bg-black text-white transition-[width,opacity] duration-150 ease-out"
+		: 'w-full md:w-75'} bg-background flex-col items-center gap-12 border-l text-white transition-[width,opacity] duration-150 ease-out"
 >
 	<div class="w-full">
 		<!-- Mobile close-->
@@ -175,7 +175,7 @@
 		bind:this={buttonElement}
 		role="button"
 		tabindex="0"
-		class="fixed right-0 flex items-center gap-2 bg-white p-2 text-black shadow-xl {isDragging
+		class="bg-background fixed right-0 flex items-center gap-2 border p-2 shadow-xl {isDragging
 			? 'cursor-grabbing'
 			: 'cursor-grab'}"
 		style:top={buttonY + "px"}
@@ -184,7 +184,7 @@
 	>
 		<GripVertical class="text-muted-foreground aspect-square" />
 		<Button variant="ghost" onclick={() => (collapsed = false)}>
-			<img alt="icon" src={$projectUrl + "/static/images/icon-small.png"} class="aspect-square w-8" />
+			<img alt="icon" src={$projectUrl + "/static/images/icon-white-small.png"} class="aspect-square w-8" />
 		</Button>
 	</div>
 {/if}

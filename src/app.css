@@ -127,6 +127,7 @@
 
 @font-face {
   font-family: Geist;
+  /* This gets included in the CSS output as base64 */
   src: url("/static/fonts/geist-variable-weight.woff2");
 }
 
@@ -173,7 +174,7 @@
 
 /* Sidebar styles */
 .playlight-sdk-container-sidebar {
-  box-shadow: 0 0 25px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.35);
   position: sticky;
   top: 0;
   bottom: 0;
