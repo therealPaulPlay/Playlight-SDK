@@ -157,10 +157,21 @@
   flex-direction: row !important;
 }
 
-.playlight-sdk-content-wrapper {
-  flex: 1;
-  overflow: auto;
-  contain: paint;
+/* Outer wrapper (containing block for fixed elements) */
+.playlight-sdk-outer-wrapper {
+  flex: 1 !important;
+  contain: paint !important;
+  /* Create new stacking context for position fixed, absolute etc. and prevent anything from rendering outside of it */
+}
+
+/* Inner wrapper (scrollable container) */
+.playlight-sdk-inner-wrapper {
+  /* Allow scrolling */
+  overflow: auto !important;
+  /* Like the body, don't grow past viewport height */
+  height: 100dvh !important;
+  position: relative !important;
+  /* Don't add any position relative/fixed/absolute etc. here! */
 }
 
 /* Widget specific styles */

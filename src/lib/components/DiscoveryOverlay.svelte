@@ -144,7 +144,7 @@
 		<img
 			alt="logo"
 			src={$projectUrl + "/static/images/logo-white-small.png"}
-			class="pointer-events-none ml-3 w-50 max-sm:w-40"
+			class="pointer-events-none ml-3 w-50 max-sm:w-40 select-none"
 		/>
 		<div class="mt-3.5 mr-4 flex items-center justify-evenly gap-8 overflow-hidden max-sm:mt-3">
 			<button class="cursor-pointer text-white transition hover:opacity-50" onclick={() => ($discoveryOpen = false)}>

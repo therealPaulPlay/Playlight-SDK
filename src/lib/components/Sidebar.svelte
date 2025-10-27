@@ -93,7 +93,7 @@
 		<img
 			alt="logo"
 			src={$projectUrl + "/static/images/logo-white-small.png"}
-			class="pointer-events-none mx-auto mt-5 w-50"
+			class="pointer-events-none mx-auto mt-5 w-50 select-none"
 		/>
 	</div>
 
