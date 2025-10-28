@@ -13,20 +13,28 @@ let originalWindowInnerWidth = null;
 
 // Polyfill window.innerWidth to return outer wrapper width when sidebar is active
 function setupWindowDimensionPolyfill() {
-	originalWindowInnerWidth = Object.getOwnPropertyDescriptor(Window.prototype, 'innerWidth');
-	Object.defineProperty(window, 'innerWidth', {
-		get: function () {
-			return isSidebarLayoutSetup && outerWrapper ? outerWrapper.clientWidth : originalWindowInnerWidth.get.call(this);
-		},
-		configurable: true
-	});
+	try {
+		originalWindowInnerWidth = Object.getOwnPropertyDescriptor(Window.prototype, 'innerWidth');
+		Object.defineProperty(window, 'innerWidth', {
+			get: function () {
+				return isSidebarLayoutSetup && outerWrapper ? outerWrapper.clientWidth : originalWindowInnerWidth.get.call(this);
+			},
+			configurable: true
+		});
+	} catch (error) {
+		console.warn('Could not polyfill window.innerWidth:', error);
+	}
 }
 
 // Restore original window.innerWidth
 function restoreWindowDimensionPolyfill() {
-	if (originalWindowInnerWidth) {
-		Object.defineProperty(window, 'innerWidth', originalWindowInnerWidth);
-		originalWindowInnerWidth = null;
+	try {
+		if (originalWindowInnerWidth) {
+			Object.defineProperty(window, 'innerWidth', originalWindowInnerWidth);
+			originalWindowInnerWidth = null;
+		}
+	} catch (error) {
+		console.warn('Could not restore original window.innerWidth:', error);
 	}
 }
 
@@ -39,7 +47,7 @@ export function mountPlaylight() {
 		document.body.appendChild(appContainer);
 		mount(App, { target: appContainer });
 	} catch (error) {
-		console.error("Playlight error occurred during mount:", error);
+		console.error("Error occurred during mount:", error);
 	}
 }
 
@@ -79,7 +87,7 @@ export function setupSidebarLayout() {
 		isSidebarLayoutSetup = true;
 
 	} catch (error) {
-		console.error("Playlight error occurred during sidebar setup:", error);
+		console.error("Error occurred during sidebar setup:", error);
 	}
 }
 
@@ -111,6 +119,6 @@ export function removeSidebarLayout() {
 		isSidebarLayoutSetup = false;
 
 	} catch (error) {
-		console.error("Playlight error occurred during sidebar removal:", error);
+		console.error("Error occurred during sidebar removal:", error);
 	}
 }
