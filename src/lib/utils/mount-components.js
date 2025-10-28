@@ -102,7 +102,7 @@ export function removeSidebarLayout() {
 			sidebarComponent = null;
 		}
 
-		if (sidebarContainer?.parentNode === body) body.removeChild(sidebarContainer);// Remove sidebar container
+		body.removeChild(sidebarContainer); // Remove sidebar container
 
 		// Unwrap inner wrapper and delete outer wrapper that contains inner one (so both)
 		if (outerWrapper && innerWrapper) {
