@@ -18,7 +18,7 @@ export function initWidgets() {
             });
         }
     } catch (error) {
-        console.error("Playlight error occurred initializing and mounting carousel widget:", error);
+        console.error("Error occurred initializing and mounting carousel widget:", error);
     }
 }
 
@@ -35,6 +35,6 @@ export function setupWidgetObserver() {
             subtree: true
         });
     } catch (error) {
-        console.error("Playlight error occurred setting up widget observer:", error);
+        console.error("Error occurred setting up widget observer:", error);
     }
 }

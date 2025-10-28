@@ -14,6 +14,9 @@
             color: #e2e2e2;
             margin: 0;
             padding: 0;
+        }
+
+        .main-element {
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -44,6 +47,8 @@
             padding: 0.75rem 1.5rem;
             cursor: pointer;
             margin: 0.5rem;
+            font-weight: 500;
+            color: white;
         }
 
         .button:hover {
@@ -56,12 +61,6 @@
             justify-content: center;
             gap: 0.5rem;
             margin-top: 2rem;
-        }
-
-        /* test overrides */
-        button {
-            font-weight: 500;
-            color: white;
         }
 
         a {
@@ -79,23 +78,98 @@
             background-color: rgba(0, 0, 0, 0.2);
             padding: 5px;
         }
+
+        .expandable-details {
+            max-width: 800px;
+            margin-inline: auto;
+            line-height: 100px;
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background-color: rgba(0, 0, 0, 0.25);
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-inner {
+            width: 300px;
+            height: 300px;
+            background-color: white;
+            color: black;
+        }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <div class="game-container">
-            <p>This is a simple example showing the Playlight SDK running on a page.</p>
+    <main class="main-element">
+        <div class="container">
+            <div class="game-container">
+                <p>This is a simple example showing the Playlight SDK running on a page.</p>
 
-            <div class="playlight-widget-carousel carousel-widget-test"></div>
+                <div class="playlight-widget-carousel carousel-widget-test"></div>
 
-            <div class="options">
-                <button class="button" id="show-discovery">Open discovery</button>
-                <button class="button" id="button-toggle-button">Toggle button</button>
-                <button class="button" id="discovery-toggle-button">Toggle discovery</button>
+                <div class="options">
+                    <button class="button" id="show-discovery">Open discovery</button>
+                    <button class="button" id="toggle-sidebar">Toggle sidebar</button>
+                    <button class="button" id="toggle-exit-intent">Toggle exit intent</button>
+                </div>
             </div>
         </div>
-    </div>
+
+        <button class="button" onclick="openModal()">Open modal</button>
+
+        <details class="expandable-details">
+            <summary>Scrollable content test</summary>
+            <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore
+                et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea
+                rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum
+                dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore
+                magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet
+                clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit
+                amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna
+                aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita
+                kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+
+                Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum
+                dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent
+                luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet,
+                consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam
+                erat volutpat.
+
+                Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip
+                ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie
+                consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim
+                qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi.
+
+                Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat
+                facer possim assum. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh
+                euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis
+                nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+
+                Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum
+                dolore eu feugiat nulla facilisis.
+
+                At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
+                sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed
+                diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero
+                eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est
+                Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, At accusam aliquyam
+                diam diam dolore dolores duo eirmod eos erat, et nonumy sed tempor et et invidunt justo labore Stet
+                clita ea et gubergren, kasd magna no rebum. sanctus sea sed takimata ut vero voluptua. est Lorem ipsum
+                dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam</p>
+        </details>
+
+        <div class="modal" id="modal">
+            <div class="modal-inner">
+                <p>Hey!</p>
+                <button onclick="closeModal()" class="button">Close</button>
+            </div>
+        </div>
+    </main>
 
     <script type="module">
         try {
@@ -104,15 +178,15 @@
             await playlightSDK.init();
 
             playlightSDK.onEvent("discoveryOpen", () => {
-                console.log("Discovery opened!");
+                console.log("Discovery open event!");
             });
 
             playlightSDK.onEvent("discoveryClose", () => {
-                console.log("Discovery closed!");
+                console.log("Discovery close event!");
             });
 
             playlightSDK.onEvent("exitIntent", () => {
-                console.log("Exit intent triggered!");
+                console.log("Exit intent triggered event!");
             });
 
             // Wait for the SDK to be fully loaded to add event listeners
@@ -120,27 +194,39 @@
                 playlightSDK?.setDiscovery(true);
             });
 
-            let buttonToggled = false;
-            document.getElementById('button-toggle-button').addEventListener('click', () => {
-                playlightSDK?.setConfig({
-                    button: {
-                        visible: buttonToggled
-                    }
-                });
-                buttonToggled = !buttonToggled;
+            let discoveryToggled = true;
+            document.getElementById('toggle-exit-intent').addEventListener('click', () => {
+                discoveryToggled = !discoveryToggled;
+                applyConfig();
             });
 
-            let discoveryToggled = false;
-            document.getElementById('discovery-toggle-button').addEventListener('click', () => {
+            let sidebarToggled = false;
+            document.getElementById('toggle-sidebar').addEventListener('click', () => {
+                sidebarToggled = !sidebarToggled;
+                applyConfig();
+            });
+
+            function applyConfig() {
                 playlightSDK?.setConfig({
                     exitIntent: {
                         enabled: discoveryToggled
+                    },
+                    sidebar: {
+                        enableBeta: true, /* TODO remove once stable */
+                        forceVisible: sidebarToggled
                     }
                 });
-                discoveryToggled = !discoveryToggled;
-            });
+            }
+
         } catch (error) {
             console.error("Playlight SDK could not be loaded:", error);
+        }
+
+        window.closeModal = () => {
+            document.getElementById("modal").style.display = "none";
+        }
+        window.openModal = () => {
+            document.getElementById("modal").style.display = "flex";
         }
     </script>
 </body>

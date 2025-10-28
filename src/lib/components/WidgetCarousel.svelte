@@ -6,11 +6,11 @@
 	import api from "../api.js";
 	import { blur } from "svelte/transition";
 	import Button from "./Button.svelte";
+	import { fetchRecommendedGames } from "../utils/fetch-recommended-games.js";
 
 	// State
 	let isLoading = $state(true);
 	let games = $state([]);
-	let selectedCategory = $state();
 	let containerRef = $state();
 	let cardWidth = $state(0);
 
@@ -20,16 +20,20 @@
 	let maskStyle = $state("");
 
 	onMount(async () => {
+		isLoading = true;
 		const categories = await api.getCategories();
 		const currentGame = await api.getCurrentGameInfo();
-		selectedCategory = currentGame?.category || categories?.[categories?.length - 1];
+		const selectedCategory = currentGame?.category || categories?.[categories?.length - 1];
+		games = await fetchRecommendedGames(selectedCategory);
+		isLoading = false;
 
-		await fetchGames();
-
-		if (containerRef) {
-			const maxScroll = containerRef.scrollWidth - containerRef.clientWidth;
-			updateMask(containerRef.scrollLeft, maxScroll - containerRef.scrollLeft);
-		}
+		// Wait for games to be rendered, then adjust mask image
+		requestAnimationFrame(() => {
+			if (containerRef) {
+				const maxScroll = containerRef.scrollWidth - containerRef.clientWidth;
+				updateMask(containerRef.scrollLeft, maxScroll - containerRef.scrollLeft);
+			}
+		});
 	});
 
 	function updateMask(scrollLeft, remainingScroll) {
@@ -54,32 +58,9 @@
 			rgba(0, 0, 0, ${0.05 * rightFactor + (1 - rightFactor)})
 		)`;
 	}
-
-	// Fetch games from API
-	async function fetchGames() {
-		isLoading = true;
-
-		// First try with category
-		let result = await api.getSuggestions(selectedCategory, 1);
-		let fetchedGames = result?.games || [];
-
-		// If not enough games, try without category
-		if (fetchedGames.length < 10 && selectedCategory) {
-			const moreResult = await api.getSuggestions(null, 1);
-			const moreGames = moreResult?.games || [];
-
-			// Filter out duplicates
-			const uniqueGames = moreGames.filter((newGame) => !fetchedGames.some((existing) => existing.id === newGame.id));
-			fetchedGames = [...fetchedGames, ...uniqueGames];
-		}
-
-		// Limit the number of games to 10
-		games = fetchedGames.slice(0, 10);
-		isLoading = false;
-	}
 </script>
 
-<div class="playlight-sdk-container">
+<div class="playlight-sdk playlight-sdk-widget">
 	<!-- Carousel -->
 	<div
 		bind:this={containerRef}
@@ -108,14 +89,7 @@
 				class="bg-background/85 my-auto mr-3 mb-30 ml-2 flex min-w-40 snap-center flex-wrap items-center justify-center gap-4 p-4 pb-6 shadow-lg backdrop-blur-xl"
 			>
 				<p class="w-full text-center text-lg font-semibold text-white">Fancy more?</p>
-				<Button
-					onclick={() => {
-						$discoveryOpen = true;
-						api.trackOpen();
-					}}
-				>
-					See all
-				</Button>
+				<Button onclick={() => ($discoveryOpen = true)}>See all</Button>
 			</div>
 		{/if}
 	</div>

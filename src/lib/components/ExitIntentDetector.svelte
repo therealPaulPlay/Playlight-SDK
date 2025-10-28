@@ -4,6 +4,7 @@
 	import { fly, slide } from "svelte/transition";
 	import { backOut } from "svelte/easing";
 	import { triggerEvent } from "../utils/trigger-event.js";
+	
 	let { enabled = true, onIntent, immediate = false } = $props();
 
 	// Elements
@@ -70,7 +71,7 @@
 	<!-- svelte-ignore a11y_mouse_events_have_key_events -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
-		class="fixed top-0 right-0 left-0 h-4"
+		class="fixed top-0 right-0 left-0 h-4 max-md:hidden"
 		bind:this={detectorElement}
 		onpointerover={(e) => {
 			if (e.pointerType !== "touch") handleBarTrigger();

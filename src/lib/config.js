@@ -1,12 +1,12 @@
 // Default configuration with ALL possible keys
 const defaultConfig = {
-    button: {
-        position: 'bottom-right',
-        visible: true
-    },
     exitIntent: {
         enabled: true,
         immediate: false
+    },
+    sidebar: {
+        enableBeta: false,
+        forceVisible: false
     }
 };
 
