@@ -27,10 +27,13 @@
 		games = await fetchRecommendedGames(selectedCategory);
 		isLoading = false;
 
-		if (containerRef) {
-			const maxScroll = containerRef.scrollWidth - containerRef.clientWidth;
-			updateMask(containerRef.scrollLeft, maxScroll - containerRef.scrollLeft);
-		}
+		// Wait for games to be rendered, then adjust mask image
+		requestAnimationFrame(() => {
+			if (containerRef) {
+				const maxScroll = containerRef.scrollWidth - containerRef.clientWidth;
+				updateMask(containerRef.scrollLeft, maxScroll - containerRef.scrollLeft);
+			}
+		});
 	});
 
 	function updateMask(scrollLeft, remainingScroll) {
