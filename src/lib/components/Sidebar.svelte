@@ -15,7 +15,13 @@
 	let isLoading = $state(false);
 	let collapsed = $state(false);
 	let currentGame = $state();
-	
+
+	// Scroll state for games container
+	let scrollOffset = $state(0);
+	let scrollColumn = $state(null);
+	let touchStart = $state(0);
+	let isTouching = $state(false);
+
 	// Game arrays
 	let games = $state([]);
 	let leftGames = $derived(games?.filter((_, i) => i % 2 === 0) || []);
@@ -35,7 +41,7 @@
 		return on(window, "touchmove", handleTouchMove, { passive: false }); // Add non-passive touch listener to prevent scrolling during drag
 	});
 
-	// Draggable button state
+	// Draggable button ---------------------------------------------------
 	let buttonY = $state(80); // Start slightly below top
 	let isDragging = $state(false);
 	let dragStartY = $state(0);
@@ -66,6 +72,26 @@
 		const newY = buttonStartY + deltaY;
 		const buttonHeight = buttonElement?.offsetHeight; // Get actual button height
 		buttonY = Math.max(0, Math.min(window.innerHeight - buttonHeight, newY)); // Constrain to screen bounds (0 to window height minus button height)
+	}
+
+	// Handle scroll on the games container ----------------------------------
+	function handleWheel(e) {
+		e.preventDefault();
+		scrollOffset -= e.deltaY;
+		if (scrollColumn) {
+			const loopHeight = scrollColumn.offsetHeight / 3;
+			scrollOffset = ((scrollOffset % loopHeight) + loopHeight) % loopHeight;
+		}
+	}
+
+	function handleScrollTouch(e) {
+		const touch = e.touches[0].clientY;
+		scrollOffset -= touchStart - touch;
+		touchStart = touch;
+		if (scrollColumn) {
+			const loopHeight = scrollColumn.offsetHeight / 3;
+			scrollOffset = ((scrollOffset % loopHeight) + loopHeight) % loopHeight;
+		}
 	}
 </script>
 
@@ -106,16 +132,32 @@
 				<LoaderCircle class="animate-spin opacity-75" size={30} strokeWidth={2.5} />
 			</div>
 		{:else if games?.length}
-			<div class="scroll-container grid grid-cols-2 gap-6">
+			<div
+				class="scroll-container grid grid-cols-2 gap-6 {isTouching ? 'touching' : ''}"
+				onwheel={handleWheel}
+				ontouchstart={(e) => {
+					touchStart = e.touches[0].clientY;
+					isTouching = true;
+				}}
+				ontouchmove={handleScrollTouch}
+				ontouchend={() => (isTouching = false)}
+			>
 				<div class="flex flex-col gap-6">
-					<div class="animate-scroll-column flex flex-col gap-6">
+					<div
+						bind:this={scrollColumn}
+						class="animate-scroll-column flex flex-col gap-6"
+						style:transform="translateY(calc(-33.333% + {scrollOffset}px))"
+					>
 						{#each [...leftGames, ...leftGames, ...leftGames] as game}
 							<GameCard {game} small={true} />
 						{/each}
 					</div>
 				</div>
 				<div class="mt-15 flex flex-col gap-6">
-					<div class="animate-scroll-column-offset flex flex-col gap-6">
+					<div
+						class="animate-scroll-column-offset flex flex-col gap-6"
+						style:transform="translateY(calc(-33.333% + {scrollOffset}px))"
+					>
 						{#each [...rightGames, ...rightGames, ...rightGames] as game}
 							<GameCard {game} small={true} />
 						{/each}
@@ -194,10 +236,10 @@
 <style>
 	@keyframes scroll-column {
 		0% {
-			transform: translateY(calc(-100% / 3));
+			translate: 0 0;
 		}
 		100% {
-			transform: translateY(calc((-100% / 3) * 2));
+			translate: 0 calc(-100% / 3);
 		}
 	}
 
@@ -208,7 +250,9 @@
 	}
 
 	.scroll-container:hover .animate-scroll-column,
-	.scroll-container:hover .animate-scroll-column-offset {
+	.scroll-container:hover .animate-scroll-column-offset,
+	.scroll-container.touching .animate-scroll-column,
+	.scroll-container.touching .animate-scroll-column-offset {
 		animation-play-state: paused;
 		opacity: 1;
 	}
