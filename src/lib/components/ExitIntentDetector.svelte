@@ -4,6 +4,7 @@
 	import { fly, slide } from "svelte/transition";
 	import { backOut } from "svelte/easing";
 	import { triggerEvent } from "../utils/trigger-event.js";
+	import { sidebarVisible } from "../store.js";
 	
 	let { enabled = true, onIntent, immediate = false } = $props();
 
@@ -67,7 +68,7 @@
 
 <svelte:window onmousemove={trackMouse} />
 
-{#if enabled}
+{#if enabled && !$sidebarVisible}
 	<!-- svelte-ignore a11y_mouse_events_have_key_events -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div

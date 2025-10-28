@@ -20,7 +20,6 @@ export const sidebarVisible = writable(false);
 export const projectUrl = writable("https://sdk.playlight.dev");
 
 // Subscriptions --------------------------------------------------------------------------------------
-
 let originalOverflow;
 
 discoveryOpen.subscribe((v) => {

@@ -7,16 +7,19 @@
 
 	let { game, compact = false, small = false } = $props();
 
+	// State
 	let isHovered = $state(false);
 	let isFullyHovered = $state(false);
-	let hoverTimeout;
-
-	let videoElement = $state();
-	let videoLoaded = $state(false);
+	let isTouchDevice = $state(false);
 	let coverImageLoaded = $state(false);
 	let logoImageLoaded = $state(false);
 
-	let isTouchDevice = $state(false);
+	// Timeout
+	let hoverTimeout;
+
+	// Elements
+	let videoElement = $state();
+	let videoLoaded = $state(false);
 	let cardElement = $state();
 
 	function handleHover() {
@@ -133,7 +136,7 @@
 				</div>
 			{/if}
 			<div
-				class="fade-mask bg-background/75 pointer-events-none absolute right-0 {isTouchDevice
+				class="bg-background/75 pointer-events-none absolute right-0 mask-t-from-0% mask-t-to-100% {isTouchDevice
 					? 'bottom-7'
 					: 'bottom-0'} left-0 h-8"
 			></div>
@@ -162,10 +165,6 @@
 	.highlight-border,
 	.highlight-border img {
 		outline-color: rgba(255, 255, 255, 0.75);
-	}
-
-	.fade-mask {
-		mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
 	}
 
 	/* this also prevents 3d-touch / haptic touch on ios */

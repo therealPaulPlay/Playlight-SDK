@@ -11,11 +11,13 @@
 	import { openGame } from "../utils/open-game";
 	import { blur } from "svelte/transition";
 
+	// State
 	let isLoading = $state(false);
 	let collapsed = $state(false);
 	let currentGame = $state();
+	
+	// Game arrays
 	let games = $state([]);
-
 	let leftGames = $derived(games?.filter((_, i) => i % 2 === 0) || []);
 	let rightGames = $derived(games?.filter((_, i) => i % 2 === 1) || []);
 

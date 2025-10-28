@@ -85,9 +85,7 @@
 			if (!fetchAllGames && selectedCategory) {
 				fetchAllGames = true;
 				page = 1;
-			} else {
-				hasMoreGames = false;
-			}
+			} else hasMoreGames = false;
 		} else {
 			page += 1;
 		}
@@ -119,13 +117,11 @@
 	<div class="-mx-10 mt-5 flex h-92 w-10 flex-col">
 		<div class="flex h-full items-center justify-center">
 			<div class="flex h-full w-full flex-col items-center justify-between">
-				<div class="bg-muted-foreground h-1/5 w-px min-[1920px]:h-1/4 opacity-60"></div>
-				<div
-					class="text-muted-foreground origin-center -rotate-90 transform text-sm whitespace-nowrap select-none"
-				>
+				<div class="bg-muted-foreground h-1/5 w-px opacity-60 min-[1920px]:h-1/4"></div>
+				<div class="text-muted-foreground origin-center -rotate-90 transform text-sm whitespace-nowrap select-none">
 					From other categories
 				</div>
-				<div class="bg-muted-foreground h-1/5 w-px min-[1920px]:h-1/4 opacity-60"></div>
+				<div class="bg-muted-foreground h-1/5 w-px opacity-60 min-[1920px]:h-1/4"></div>
 			</div>
 		</div>
 	</div>
@@ -144,7 +140,7 @@
 		<img
 			alt="logo"
 			src={$projectUrl + "/static/images/logo-white-small.png"}
-			class="pointer-events-none ml-3 w-50 max-sm:w-40 select-none"
+			class="pointer-events-none ml-3 w-50 select-none max-sm:w-40"
 		/>
 		<div class="mt-3.5 mr-4 flex items-center justify-evenly gap-8 overflow-hidden max-sm:mt-3">
 			<button class="cursor-pointer text-white transition hover:opacity-50" onclick={() => ($discoveryOpen = false)}>
