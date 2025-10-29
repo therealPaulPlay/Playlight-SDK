@@ -9,15 +9,15 @@ let sidebarComponent = null;
 let outerWrapper = null; // Pseudo html element
 let innerWrapper = null; // Pseudo body element
 let isSidebarLayoutSetup = false;
-let originalWindowInnerWidth = null;
+let originalInnerWidthDescriptor = null;
 
 // Polyfill window.innerWidth to return outer wrapper width when sidebar is active
 function setupWindowDimensionPolyfill() {
 	try {
-		originalWindowInnerWidth = Object.getOwnPropertyDescriptor(Window.prototype, 'innerWidth');
+		originalInnerWidthDescriptor = Object.getOwnPropertyDescriptor(window, 'innerWidth');
 		Object.defineProperty(window, 'innerWidth', {
 			get: function () {
-				return isSidebarLayoutSetup && outerWrapper ? outerWrapper.clientWidth : originalWindowInnerWidth.get.call(this);
+				return outerWrapper?.clientWidth;
 			},
 			configurable: true
 		});
@@ -29,10 +29,8 @@ function setupWindowDimensionPolyfill() {
 // Restore original window.innerWidth
 function restoreWindowDimensionPolyfill() {
 	try {
-		if (originalWindowInnerWidth) {
-			Object.defineProperty(window, 'innerWidth', originalWindowInnerWidth);
-			originalWindowInnerWidth = null;
-		}
+		Object.defineProperty(window, 'innerWidth', originalInnerWidthDescriptor);
+		originalInnerWidthDescriptor = null;
 	} catch (error) {
 		console.warn('Could not restore original window.innerWidth:', error);
 	}

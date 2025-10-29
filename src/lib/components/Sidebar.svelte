@@ -11,13 +11,24 @@
 	import { openGame } from "../utils/open-game";
 	import { blur } from "svelte/transition";
 
+	// State
 	let isLoading = $state(false);
 	let collapsed = $state(false);
 	let currentGame = $state();
-	let games = $state([]);
 
+	// Scroll state for games container
+	let scrollOffset = $state(0);
+	let scrollColumn = $state(null);
+
+	// Game arrays
+	let games = $state([]);
 	let leftGames = $derived(games?.filter((_, i) => i % 2 === 0) || []);
 	let rightGames = $derived(games?.filter((_, i) => i % 2 === 1) || []);
+
+	$effect.pre(() => {
+		// Default to collapsed sidebar on mobile (before the component renders to avoid collapse animation)
+		if (window.matchMedia("(max-width: 768px)").matches) collapsed = true;
+	});
 
 	onMount(async () => {
 		isLoading = true;
@@ -29,11 +40,10 @@
 	});
 
 	onMount(() => {
-		if (window.innerWidth <= 768) collapsed = true; // Default to collapsed sidebar on mobile
-		return on(window, "touchmove", handleTouchMove, { passive: false }); // Add non-passive touch listener to prevent scrolling during drag
+		return on(window, "touchmove", handleTouchMove, { passive: false }); // Add non-passive touch listener to prevent scrolling during button drag
 	});
 
-	// Draggable button state
+	// Draggable button ---------------------------------------------------
 	let buttonY = $state(80); // Start slightly below top
 	let isDragging = $state(false);
 	let dragStartY = $state(0);
@@ -64,6 +74,16 @@
 		const newY = buttonStartY + deltaY;
 		const buttonHeight = buttonElement?.offsetHeight; // Get actual button height
 		buttonY = Math.max(0, Math.min(window.innerHeight - buttonHeight, newY)); // Constrain to screen bounds (0 to window height minus button height)
+	}
+
+	// Handle scroll on the games container ----------------------------------
+	function handleWheel(e) {
+		e.preventDefault();
+		scrollOffset -= e.deltaY;
+		if (scrollColumn) {
+			const loopHeight = scrollColumn.offsetHeight / 3;
+			scrollOffset = ((scrollOffset % loopHeight) + loopHeight) % loopHeight;
+		}
 	}
 </script>
 
@@ -104,16 +124,23 @@
 				<LoaderCircle class="animate-spin opacity-75" size={30} strokeWidth={2.5} />
 			</div>
 		{:else if games?.length}
-			<div class="scroll-container grid grid-cols-2 gap-6">
+			<div class="scroll-container grid grid-cols-2 gap-6" onwheel={handleWheel}>
 				<div class="flex flex-col gap-6">
-					<div class="animate-scroll-column flex flex-col gap-6">
+					<div
+						bind:this={scrollColumn}
+						class="animate-scroll-column flex flex-col gap-6"
+						style:transform="translateY(calc(-33.333% + {scrollOffset}px))"
+					>
 						{#each [...leftGames, ...leftGames, ...leftGames] as game}
 							<GameCard {game} small={true} />
 						{/each}
 					</div>
 				</div>
 				<div class="mt-15 flex flex-col gap-6">
-					<div class="animate-scroll-column-offset flex flex-col gap-6">
+					<div
+						class="animate-scroll-column-offset flex flex-col gap-6"
+						style:transform="translateY(calc(-33.333% + {scrollOffset}px))"
+					>
 						{#each [...rightGames, ...rightGames, ...rightGames] as game}
 							<GameCard {game} small={true} />
 						{/each}
@@ -192,10 +219,10 @@
 <style>
 	@keyframes scroll-column {
 		0% {
-			transform: translateY(calc(-100% / 3));
+			translate: 0 0;
 		}
 		100% {
-			transform: translateY(calc((-100% / 3) * 2));
+			translate: 0 calc(-100% / 3);
 		}
 	}
 

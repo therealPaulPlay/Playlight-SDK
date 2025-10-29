@@ -7,7 +7,7 @@
 
 	let { categories = [], selectedCategory = $bindable(), onCategoryChange } = $props();
 
-	// Local state for the component
+	// State
 	let isOpen = $state(false);
 	let displayCategory = $derived(selectedCategory || (categories.length > 0 ? categories[0] : "..."));
 	let searchTerm = $state("");

@@ -160,8 +160,10 @@
 /* Outer wrapper (containing block for fixed elements) */
 .playlight-sdk-outer-wrapper {
   flex: 1 !important;
-  contain: paint !important;
   /* Create new stacking context for position fixed, absolute etc. and prevent anything from rendering outside of it */
+  contain: paint !important;
+  /* Never scale past the available space */
+  overflow: hidden;
 }
 
 /* Inner wrapper (scrollable container) */

@@ -3,9 +3,8 @@
 	import CurrentGameDisplay from "./CurrentGameDisplay.svelte";
 
 	let { currentGame } = $props();
-	
-	let visible = $state(true);
-	let showLatch = $state(false);
+
+	let minimized = $state(false);
 	let y = $state(0);
 	let alpha = $state(1);
 	let dragging = $state(false);
@@ -52,16 +51,12 @@
 		animate(y, 250, 250, (from, to, p) => {
 			y = from + (to - from) * p;
 			alpha = Math.max(0, 1 - p * 1.5);
-			if (p === 1) {
-				visible = false;
-				showLatch = true;
-			}
+			if (p === 1) minimized = true;
 		});
 	}
 
 	function restore() {
-		showLatch = false;
-		visible = true;
+		minimized = false;
 		y = 250;
 		alpha = 0;
 		animate(250, 0, 250, (from, to, p) => {
@@ -71,7 +66,7 @@
 	}
 </script>
 
-{#if currentGame && visible}
+{#if currentGame && !minimized}
 	<div
 		class="bg-background/85 fixed bottom-4 left-4 z-2 touch-none border-1 p-4 shadow-lg backdrop-blur-xl max-sm:right-4 sm:w-72"
 		style="transform: translateY({y}px); opacity: {alpha}; cursor: grab;"
@@ -89,7 +84,7 @@
 	</div>
 {/if}
 
-{#if currentGame && showLatch}
+{#if currentGame && minimized}
 	<div class="fixed bottom-0 z-3 shadow-xl max-sm:right-4 max-sm:left-4 sm:left-4 sm:w-72">
 		<button
 			transition:fly={{ delay: 150, y: 30 }}
