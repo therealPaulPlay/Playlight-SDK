@@ -32,8 +32,11 @@ class PlaylightSDK {
         initWidgets();
         setupWidgetObserver();
 
-        // Set user state
-        userIsFromPlaylight.set(new URLSearchParams(window.location.search).get('utm_source') === 'playlight');
+        // Set user origin
+        const isPlaylightSession = sessionStorage.getItem("fromPlaylight") === "true";
+        const isFromPlaylight = new URLSearchParams(window.location.search).get('utm_source') === 'playlight';
+        if (isFromPlaylight) sessionStorage.setItem("fromPlaylight", "true"); // Save in session storage to persist on MPAs
+        userIsFromPlaylight.set(isPlaylightSession || isFromPlaylight);
 
         // Set initialized
         this.isInitialized = true;
