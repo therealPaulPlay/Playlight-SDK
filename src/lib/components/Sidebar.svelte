@@ -25,6 +25,11 @@
 	let leftGames = $derived(games?.filter((_, i) => i % 2 === 0) || []);
 	let rightGames = $derived(games?.filter((_, i) => i % 2 === 1) || []);
 
+	$effect.pre(() => {
+		// Default to collapsed sidebar on mobile (before the component renders to avoid collapse animation)
+		if (window.matchMedia("(max-width: 768px)").matches) collapsed = true;
+	});
+
 	onMount(async () => {
 		isLoading = true;
 		const categories = await api.getCategories();
@@ -35,7 +40,6 @@
 	});
 
 	onMount(() => {
-		if (window.matchMedia("(max-width: 768px)").matches) collapsed = true; // Default to collapsed sidebar on mobile
 		return on(window, "touchmove", handleTouchMove, { passive: false }); // Add non-passive touch listener to prevent scrolling during button drag
 	});
 
