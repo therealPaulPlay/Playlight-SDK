@@ -1,6 +1,6 @@
 <script>
 	import api from "../api.js";
-	import Button from "../components/Button.svelte";
+	import Button from "./ui/Button.svelte";
 	import { fly, slide } from "svelte/transition";
 	import { backOut } from "svelte/easing";
 	import { triggerEvent } from "../utils/trigger-event.js";

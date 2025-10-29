@@ -1,18 +1,18 @@
 <script>
 	import "./app.css";
-	import DiscoveryOverlay from "./lib/components/DiscoveryOverlay.svelte";
+	import Discovery from "./lib/components/Discovery.svelte";
 	import { Toaster } from "svelte-sonner";
-	import ExitIntentDetector from "./lib/components/ExitIntentDetector.svelte";
+	import ExitIntent from "./lib/components/ExitIntent.svelte";
 	import { config, discoveryOpen, sidebarVisible } from "./lib/store.js";
 </script>
 
 <!-- Discovery overlay -->
 {#if $discoveryOpen}
-	<DiscoveryOverlay />
+	<Discovery />
 {/if}
 
 <!-- Detect user leaving page -->
-<ExitIntentDetector
+<ExitIntent
 	enabled={$config?.exitIntent?.enabled}
 	immediate={$config?.exitIntent?.immediate}
 	onIntent={() => {
