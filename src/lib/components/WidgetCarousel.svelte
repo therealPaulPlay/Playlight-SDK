@@ -5,7 +5,7 @@
 	import GameCard from "./GameCard.svelte";
 	import api from "../api.js";
 	import { blur } from "svelte/transition";
-	import Button from "./Button.svelte";
+	import Button from "./ui/Button.svelte";
 	import { fetchRecommendedGames } from "../utils/fetch-recommended-games.js";
 
 	// State

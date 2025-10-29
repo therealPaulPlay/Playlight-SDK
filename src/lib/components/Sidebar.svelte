@@ -7,7 +7,7 @@
 	import { LoaderCircle, Gamepad2, Dices, ChevronsRight, GripVertical, X } from "lucide-svelte";
 	import GameCard from "./GameCard.svelte";
 	import CurrentGameDisplay from "./CurrentGameDisplay.svelte";
-	import Button from "./Button.svelte";
+	import Button from "./ui/Button.svelte";
 	import { openGame } from "../utils/open-game";
 	import { blur } from "svelte/transition";
 
