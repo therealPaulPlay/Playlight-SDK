@@ -19,8 +19,6 @@
 	// Scroll state for games container
 	let scrollOffset = $state(0);
 	let scrollColumn = $state(null);
-	let touchStart = $state(0);
-	let isTouching = $state(false);
 
 	// Game arrays
 	let games = $state([]);
@@ -37,8 +35,8 @@
 	});
 
 	onMount(() => {
-		if (window.innerWidth <= 768) collapsed = true; // Default to collapsed sidebar on mobile
-		return on(window, "touchmove", handleTouchMove, { passive: false }); // Add non-passive touch listener to prevent scrolling during drag
+		if (window.matchMedia("(max-width: 768px)").matches) collapsed = true; // Default to collapsed sidebar on mobile
+		return on(window, "touchmove", handleTouchMove, { passive: false }); // Add non-passive touch listener to prevent scrolling during button drag
 	});
 
 	// Draggable button ---------------------------------------------------
@@ -83,16 +81,6 @@
 			scrollOffset = ((scrollOffset % loopHeight) + loopHeight) % loopHeight;
 		}
 	}
-
-	function handleScrollTouch(e) {
-		const touch = e.touches[0].clientY;
-		scrollOffset -= touchStart - touch;
-		touchStart = touch;
-		if (scrollColumn) {
-			const loopHeight = scrollColumn.offsetHeight / 3;
-			scrollOffset = ((scrollOffset % loopHeight) + loopHeight) % loopHeight;
-		}
-	}
 </script>
 
 <svelte:window
@@ -132,16 +120,7 @@
 				<LoaderCircle class="animate-spin opacity-75" size={30} strokeWidth={2.5} />
 			</div>
 		{:else if games?.length}
-			<div
-				class="scroll-container grid grid-cols-2 gap-6 {isTouching ? 'touching' : ''}"
-				onwheel={handleWheel}
-				ontouchstart={(e) => {
-					touchStart = e.touches[0].clientY;
-					isTouching = true;
-				}}
-				ontouchmove={handleScrollTouch}
-				ontouchend={() => (isTouching = false)}
-			>
+			<div class="scroll-container grid grid-cols-2 gap-6" onwheel={handleWheel}>
 				<div class="flex flex-col gap-6">
 					<div
 						bind:this={scrollColumn}
@@ -250,9 +229,7 @@
 	}
 
 	.scroll-container:hover .animate-scroll-column,
-	.scroll-container:hover .animate-scroll-column-offset,
-	.scroll-container.touching .animate-scroll-column,
-	.scroll-container.touching .animate-scroll-column-offset {
+	.scroll-container:hover .animate-scroll-column-offset {
 		animation-play-state: paused;
 		opacity: 1;
 	}
