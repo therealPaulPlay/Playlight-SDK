@@ -7,18 +7,17 @@ import { activateCSSViewportOverride, deactivateCSSViewportOverride } from './ov
 let appContainer = null;
 let sidebarContainer = null;
 let sidebarComponent = null;
-let outerWrapper = null; // Pseudo html element
-let innerWrapper = null; // Pseudo body element
 let isSidebarLayoutSetup = false;
 let originalInnerWidthDescriptor = null;
+let sidebarResizeObserver = null;
 
-// Polyfill window.innerWidth to return outer wrapper width when sidebar is active
+// Polyfill window.innerWidth to return body width when sidebar is active
 function setupWindowDimensionPolyfill() {
 	try {
 		originalInnerWidthDescriptor = Object.getOwnPropertyDescriptor(window, 'innerWidth');
 		Object.defineProperty(window, 'innerWidth', {
 			get: function () {
-				return outerWrapper?.clientWidth;
+				return document.body?.clientWidth;
 			},
 			configurable: true
 		});
@@ -55,35 +54,30 @@ export function setupSidebarLayout() {
 	if (isSidebarLayoutSetup) return;
 	try {
 		const body = document.body;
-		const bodyChildren = Array.from(body.children).filter(
-			(child) =>
-				child.tagName !== 'SCRIPT' &&
-				child.tagName !== 'STYLE' &&
-				!child.id?.startsWith('playlight-sdk')
-		);
+		const html = document.documentElement;
 
-		// Create inner wrapper (scrollable layer)
-		innerWrapper = document.createElement('div');
-		innerWrapper.id = 'playlight-sdk-inner-wrapper';
-		innerWrapper.className = 'playlight-sdk-inner-wrapper';
-		bodyChildren.forEach((child) => innerWrapper.appendChild(child));
-
-		// Create outer wrapper (containing block for fixed elements)
-		outerWrapper = document.createElement('div');
-		outerWrapper.id = 'playlight-sdk-outer-wrapper';
-		outerWrapper.className = 'playlight-sdk-outer-wrapper';
-		outerWrapper.appendChild(innerWrapper);
-		body.appendChild(outerWrapper);
-
-		// Create and mount sidebar
+		// Create and mount sidebar as child of <html>
 		sidebarContainer = document.createElement('div');
 		sidebarContainer.className = 'playlight-sdk playlight-sdk-container-sidebar';
-		body.appendChild(sidebarContainer);
+		html.appendChild(sidebarContainer);
 		sidebarComponent = mount(Sidebar, { target: sidebarContainer });
 
-		body.classList.add('playlight-sdk-flex-body'); // Make the body flex
-		setupWindowDimensionPolyfill(); // Polyfill window.innerWidth to account for sidebar width
-		activateCSSViewportOverride(outerWrapper); // Override CSS viewport units (after window polyfill!)
+		// Update CSS variable for sidebar width
+		const updateSidebarWidth = () => {
+			const width = sidebarContainer.offsetWidth;
+			body.style.setProperty('--playlight-sdk-sidebar-width', `${width}px`);
+		};
+
+		// Watch for sidebar width changes (e.g., collapse/expand animation)
+		sidebarResizeObserver = new ResizeObserver(updateSidebarWidth);
+		sidebarResizeObserver.observe(sidebarContainer);
+		updateSidebarWidth();
+
+		// Apply class to body for styling
+		body.classList.add('playlight-sdk-body');
+
+		setupWindowDimensionPolyfill();
+		activateCSSViewportOverride(body);
 		isSidebarLayoutSetup = true;
 
 	} catch (error) {
@@ -96,27 +90,26 @@ export function removeSidebarLayout() {
 	if (!isSidebarLayoutSetup) return;
 	try {
 		const body = document.body;
+		const html = document.documentElement;
+
+		if (sidebarResizeObserver) {
+			sidebarResizeObserver.disconnect();
+			sidebarResizeObserver = null;
+		}
 
 		if (sidebarComponent) {
-			unmount(sidebarComponent); // Unmount sidebar Svelte component
+			unmount(sidebarComponent);
 			sidebarComponent = null;
 		}
 
-		body.removeChild(sidebarContainer); // Remove sidebar container
+		html.removeChild(sidebarContainer);
+		body.classList.remove('playlight-sdk-body');
+		body.style.removeProperty('--playlight-sdk-sidebar-width');
 
-		// Unwrap inner wrapper and delete outer wrapper that contains inner one (so both)
-		if (outerWrapper && innerWrapper) {
-			Array.from(innerWrapper.children).forEach((child) => body.insertBefore(child, outerWrapper));
-			body.removeChild(outerWrapper);
-		}
-
-		body.classList.remove('playlight-sdk-flex-body'); // Remove body flex class
-		restoreWindowDimensionPolyfill(); // Restore window dimension
-		deactivateCSSViewportOverride(); // Remove CSS viewport overrides
+		restoreWindowDimensionPolyfill();
+		deactivateCSSViewportOverride();
 
 		sidebarContainer = null;
-		outerWrapper = null;
-		innerWrapper = null;
 		isSidebarLayoutSetup = false;
 
 	} catch (error) {

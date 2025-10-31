@@ -130,18 +130,7 @@ function applyTransform(styleElement, originalCSS, adjustedWidth, windowHeight, 
 		)
 		// Convert orientation
 		.replace(/\(\s*orientation:\s*portrait\s*\)/gi, `(max-width: ${orientationBreakpoint}px)`)
-		.replace(/\(\s*orientation:\s*landscape\s*\)/gi, `(min-width: ${orientationBreakpoint + 1}px)`)
-		// Copy body overflow rules to inner wrapper with !important
-		// !TODO TEST THIS
-		.replace(/\bbody\s*\{[^}]*\boverflow[^}]+\}/gi, (match) => {
-			const overflowRules = [];
-			match.replace(/\b(overflow[^:]*)\s*:\s*([^;]+)/gi, (_, prop, value) => {
-				overflowRules.push(`${prop.trim()}: ${value.trim().replace(/\s*!important\s*$/, '')} !important`);
-			});
-			return overflowRules.length
-				? `${match} .playlight-sdk-inner-wrapper { ${overflowRules.join('; ')}; }`
-				: match;
-		});
+		.replace(/\(\s*orientation:\s*landscape\s*\)/gi, `(min-width: ${orientationBreakpoint + 1}px)`);
 
 	styleElement.textContent = transformed;
 	styleElement.setAttribute('data-playlight-modified', 'true');

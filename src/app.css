@@ -151,30 +151,12 @@
   pointer-events: auto;
 }
 
-/* Layout styles */
-.playlight-sdk-flex-body {
-  display: flex !important;
-  flex-direction: row !important;
-  gap: 0 !important;
-}
-
-/* Outer wrapper (containing block for fixed elements) */
-.playlight-sdk-outer-wrapper {
-  flex: 1 !important;
-  /* Create new stacking context for position fixed, absolute etc. and prevent anything from rendering outside of it */
+/* Body styles when sidebar is active */
+.playlight-sdk-body {
   contain: paint !important;
-  /* Never scale past the available space */
-  overflow: hidden;
-}
-
-/* Inner wrapper (scrollable container) */
-.playlight-sdk-inner-wrapper {
-  /* Allow scrolling (not !important because overrides are allowed) */
-  overflow: auto;
-  /* Like the body, don't grow past viewport height */
   height: 100dvh !important;
-  position: relative !important;
-  /* Don't add any position relative/fixed/absolute etc. here! */
+  overflow: auto;
+  margin-right: var(--playlight-sdk-sidebar-width, 300px) !important;
 }
 
 /* Widget specific styles */
@@ -185,8 +167,9 @@
 
 /* Sidebar styles */
 .playlight-sdk-container-sidebar {
-  box-shadow: 0 0 25px rgba(0, 0, 0, 0.35);
-  position: sticky;
-  top: 0;
-  bottom: 0;
+  position: fixed !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  right: 0 !important;
+  box-shadow: 0 0 25px #00000059 !important;
 }
