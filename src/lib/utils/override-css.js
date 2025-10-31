@@ -21,11 +21,7 @@ export function activateCSSViewportOverride(outerWrapper) {
 		const adjustedWidth = outerWrapper.clientWidth;
 		const windowHeight = window.innerHeight;
 		const sidebarWidth = document.documentElement.clientWidth - adjustedWidth;
-		if (sidebarWidth < 10) return restoreAllStylesheets();
-
-		for (const sheet of Array.from(document.styleSheets)) {
-			replaceStylesheet(sheet, adjustedWidth, windowHeight, sidebarWidth);
-		}
+		for (const sheet of Array.from(document.styleSheets)) replaceStylesheet(sheet, adjustedWidth, windowHeight, sidebarWidth);
 	};
 
 	resizeObserver = new ResizeObserver(scheduleUpdate);
