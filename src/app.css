@@ -155,6 +155,7 @@
 .playlight-sdk-flex-body {
   display: flex !important;
   flex-direction: row !important;
+  gap: 0 !important;
 }
 
 /* Outer wrapper (containing block for fixed elements) */
@@ -168,8 +169,8 @@
 
 /* Inner wrapper (scrollable container) */
 .playlight-sdk-inner-wrapper {
-  /* Allow scrolling */
-  overflow: auto !important;
+  /* Allow scrolling (not !important because overrides are allowed) */
+  overflow: auto;
   /* Like the body, don't grow past viewport height */
   height: 100dvh !important;
   position: relative !important;

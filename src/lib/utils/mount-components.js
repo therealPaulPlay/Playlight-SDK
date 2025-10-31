@@ -1,6 +1,7 @@
 import { mount, unmount } from 'svelte';
 import App from '../../App.svelte';
 import Sidebar from '../components/Sidebar.svelte';
+import { activateCSSViewportOverride, deactivateCSSViewportOverride } from './override-css.js';
 
 // State management
 let appContainer = null;
@@ -82,6 +83,7 @@ export function setupSidebarLayout() {
 
 		body.classList.add('playlight-sdk-flex-body'); // Make the body flex
 		setupWindowDimensionPolyfill(); // Polyfill window.innerWidth to account for sidebar width
+		activateCSSViewportOverride(outerWrapper); // Override CSS viewport units (after window polyfill!)
 		isSidebarLayoutSetup = true;
 
 	} catch (error) {
@@ -110,6 +112,7 @@ export function removeSidebarLayout() {
 
 		body.classList.remove('playlight-sdk-flex-body'); // Remove body flex class
 		restoreWindowDimensionPolyfill(); // Restore window dimension
+		deactivateCSSViewportOverride(); // Remove CSS viewport overrides
 
 		sidebarContainer = null;
 		outerWrapper = null;

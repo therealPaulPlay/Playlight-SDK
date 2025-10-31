@@ -10,19 +10,12 @@ import { mountPlaylight } from './lib/utils/mount-components.js';
  */
 class PlaylightSDK {
     /**
-     * Create new Playlight instance
-     */
-    constructor() {
-        this.isInitialized = false;
-    }
-
-    /**
      * Initialize Playlight
      * @param {object} [userConfig] - The playlight configuration object
      */
     async init(userConfig = {}) {
         if (typeof window === 'undefined') return console.error("Playlight cannot run on the server, as it depends on browser APIs.");
-        if (this.isInitialized) return console.warn("Playlight SDK already initialized!");
+        if (window.playlightInitialized) return console.warn("Playlight SDK is already initialized!");
 
         // Initialize configuration with defaults and user overrides
         this.setConfig(userConfig);
@@ -39,7 +32,7 @@ class PlaylightSDK {
         userIsFromPlaylight.set(isPlaylightSession || isFromPlaylight);
 
         // Set initialized
-        this.isInitialized = true;
+        window.playlightInitialized = true;
 
         // Fetch current game info to cache it
         await api.getCurrentGameInfo();
@@ -50,7 +43,6 @@ class PlaylightSDK {
      * @param {boolean} [value=true] - Whether to show the discovery
      */
     setDiscovery(value = true) {
-        if (!this.isInitialized) return;
         discoveryOpen.set(value);
     }
 
