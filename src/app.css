@@ -169,6 +169,8 @@
   margin: 0 !important;
   padding: 0 !important;
   position: static !important;
+  /* Elements positioned in the body expect a fixed height */
+  height: 100dvh !important;
 }
 
 /* Inner wrapper (framework root element or custom div) */

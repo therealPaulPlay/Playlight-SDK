@@ -150,9 +150,17 @@ function applyTransform(styleElement, originalCSS, adjustedWidth, windowHeight, 
 
 // Convert relative URLs to absolute based on stylesheet's original location
 function makeURLsAbsolute(css, baseHref) {
-	const baseDir = new URL(baseHref, document.baseURI).href.replace(/[^/]*$/, '');
-	return css.replace(/url\(\s*(['"]?)(?!data:|https?:|\/\/)(.+?)\1\s*\)/gi,
-		(_, quote, url) => `url(${quote}${new URL(url, baseDir).href}${quote})`);
+	try {
+		const base = new URL(baseHref, document.baseURI);
+		return css.replace(/url\(\s*(['"]?)([^)'"]+)\1\s*\)/gi, (match, quote, url) => {
+			url = url.trim();
+			if (!url || /^(data:|https?:|\/\/|\/|#)/.test(url)) return match;
+			return `url(${quote}${new URL(url, base).href}${quote})`;
+		});
+	} catch (error) {
+		console.error("Playlight error transforming relative URLs in stylesheets:", error);
+		return css;
+	}
 }
 
 function restoreAllStylesheets() {
