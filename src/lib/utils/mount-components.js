@@ -3,7 +3,7 @@ import App from '../../App.svelte';
 import Sidebar from '../components/Sidebar.svelte';
 import { activateCSSViewportOverride, deactivateCSSViewportOverride } from './override-css.js';
 
-// State management
+// State
 let appContainer = null;
 let sidebarContainer = null;
 let sidebarComponent = null;
@@ -18,9 +18,7 @@ function setupWindowDimensionPolyfill() {
 	try {
 		originalInnerWidthDescriptor = Object.getOwnPropertyDescriptor(window, 'innerWidth');
 		Object.defineProperty(window, 'innerWidth', {
-			get: function () {
-				return innerWrapper?.clientWidth || document.documentElement.clientWidth;
-			},
+			get: () => innerWrapper?.clientWidth || document.documentElement.clientWidth,
 			configurable: true
 		});
 	} catch (error) {
@@ -28,7 +26,6 @@ function setupWindowDimensionPolyfill() {
 	}
 }
 
-// Restore original window.innerWidth
 function restoreWindowDimensionPolyfill() {
 	try {
 		Object.defineProperty(window, 'innerWidth', originalInnerWidthDescriptor);
@@ -47,7 +44,7 @@ export function mountPlaylight() {
 		document.body.appendChild(appContainer);
 		mount(App, { target: appContainer });
 	} catch (error) {
-		console.error("Error occurred during mount:", error);
+		console.error('Error during Playlight mount:', error);
 	}
 }
 
@@ -58,7 +55,7 @@ export function setupSidebarLayout() {
 		const body = document.body;
 		const html = document.documentElement;
 
-		// Find DIVs with children (excluding Playlight/script/style)
+		// Find potential framework root divs
 		const bodyDivs = Array.from(body.children).filter(
 			child => child.tagName === 'DIV' && !child.id?.includes('playlight') && child.children.length > 0
 		);
@@ -68,13 +65,13 @@ export function setupSidebarLayout() {
 			const wrapper = document.createElement('div');
 			wrapper.id = 'playlight-sdk-inner-wrapper';
 			Array.from(body.children)
-				.filter(child => child.tagName !== 'SCRIPT' && child.tagName !== 'STYLE' && !child.id?.includes('playlight'))
+				.filter(child => !['SCRIPT', 'STYLE'].includes(child.tagName) && !child.id?.includes('playlight'))
 				.forEach(child => wrapper.appendChild(child));
 			body.appendChild(wrapper);
 			return wrapper;
 		};
 
-		// Detect framework root
+		// Detect framework root using depth heuristic (deepest div is likely the framework root)
 		if (bodyDivs.length === 1) {
 			innerWrapper = bodyDivs[0];
 			createdInnerWrapper = false;
@@ -89,18 +86,18 @@ export function setupSidebarLayout() {
 			}
 		}
 
-		// If no framework root detected, create wrapper
+		// Fallback: create wrapper if no framework root detected
 		if (!innerWrapper) {
 			innerWrapper = createWrapper();
 			createdInnerWrapper = true;
 		}
 
-		// Apply classes first
+		// Apply structure classes
 		html.classList.add('playlight-sdk-flex-html');
 		body.classList.add('playlight-sdk-outer-wrapper');
 		innerWrapper.classList.add('playlight-sdk-inner-wrapper');
 
-		// Activate CSS overrides BEFORE transferring styles (so body {...} rules are rewritten to .playlight-sdk-inner-wrapper)
+		// Activate CSS overrides (must happen before transferring styles)
 		setupWindowDimensionPolyfill();
 		activateCSSViewportOverride(body);
 
@@ -111,21 +108,19 @@ export function setupSidebarLayout() {
 			body.classList.remove(cls);
 		});
 
-		// Get computed styles and apply conditional overrides
-		const computedStyle = window.getComputedStyle(innerWrapper);
-		if (computedStyle.display === 'contents') innerWrapper.style.setProperty('display', 'block', 'important');
-		const overflow = computedStyle.overflow;
-		if (overflow === 'visible' || overflow === '') innerWrapper.style.setProperty('overflow', 'auto', 'important');
+		// Apply conditional style overrides based on computed styles
+		const computed = window.getComputedStyle(innerWrapper);
+		if (computed.display === 'contents') innerWrapper.style.setProperty('display', 'block', 'important');
+		if (computed.overflow === 'visible' || computed.overflow === '') innerWrapper.style.setProperty('overflow', 'auto', 'important');
 
-		// Create and mount sidebar as child of <html> (after all setup is complete)
+		// Mount sidebar as child of <html>
 		sidebarContainer = document.createElement('div');
 		sidebarContainer.className = 'playlight-sdk playlight-sdk-container-sidebar';
 		html.appendChild(sidebarContainer);
 		sidebarComponent = mount(Sidebar, { target: sidebarContainer });
 		isSidebarLayoutSetup = true;
-
 	} catch (error) {
-		console.error("Error occurred during sidebar setup:", error);
+		console.error('Error during sidebar setup:', error);
 	}
 }
 
@@ -136,11 +131,8 @@ export function removeSidebarLayout() {
 		const body = document.body;
 		const html = document.documentElement;
 
-		if (sidebarComponent) {
-			unmount(sidebarComponent);
-			sidebarComponent = null;
-		}
-
+		// Unmount and remove sidebar
+		if (sidebarComponent) unmount(sidebarComponent);
 		if (sidebarContainer?.parentNode) html.removeChild(sidebarContainer);
 
 		// Remove classes
@@ -153,24 +145,25 @@ export function removeSidebarLayout() {
 				body.classList.add(cls);
 				innerWrapper.classList.remove(cls);
 			});
-			originalBodyClasses = [];
 		}
 
-		// If we created the wrapper, unwrap it
+		// Unwrap or remove inner wrapper
 		if (createdInnerWrapper && innerWrapper) {
 			Array.from(innerWrapper.children).forEach(child => body.insertBefore(child, innerWrapper));
 			body.removeChild(innerWrapper);
 		} else if (innerWrapper) innerWrapper.classList.remove('playlight-sdk-inner-wrapper');
 
+		// Restore polyfills and clean up
 		restoreWindowDimensionPolyfill();
 		deactivateCSSViewportOverride();
 
+		// Reset state
 		sidebarContainer = null;
+		sidebarComponent = null;
 		innerWrapper = null;
-		createdInnerWrapper = false;
-		isSidebarLayoutSetup = false;
-
+		originalBodyClasses = [];
+		createdInnerWrapper = isSidebarLayoutSetup = false;
 	} catch (error) {
-		console.error("Error occurred during sidebar removal:", error);
+		console.error('Error during sidebar removal:', error);
 	}
 }

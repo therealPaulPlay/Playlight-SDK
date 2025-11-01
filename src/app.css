@@ -178,6 +178,8 @@
   /* Like the body, don't grow past viewport height */
   height: 100dvh !important;
   width: 100% !important;
+  /* On scroll, move elements relative to this element */
+  position: relative !important;
   /* Note: overflow and display are conditionally applied via JS based on existing values */
 }
 
