@@ -11,6 +11,7 @@ let isSidebarLayoutSetup = false;
 let originalInnerWidthDescriptor = null;
 let innerWrapper = null;
 let createdInnerWrapper = false;
+let originalBodyClasses = [];
 
 // Polyfill window.innerWidth to return inner wrapper width when sidebar is active
 function setupWindowDimensionPolyfill() {
@@ -73,7 +74,7 @@ export function setupSidebarLayout() {
 			return wrapper;
 		};
 
-		// Detect framework root or create wrapper
+		// Detect framework root
 		if (bodyDivs.length === 1) {
 			innerWrapper = bodyDivs[0];
 			createdInnerWrapper = false;
@@ -85,28 +86,42 @@ export function setupSidebarLayout() {
 			if (maxDepth > avgDepth * 3) {
 				innerWrapper = bodyDivs[depths.indexOf(maxDepth)];
 				createdInnerWrapper = false;
-			} else {
-				innerWrapper = createWrapper();
-				createdInnerWrapper = true;
 			}
-		} else {
+		}
+
+		// If no framework root detected, create wrapper
+		if (!innerWrapper) {
 			innerWrapper = createWrapper();
 			createdInnerWrapper = true;
 		}
 
-		// Create and mount sidebar as child of <html>
+		// Apply classes first
+		html.classList.add('playlight-sdk-flex-html');
+		body.classList.add('playlight-sdk-outer-wrapper');
+		innerWrapper.classList.add('playlight-sdk-inner-wrapper');
+
+		// Activate CSS overrides BEFORE transferring styles (so body {...} rules are rewritten to .playlight-sdk-inner-wrapper)
+		setupWindowDimensionPolyfill();
+		activateCSSViewportOverride(innerWrapper);
+
+		// Transfer body classes to inner wrapper (except SDK classes)
+		originalBodyClasses = Array.from(body.classList).filter(cls => !cls.startsWith('playlight'));
+		originalBodyClasses.forEach(cls => {
+			innerWrapper.classList.add(cls);
+			body.classList.remove(cls);
+		});
+
+		// Get computed styles and apply conditional overrides
+		const computedStyle = window.getComputedStyle(innerWrapper);
+		if (computedStyle.display === 'contents') innerWrapper.style.setProperty('display', 'block', 'important');
+		const overflow = computedStyle.overflow;
+		if (overflow === 'visible' || overflow === '') innerWrapper.style.setProperty('overflow', 'auto', 'important');
+
+		// Create and mount sidebar as child of <html> (after all setup is complete)
 		sidebarContainer = document.createElement('div');
 		sidebarContainer.className = 'playlight-sdk playlight-sdk-container-sidebar';
 		html.appendChild(sidebarContainer);
 		sidebarComponent = mount(Sidebar, { target: sidebarContainer });
-
-		// Apply classes
-		html.classList.add('playlight-sdk-flex-html');
-		body.classList.add('playlight-sdk-outer-wrapper');
-		if (innerWrapper) innerWrapper.classList.add('playlight-sdk-inner-wrapper');
-
-		setupWindowDimensionPolyfill();
-		activateCSSViewportOverride(innerWrapper || body);
 		isSidebarLayoutSetup = true;
 
 	} catch (error) {
@@ -131,6 +146,15 @@ export function removeSidebarLayout() {
 		// Remove classes
 		html.classList.remove('playlight-sdk-flex-html');
 		body.classList.remove('playlight-sdk-outer-wrapper');
+
+		// Restore body classes
+		if (innerWrapper) {
+			originalBodyClasses.forEach(cls => {
+				body.classList.add(cls);
+				innerWrapper.classList.remove(cls);
+			});
+			originalBodyClasses = [];
+		}
 
 		// If we created the wrapper, unwrap it
 		if (createdInnerWrapper && innerWrapper) {

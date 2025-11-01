@@ -155,25 +155,27 @@
 .playlight-sdk-flex-html {
   display: flex !important;
   flex-direction: row !important;
+  gap: 0 !important;
 }
 
-/* Outer wrapper (now BODY) */
+/* Outer wrapper (body element) */
 .playlight-sdk-outer-wrapper {
   flex: 1 !important;
   /* Create new stacking context for position fixed, absolute etc. and prevent anything from rendering outside of it */
   contain: paint !important;
   /* Never scale past the available space */
   overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  position: static !important;
 }
 
-/* Inner wrapper (scrollable container) */
+/* Inner wrapper (framework root element or custom div) */
 .playlight-sdk-inner-wrapper {
-  /* Allow scrolling */
-  overflow: auto !important;
   /* Like the body, don't grow past viewport height */
   height: 100dvh !important;
   width: 100% !important;
-  display: block !important; /* Some frameworks like to do display: contents */
+  /* Note: overflow and display are conditionally applied via JS based on existing values */
 }
 
 /* Widget specific styles */

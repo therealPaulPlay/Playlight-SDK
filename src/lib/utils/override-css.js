@@ -30,14 +30,10 @@ export function activateCSSViewportOverride(outerWrapper) {
 	mutationObserver = new MutationObserver((mutations) => {
 		for (const mutation of mutations) {
 			for (const node of mutation.addedNodes) {
-				if (node.nodeName === 'STYLE') {
-					scheduleUpdate();
-					break;
-				} else if (node.nodeName === 'LINK' && node.rel === 'stylesheet') {
-					// Wait for stylesheet to load before processing
+				if (node.nodeName === 'STYLE') scheduleUpdate();
+				else if (node.nodeName === 'LINK' && node.rel === 'stylesheet') {
 					if (node.sheet) scheduleUpdate();
-					else node.addEventListener('load', scheduleUpdate, { once: true });
-					break;
+					else node.addEventListener('load', scheduleUpdate, { once: true }); // Wait for stylesheet to load before processing
 				}
 			}
 			// Watch for rel attribute changes (preload -> stylesheet)
@@ -46,7 +42,6 @@ export function activateCSSViewportOverride(outerWrapper) {
 				if (link.rel === 'stylesheet' && mutation.attributeName === 'rel') {
 					if (link.sheet) scheduleUpdate();
 					else link.addEventListener('load', scheduleUpdate, { once: true });
-					break;
 				}
 			}
 		}
@@ -58,7 +53,8 @@ export function activateCSSViewportOverride(outerWrapper) {
 		attributes: true,
 		attributeFilter: ['rel']
 	});
-	requestAnimationFrame(update); // Direclty run once
+
+	update(); // Run initial update synchronously so styles are applied immediately
 }
 
 export function deactivateCSSViewportOverride() {
@@ -97,8 +93,7 @@ function replaceStylesheet(sheet, adjustedWidth, windowHeight, sidebarWidth) {
 			const { originalCSS } = originalSheets.get(ownerNode);
 			applyTransform(ownerNode, originalCSS, adjustedWidth, windowHeight, sidebarWidth);
 		}
-	} catch (e) {
-		// CORS blocked (SecurityError)
+	} catch (error) {
 		console.warn(`Playlight cannot process stylesheet with href ${sheet.href} due to CORS restrictions. If this is your own CSS file, please adjust the CORS policies.`);
 	}
 }
@@ -109,8 +104,17 @@ function applyTransform(styleElement, originalCSS, adjustedWidth, windowHeight, 
 	const orientationBreakpoint = windowHeight + sidebarWidth;
 
 	const transformed = originalCSS
-		// Adjust viewport units
-		.replace(/(\d+(?:\.\d+)?)(vw|svw|lvw|dvw)/gi, (_match, value, unit) => {
+		// Adjust viewport units (skip if inside html selector blocks) !TODO: Sometimes broken and sets it to 0.00vw
+		.replace(/(\d+(?:\.\d+)?)(vw|svw|lvw|dvw)/gi, (match, value, unit, offset) => {
+			const beforeMatch = originalCSS.substring(0, offset);
+			const lastOpenBrace = beforeMatch.lastIndexOf('{');
+			const lastCloseBrace = beforeMatch.lastIndexOf('}');
+
+			if (lastOpenBrace > lastCloseBrace) {
+				const selector = beforeMatch.substring(lastCloseBrace + 1, lastOpenBrace).trim();
+				if (/^html[.\s,:[]/.test(selector)) return match;
+			}
+
 			return `${(parseFloat(value) * vwRatio).toFixed(2)}${unit}`;
 		})
 		// Adjust legacy width breakpoints
@@ -130,7 +134,12 @@ function applyTransform(styleElement, originalCSS, adjustedWidth, windowHeight, 
 		)
 		// Convert orientation
 		.replace(/\(\s*orientation:\s*portrait\s*\)/gi, `(max-width: ${orientationBreakpoint}px)`)
-		.replace(/\(\s*orientation:\s*landscape\s*\)/gi, `(min-width: ${orientationBreakpoint + 1}px)`);
+		.replace(/\(\s*orientation:\s*landscape\s*\)/gi, `(min-width: ${orientationBreakpoint + 1}px)`)
+		// Rewrite body { ... } to.playlight - sdk - inner - wrapper { ... } and remove!important
+		.replace(/\bbody\s*\{([^}]*)\}/gi, (_match, content) => {
+			const cleanedContent = content.replace(/\s*!important\s*/gi, '');
+			return `.playlight-sdk-inner-wrapper {${cleanedContent}}`;
+		});
 
 	styleElement.textContent = transformed;
 	styleElement.setAttribute('data-playlight-modified', 'true');
@@ -138,10 +147,8 @@ function applyTransform(styleElement, originalCSS, adjustedWidth, windowHeight, 
 
 function restoreAllStylesheets() {
 	for (const [ownerNode, { originalCSS, originalElement }] of originalSheets.entries()) {
-		if (originalElement) {
-			// Was a link, restore it
-			ownerNode.replaceWith(originalElement);
-		} else {
+		if (originalElement) ownerNode.replaceWith(originalElement); 	// Was a link, restore it
+		else {
 			// Was inline style, restore content
 			ownerNode.textContent = originalCSS;
 			ownerNode.removeAttribute('data-playlight-modified');
