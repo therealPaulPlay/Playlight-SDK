@@ -10,6 +10,7 @@
   scrollbar-width: none;
   touch-action: manipulation;
   /* Prevent double-tap to zoom */
+  text-shadow: none;
 }
 
 /* Base SDK styles */
@@ -18,9 +19,9 @@
   font-size: 1rem;
   line-height: 1.5;
   font-weight: normal;
-  color: white;
   background-color: transparent;
   isolation: isolate;
+  color: white;
 }
 
 .playlight-sdk p,

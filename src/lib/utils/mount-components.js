@@ -102,7 +102,7 @@ export function setupSidebarLayout() {
 
 		// Activate CSS overrides BEFORE transferring styles (so body {...} rules are rewritten to .playlight-sdk-inner-wrapper)
 		setupWindowDimensionPolyfill();
-		activateCSSViewportOverride(innerWrapper);
+		activateCSSViewportOverride(body);
 
 		// Transfer body classes to inner wrapper (except SDK classes)
 		originalBodyClasses = Array.from(body.classList).filter(cls => !cls.startsWith('playlight'));

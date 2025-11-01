@@ -1,4 +1,3 @@
-
 // Automatically adjusts viewport units (vw, svw, lvw, dvw) and media queries
 // in stylesheets to account for sidebar width & replaces them
 
@@ -103,7 +102,11 @@ function applyTransform(styleElement, originalCSS, adjustedWidth, windowHeight, 
 	const vwRatio = adjustedWidth / actualWidth;
 	const orientationBreakpoint = windowHeight + sidebarWidth;
 
-	const transformed = originalCSS
+	// Get base URL for resolving relative paths (for converted <link> elements)
+	const baseHref = styleElement.getAttribute('data-playlight-original-href');
+	const cssWithAbsoluteURLs = baseHref ? makeURLsAbsolute(originalCSS, baseHref) : originalCSS;
+
+	const transformed = cssWithAbsoluteURLs
 		// Adjust viewport units (skip if inside html selector blocks) !TODO: Sometimes broken and sets it to 0.00vw
 		.replace(/(\d+(?:\.\d+)?)(vw|svw|lvw|dvw)/gi, (match, value, unit, offset) => {
 			const beforeMatch = originalCSS.substring(0, offset);
@@ -145,9 +148,16 @@ function applyTransform(styleElement, originalCSS, adjustedWidth, windowHeight, 
 	styleElement.setAttribute('data-playlight-modified', 'true');
 }
 
+// Convert relative URLs to absolute based on stylesheet's original location
+function makeURLsAbsolute(css, baseHref) {
+	const baseDir = new URL(baseHref, document.baseURI).href.replace(/[^/]*$/, '');
+	return css.replace(/url\(\s*(['"]?)(?!data:|https?:|\/\/)(.+?)\1\s*\)/gi,
+		(_, quote, url) => `url(${quote}${new URL(url, baseDir).href}${quote})`);
+}
+
 function restoreAllStylesheets() {
 	for (const [ownerNode, { originalCSS, originalElement }] of originalSheets.entries()) {
-		if (originalElement) ownerNode.replaceWith(originalElement); 	// Was a link, restore it
+		if (originalElement) ownerNode.replaceWith(originalElement);
 		else {
 			// Was inline style, restore content
 			ownerNode.textContent = originalCSS;
