@@ -4,9 +4,17 @@
 let resizeObserver = null;
 let mutationObserver = null;
 let updateScheduled = false;
+let resizeTimeout = null;
 let originalSheets = new Map(); // ownerNode -> { originalCSS: string, originalElement: link or null }
 
 export function activateCSSViewportOverride(outerWrapper) {
+	const update = () => {
+		const adjustedWidth = outerWrapper.clientWidth;
+		const windowHeight = window.innerHeight;
+		const sidebarWidth = document.documentElement.clientWidth - adjustedWidth;
+		for (const sheet of Array.from(document.styleSheets)) replaceStylesheet(sheet, adjustedWidth, windowHeight, sidebarWidth);
+	};
+
 	const scheduleUpdate = () => {
 		if (updateScheduled) return;
 		updateScheduled = true;
@@ -16,14 +24,10 @@ export function activateCSSViewportOverride(outerWrapper) {
 		});
 	};
 
-	const update = () => {
-		const adjustedWidth = outerWrapper.clientWidth;
-		const windowHeight = window.innerHeight;
-		const sidebarWidth = document.documentElement.clientWidth - adjustedWidth;
-		for (const sheet of Array.from(document.styleSheets)) replaceStylesheet(sheet, adjustedWidth, windowHeight, sidebarWidth);
-	};
-
-	resizeObserver = new ResizeObserver(scheduleUpdate);
+	resizeObserver = new ResizeObserver(() => {
+		clearTimeout(resizeTimeout);
+		resizeTimeout = setTimeout(scheduleUpdate, 50); // Debounce to prevent rapid updates
+	});
 	resizeObserver.observe(outerWrapper);
 
 	mutationObserver = new MutationObserver((mutations) => {
@@ -59,8 +63,10 @@ export function activateCSSViewportOverride(outerWrapper) {
 export function deactivateCSSViewportOverride() {
 	resizeObserver?.disconnect();
 	mutationObserver?.disconnect();
+	clearTimeout(resizeTimeout);
 	resizeObserver = null;
 	mutationObserver = null;
+	resizeTimeout = null;
 	restoreAllStylesheets();
 	originalSheets.clear();
 }

@@ -130,7 +130,7 @@
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
-	class="bg-background/75 fixed inset-0 top-0 right-0 bottom-0 left-0 z-99999 flex flex-col justify-center text-white backdrop-blur-md"
+	class="bg-background/75 fixed inset-0 top-0 right-0 bottom-0 left-0 flex flex-col justify-center text-white backdrop-blur-md"
 	id="playlight-discovery"
 	transition:blur={{ duration: 250 }}
 	onclick={closeDiscoveryOnEmptyClick}

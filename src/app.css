@@ -190,4 +190,6 @@
 /* Sidebar styles */
 .playlight-sdk-container-sidebar {
   box-shadow: 0 0 25px #00000059 !important;
+  /* 1 less z-index compared to regular Playlight components */
+  z-index: 99998 !important;
 }

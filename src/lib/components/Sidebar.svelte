@@ -95,8 +95,8 @@
 
 <div
 	class="fixed z-1 flex h-dvh overflow-y-auto max-md:top-0 max-md:right-0 max-md:bottom-0 md:relative md:ml-auto {collapsed
-		? 'w-0 opacity-50'
-		: 'w-full md:w-75'} bg-background flex-col items-center gap-12 border-l text-white transition-[width,opacity] duration-150 ease-out"
+		? 'w-0'
+		: 'w-full border-l md:w-75'} bg-background flex-col items-center gap-12 text-white transition-[width] duration-150 ease-out"
 >
 	<div class="w-full">
 		<!-- Mobile close-->
@@ -118,7 +118,7 @@
 	</div>
 
 	<!-- Recommended games -->
-	<div class="grow-1 overflow-hidden mask-y-from-90% mask-y-to-100% p-6 py-12">
+	<div class="grow-1 overflow-hidden mask-y-from-90% mask-y-to-100% p-6 py-12 transition-opacity not-hover:opacity-75">
 		{#if isLoading}
 			<div class="flex h-full w-full items-center justify-center">
 				<LoaderCircle class="animate-spin opacity-75" size={30} strokeWidth={2.5} />
@@ -156,7 +156,14 @@
 
 	<!-- CTA buttons -->
 	<div class="flex w-full flex-col items-center gap-3 px-4">
-		<Button class="w-full" onclick={() => ($discoveryOpen = true)}>
+		<Button
+			class="w-full"
+			onclick={() => {
+				if (window.matchMedia("(max-width: 768px)").matches) collapsed = true;
+				$discoveryOpen = true;
+			}}
+			disabled={$discoveryOpen}
+		>
 			View all games <Gamepad2 style="margin-top: -1px;" />
 		</Button>
 		<div class="flex w-full items-center gap-4">

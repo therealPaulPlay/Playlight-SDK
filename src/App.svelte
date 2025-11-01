@@ -20,7 +20,7 @@
 	}}
 />
 
+<!-- Toaster for notifications -->
 {#if $discoveryOpen || $sidebarVisible}
-	<!-- Toaster for notifications -->
 	<Toaster />
 {/if}
