@@ -2,6 +2,8 @@ import { mount, unmount } from 'svelte';
 import App from '../../App.svelte';
 import Sidebar from '../components/Sidebar.svelte';
 import { activateCSSViewportOverride, deactivateCSSViewportOverride } from './override-css.js';
+import { config } from '../store.js';
+import { get } from 'svelte/store';
 
 // State
 let appContainer = null;
@@ -60,7 +62,6 @@ export function setupSidebarLayout() {
 			child => child.tagName === 'DIV' && !child.id?.includes('playlight') && child.children.length > 0
 		);
 
-		// Helper to create wrapper
 		const createWrapper = () => {
 			const wrapper = document.createElement('div');
 			wrapper.id = 'playlight-sdk-inner-wrapper';
@@ -71,22 +72,22 @@ export function setupSidebarLayout() {
 			return wrapper;
 		};
 
-		// Detect framework root using depth heuristic (deepest div is likely the framework root)
-		if (bodyDivs.length === 1) {
-			innerWrapper = bodyDivs[0];
-			createdInnerWrapper = false;
-		} else if (bodyDivs.length > 1) {
-			const depths = bodyDivs.map(div => div.querySelectorAll('*').length);
-			const maxDepth = Math.max(...depths);
-			const avgDepth = depths.reduce((a, b) => a + b) / depths.length;
-
-			if (maxDepth > avgDepth * 3) {
-				innerWrapper = bodyDivs[depths.indexOf(maxDepth)];
+		// Detect framework root using depth heuristic
+		if (get(config)?.sidebar?.hasFrameworkRoot !== false && bodyDivs.length > 0) {
+			if (bodyDivs.length === 1) {
+				innerWrapper = bodyDivs[0];
 				createdInnerWrapper = false;
+			} else {
+				const depths = bodyDivs.map(div => div.querySelectorAll('*').length);
+				const maxDepth = Math.max(...depths);
+				const avgDepth = depths.reduce((a, b) => a + b) / depths.length;
+				if (get(config)?.sidebar?.hasFrameworkRoot === true || maxDepth > avgDepth * 3) {
+					innerWrapper = bodyDivs[depths.indexOf(maxDepth)];
+					createdInnerWrapper = false;
+				}
 			}
 		}
 
-		// Fallback: create wrapper if no framework root detected
 		if (!innerWrapper) {
 			innerWrapper = createWrapper();
 			createdInnerWrapper = true;

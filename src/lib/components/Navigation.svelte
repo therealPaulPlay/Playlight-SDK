@@ -28,7 +28,7 @@
 	});
 </script>
 
-<svelte:document
+<svelte:window
 	onclick={(event) => {
 		if (dropdownRef && !dropdownRef?.contains(event.target) && !titleRef?.contains(event.target)) {
 			isOpen = false; // Close dropdown on outside click

@@ -102,11 +102,11 @@
 	}
 
 	function closeDiscoveryOnEmptyClick(e) {
-		if (e.target === e.currentTarget) $discoveryOpen = false;
+		if (e.target === e.currentTarget && e.pointerType !== "touch") $discoveryOpen = false;
 	}
 </script>
 
-<svelte:document
+<svelte:window
 	onkeydown={(e) => {
 		if (e.key == "Escape") $discoveryOpen = false;
 	}}
@@ -133,7 +133,7 @@
 	class="bg-background/75 fixed inset-0 top-0 right-0 bottom-0 left-0 flex flex-col justify-center text-white backdrop-blur-md"
 	id="playlight-discovery"
 	transition:blur={{ duration: 250 }}
-	onclick={closeDiscoveryOnEmptyClick}
+	onpointerup={closeDiscoveryOnEmptyClick}
 >
 	<!-- Header -->
 	<div class="pointer-events-none flex items-center justify-between p-4">
@@ -164,7 +164,7 @@
 	<div
 		class="mask-fade show-scrollbar relative h-full w-full overflow-y-auto p-4"
 		bind:this={scrollContainer}
-		onclick={closeDiscoveryOnEmptyClick}
+		onpointerup={closeDiscoveryOnEmptyClick}
 	>
 		{#if isLoading && games.length === 0}
 			<div class="flex h-4/5 items-center justify-center gap-4">

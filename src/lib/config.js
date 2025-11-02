@@ -6,6 +6,7 @@ const defaultConfig = {
     },
     sidebar: {
         enableBeta: false,
+        hasFrameworkRoot: "auto",
         forceVisible: false
     }
 };

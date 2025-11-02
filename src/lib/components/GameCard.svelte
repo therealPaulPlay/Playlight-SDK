@@ -27,9 +27,7 @@
 		isHovered = true;
 		clearTimeout(hoverTimeout);
 		hoverTimeout = setTimeout(() => (isFullyHovered = true), 300);
-		if (videoElement && game.cover_video_url) {
-			videoElement.play().catch((err) => console.error("Video play error:", err)); // Play video
-		}
+		if (videoElement && game.cover_video_url) videoElement.play().catch((err) => console.error("Video error:", err));
 	}
 
 	function handleUnhover() {
@@ -47,7 +45,7 @@
 	}
 </script>
 
-<svelte:document
+<svelte:window
 	ontouchstart={(e) => {
 		if (cardElement && !cardElement.contains(e.target)) handleUnhover();
 	}}
