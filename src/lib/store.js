@@ -28,7 +28,7 @@ discoveryOpen.subscribe((v) => {
             api.trackOpen();
             triggerEvent("discoveryOpen");
             originalOverflow = document.body.style.overflow;
-            document.body.style.overflow = "hidden"; // Prevent scroll propagation
+            document.body.style.setProperty("overflow", "hidden", "important"); // Prevent scroll propagation
         } else {
             triggerEvent("discoveryClose");
             document.body.style.overflow = originalOverflow;

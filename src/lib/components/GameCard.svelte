@@ -27,9 +27,7 @@
 		isHovered = true;
 		clearTimeout(hoverTimeout);
 		hoverTimeout = setTimeout(() => (isFullyHovered = true), 300);
-		if (videoElement && game.cover_video_url) {
-			videoElement.play().catch((err) => console.error("Video play error:", err)); // Play video
-		}
+		if (videoElement && game.cover_video_url) videoElement.play().catch((err) => console.error("Video error:", err));
 	}
 
 	function handleUnhover() {
@@ -47,7 +45,7 @@
 	}
 </script>
 
-<svelte:document
+<svelte:window
 	ontouchstart={(e) => {
 		if (cardElement && !cardElement.contains(e.target)) handleUnhover();
 	}}
@@ -68,9 +66,11 @@
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
 	bind:this={cardElement}
-	class="bg-background highlight-border group relative flex aspect-[2/3] cursor-pointer flex-col shadow-xl transition hover:outline-2 {coverImageLoaded
+	class="highlight-border group relative flex aspect-[2/3] cursor-pointer flex-col shadow-xl transition hover:outline-2 {coverImageLoaded
 		? ''
-		: 'animate-pulse'} {small ? 'h-42' : compact ? 'h-62' : 'h-92'} {small ? '' : ' mt-5 mb-[calc(3dvh+1.5vw)]'}"
+		: 'animate-pulse'} {small ? 'h-42' : compact ? 'h-62' : 'h-92'} {small
+		? 'bg-muted'
+		: 'bg-background mt-5 mb-[calc(3dvh+1.5vw)]'}"
 	onmouseenter={handleHover}
 	onmouseleave={handleUnhover}
 	role="button"

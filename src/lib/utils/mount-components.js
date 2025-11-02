@@ -1,24 +1,26 @@
 import { mount, unmount } from 'svelte';
 import App from '../../App.svelte';
 import Sidebar from '../components/Sidebar.svelte';
+import { activateCSSViewportOverride, deactivateCSSViewportOverride } from './override-css.js';
+import { config } from '../store.js';
+import { get } from 'svelte/store';
 
-// State management
+// State
 let appContainer = null;
 let sidebarContainer = null;
 let sidebarComponent = null;
-let outerWrapper = null; // Pseudo html element
-let innerWrapper = null; // Pseudo body element
 let isSidebarLayoutSetup = false;
 let originalInnerWidthDescriptor = null;
+let innerWrapper = null;
+let createdInnerWrapper = false;
+let originalBodyClasses = [];
 
-// Polyfill window.innerWidth to return outer wrapper width when sidebar is active
+// Polyfill window.innerWidth to return inner wrapper width when sidebar is active
 function setupWindowDimensionPolyfill() {
 	try {
 		originalInnerWidthDescriptor = Object.getOwnPropertyDescriptor(window, 'innerWidth');
 		Object.defineProperty(window, 'innerWidth', {
-			get: function () {
-				return outerWrapper?.clientWidth;
-			},
+			get: () => innerWrapper?.clientWidth || document.documentElement.clientWidth,
 			configurable: true
 		});
 	} catch (error) {
@@ -26,7 +28,6 @@ function setupWindowDimensionPolyfill() {
 	}
 }
 
-// Restore original window.innerWidth
 function restoreWindowDimensionPolyfill() {
 	try {
 		Object.defineProperty(window, 'innerWidth', originalInnerWidthDescriptor);
@@ -45,7 +46,7 @@ export function mountPlaylight() {
 		document.body.appendChild(appContainer);
 		mount(App, { target: appContainer });
 	} catch (error) {
-		console.error("Error occurred during mount:", error);
+		console.error('Error during Playlight mount:', error);
 	}
 }
 
@@ -54,38 +55,73 @@ export function setupSidebarLayout() {
 	if (isSidebarLayoutSetup) return;
 	try {
 		const body = document.body;
-		const bodyChildren = Array.from(body.children).filter(
-			(child) =>
-				child.tagName !== 'SCRIPT' &&
-				child.tagName !== 'STYLE' &&
-				!child.id?.startsWith('playlight-sdk')
+		const html = document.documentElement;
+
+		// Find potential framework root divs
+		const bodyDivs = Array.from(body.children).filter(
+			child => child.tagName === 'DIV' && !child.id?.includes('playlight') && child.children.length > 0
 		);
 
-		// Create inner wrapper (scrollable layer)
-		innerWrapper = document.createElement('div');
-		innerWrapper.id = 'playlight-sdk-inner-wrapper';
-		innerWrapper.className = 'playlight-sdk-inner-wrapper';
-		bodyChildren.forEach((child) => innerWrapper.appendChild(child));
+		const createWrapper = () => {
+			const wrapper = document.createElement('div');
+			wrapper.id = 'playlight-sdk-inner-wrapper';
+			Array.from(body.children)
+				.filter(child => !['SCRIPT', 'STYLE'].includes(child.tagName) && !child.id?.includes('playlight'))
+				.forEach(child => wrapper.appendChild(child));
+			body.appendChild(wrapper);
+			return wrapper;
+		};
 
-		// Create outer wrapper (containing block for fixed elements)
-		outerWrapper = document.createElement('div');
-		outerWrapper.id = 'playlight-sdk-outer-wrapper';
-		outerWrapper.className = 'playlight-sdk-outer-wrapper';
-		outerWrapper.appendChild(innerWrapper);
-		body.appendChild(outerWrapper);
+		// Detect framework root using depth heuristic
+		if (get(config)?.sidebar?.hasFrameworkRoot !== false && bodyDivs.length > 0) {
+			if (bodyDivs.length === 1) {
+				innerWrapper = bodyDivs[0];
+				createdInnerWrapper = false;
+			} else {
+				const depths = bodyDivs.map(div => div.querySelectorAll('*').length);
+				const maxDepth = Math.max(...depths);
+				const avgDepth = depths.reduce((a, b) => a + b) / depths.length;
+				if (get(config)?.sidebar?.hasFrameworkRoot === true || maxDepth > avgDepth * 3) {
+					innerWrapper = bodyDivs[depths.indexOf(maxDepth)];
+					createdInnerWrapper = false;
+				}
+			}
+		}
 
-		// Create and mount sidebar
+		if (!innerWrapper) {
+			innerWrapper = createWrapper();
+			createdInnerWrapper = true;
+		}
+
+		// Apply structure classes
+		html.classList.add('playlight-sdk-flex-html');
+		body.classList.add('playlight-sdk-outer-wrapper');
+		innerWrapper.classList.add('playlight-sdk-inner-wrapper');
+
+		// Activate CSS overrides (must happen before transferring styles)
+		setupWindowDimensionPolyfill();
+		activateCSSViewportOverride(body);
+
+		// Transfer body classes to inner wrapper (except SDK classes)
+		originalBodyClasses = Array.from(body.classList).filter(cls => !cls.startsWith('playlight'));
+		originalBodyClasses.forEach(cls => {
+			innerWrapper.classList.add(cls);
+			body.classList.remove(cls);
+		});
+
+		// Apply conditional style overrides based on computed styles
+		const computed = window.getComputedStyle(innerWrapper);
+		if (computed.display === 'contents') innerWrapper.style.setProperty('display', 'block', 'important');
+		if (computed.overflow === 'visible') innerWrapper.style.setProperty('overflow', 'auto', 'important');
+
+		// Mount sidebar as child of <html>
 		sidebarContainer = document.createElement('div');
 		sidebarContainer.className = 'playlight-sdk playlight-sdk-container-sidebar';
-		body.appendChild(sidebarContainer);
+		html.appendChild(sidebarContainer);
 		sidebarComponent = mount(Sidebar, { target: sidebarContainer });
-
-		body.classList.add('playlight-sdk-flex-body'); // Make the body flex
-		setupWindowDimensionPolyfill(); // Polyfill window.innerWidth to account for sidebar width
 		isSidebarLayoutSetup = true;
-
 	} catch (error) {
-		console.error("Error occurred during sidebar setup:", error);
+		console.error('Error during sidebar setup:', error);
 	}
 }
 
@@ -94,29 +130,41 @@ export function removeSidebarLayout() {
 	if (!isSidebarLayoutSetup) return;
 	try {
 		const body = document.body;
+		const html = document.documentElement;
 
-		if (sidebarComponent) {
-			unmount(sidebarComponent); // Unmount sidebar Svelte component
-			sidebarComponent = null;
+		// Unmount and remove sidebar
+		if (sidebarComponent) unmount(sidebarComponent);
+		if (sidebarContainer?.parentNode) html.removeChild(sidebarContainer);
+
+		// Remove classes
+		html.classList.remove('playlight-sdk-flex-html');
+		body.classList.remove('playlight-sdk-outer-wrapper');
+
+		// Restore body classes
+		if (innerWrapper) {
+			originalBodyClasses.forEach(cls => {
+				body.classList.add(cls);
+				innerWrapper.classList.remove(cls);
+			});
 		}
 
-		body.removeChild(sidebarContainer); // Remove sidebar container
+		// Unwrap or remove inner wrapper
+		if (createdInnerWrapper && innerWrapper) {
+			Array.from(innerWrapper.children).forEach(child => body.insertBefore(child, innerWrapper));
+			body.removeChild(innerWrapper);
+		} else if (innerWrapper) innerWrapper.classList.remove('playlight-sdk-inner-wrapper');
 
-		// Unwrap inner wrapper and delete outer wrapper that contains inner one (so both)
-		if (outerWrapper && innerWrapper) {
-			Array.from(innerWrapper.children).forEach((child) => body.insertBefore(child, outerWrapper));
-			body.removeChild(outerWrapper);
-		}
+		// Restore polyfills and clean up
+		restoreWindowDimensionPolyfill();
+		deactivateCSSViewportOverride();
 
-		body.classList.remove('playlight-sdk-flex-body'); // Remove body flex class
-		restoreWindowDimensionPolyfill(); // Restore window dimension
-
+		// Reset state
 		sidebarContainer = null;
-		outerWrapper = null;
+		sidebarComponent = null;
 		innerWrapper = null;
-		isSidebarLayoutSetup = false;
-
+		originalBodyClasses = [];
+		createdInnerWrapper = isSidebarLayoutSetup = false;
 	} catch (error) {
-		console.error("Error occurred during sidebar removal:", error);
+		console.error('Error during sidebar removal:', error);
 	}
 }

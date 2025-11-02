@@ -101,6 +101,21 @@
             background-color: white;
             color: black;
         }
+
+        .vw-test {
+            width: 50vw;
+            height: 25px;
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .vw-test {
+                color: red;
+            }
+        }
     </style>
 </head>
 
@@ -121,6 +136,10 @@
         </div>
 
         <button class="button" onclick="openModal()">Open modal</button>
+
+        <div class="vw-test">
+            <p>50vw</p>
+        </div>
 
         <details class="expandable-details">
             <summary>Scrollable content test</summary>
