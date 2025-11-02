@@ -6,6 +6,7 @@ let mutationObserver = null;
 let updateScheduled = false;
 let resizeTimeout = null;
 let originalSheets = new Map(); // ownerNode -> { originalCSS: string, originalElement: link or null }
+let lastSidebarWidth = null;
 
 export function activateCSSViewportOverride(outerWrapper) {
 	const update = () => {
@@ -14,6 +15,9 @@ export function activateCSSViewportOverride(outerWrapper) {
 		Array.from(document.styleSheets).forEach(sheet =>
 			replaceStylesheet(sheet, adjustedWidth, window.innerHeight, sidebarWidth)
 		);
+		// Only dispatch resize event if sidebar width actually changed (not just window resize)
+		if (lastSidebarWidth !== sidebarWidth) window.dispatchEvent(new Event('resize')); // For game engines
+		lastSidebarWidth = sidebarWidth;
 	};
 
 	const scheduleUpdate = () => {
@@ -56,7 +60,7 @@ export function deactivateCSSViewportOverride() {
 	resizeObserver?.disconnect();
 	mutationObserver?.disconnect();
 	clearTimeout(resizeTimeout);
-	resizeObserver = mutationObserver = resizeTimeout = null;
+	resizeObserver = mutationObserver = resizeTimeout = lastSidebarWidth = null;
 	for (const [node, { originalCSS, originalElement }] of originalSheets.entries()) {
 		if (originalElement) node.replaceWith(originalElement);
 		else {
