@@ -1,18 +1,16 @@
 <script>
-	import { likedInThisSession } from "../store";
+	import { currentGameIsLiked, currentGameLikeCount } from "../store";
 	import api from "../api";
 	import { ThumbsUp } from "lucide-svelte";
 
 	let { currentGame } = $props();
 
 	let logoImageLoaded = $state(false);
-	let isLiked = $state(false);
-	let likeCount = $state(currentGame?.likes || 0);
 
 	$effect(() => {
 		if (currentGame?.id != null) {
-			isLiked = localStorage.getItem(`playlight_${currentGame.id}_liked`) !== null;
-			likeCount = currentGame?.likes || 0;
+			$currentGameIsLiked = localStorage.getItem(`playlight_${currentGame.id}_liked`) !== null;
+			$currentGameLikeCount = currentGame?.likes || 0;
 		}
 	});
 
@@ -20,25 +18,24 @@
 		if (!currentGame?.id) return;
 
 		// Optimistically update UI
-		const newLikedState = !isLiked;
-		$likedInThisSession = newLikedState;
-		isLiked = !isLiked; // Toggle liked state
+		$currentGameIsLiked = !$currentGameIsLiked; // Toggle liked state
+		$currentGameLikeCount += $currentGameIsLiked ? 1 : -1;
 
 		// Save to localStorage
-		newLikedState
+		$currentGameIsLiked
 			? localStorage.setItem(`playlight_${currentGame.id}_liked`, "true")
 			: localStorage.removeItem(`playlight_${currentGame.id}_liked`);
 
-		const success = await api.toggleLike(currentGame.id, newLikedState);
+		const success = await api.toggleLike(currentGame.id, $currentGameIsLiked);
 
-		// Revert like count on error
-		if (!success) $likedInThisSession = !newLikedState;
+		// Revert like count on error (but not currentGameIsLiked since if it fails, that's likely because it was already liked)
+		if (!success) $currentGameLikeCount += !$currentGameIsLiked ? 1 : -1;
 	}
 </script>
 
 <div class="flex flex-wrap gap-1 text-start">
 	<div class="w-full">
-		<p class="text-muted-foreground text-sm select-none text-nowrap">Currently playing</p>
+		<p class="text-muted-foreground text-sm text-nowrap select-none">Currently playing</p>
 	</div>
 	<div class="flex w-full items-center gap-2">
 		{#if currentGame?.logo_url}
@@ -58,14 +55,19 @@
 			{currentGame?.name || "Unavailable"}
 		</p>
 		<div class="mt-0.5 ml-auto flex items-center gap-2">
-			<p class="text-muted-foreground text-sm">{$likedInThisSession ? likeCount + 1 : likeCount}</p>
+			<p class="text-muted-foreground text-sm">{$currentGameLikeCount}</p>
 			<button
 				class="text-muted-foreground cursor-pointer transition hover:text-white"
-				style="color: {isLiked ? 'white !important' : ''};"
+				style="color: {$currentGameIsLiked ? 'white !important' : ''};"
 				onclick={toggleLike}
-				aria-label={isLiked ? "Unlike game" : "Like game"}
+				aria-label={$currentGameIsLiked ? "Unlike game" : "Like game"}
 			>
-				<ThumbsUp size={18} strokeWidth={2.5} fill={isLiked ? "currentColor" : "none"} style="margin-top: -5px;" />
+				<ThumbsUp
+					size={18}
+					strokeWidth={2.5}
+					fill={$currentGameIsLiked ? "currentColor" : "none"}
+					style="margin-top: -5px;"
+				/>
 			</button>
 		</div>
 	</div>

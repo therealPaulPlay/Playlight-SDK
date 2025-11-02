@@ -25,20 +25,16 @@ class PlayLightAPI {
                 } catch {
                     // Do nothing...
                 } finally {
-                    if (response.status !== 429 && response.status !== 404) {
-                        throw new Error(`API request failed: ${data?.error || data?.message || response.status}`);
-                    } else if (response.status === 429) {
-                        return console.warn("Playlight request didn't go through due to rate limiting.");
-                    } else {
-                        return console.warn("Playlight game not found. This is normal in a test / local environment, but should not appear in production.");
-                    }
+                    if (response.status !== 429 && response.status !== 404) throw new Error(data?.error || data?.message || response.status);
+                    else if (response.status === 429) return console.warn("Playlight request didn't go through due to rate limiting.");
+                    else return console.warn("Playlight game not found. This is normal in a test / local environment, but should not appear in production.");
                 }
             }
 
             return await response.json();
         } catch (error) {
-            toast.error("Error: " + error);
-            console.error("Playlight API error:", error);
+            toast.error("Request failed: " + error.message);
+            console.error("Playlight API request error:", error);
         }
     }
 

@@ -1,6 +1,7 @@
 <script>
 	import { fly } from "svelte/transition";
 	import CurrentGameDisplay from "./CurrentGameDisplay.svelte";
+	import { onMount } from "svelte";
 
 	let { currentGame } = $props();
 
@@ -10,6 +11,15 @@
 	let dragging = $state(false);
 	let startY = 0;
 
+	function animate(duration, onFrame) {
+		const start = Date.now();
+		(function frame() {
+			const p = Math.min((Date.now() - start) / duration, 1);
+			onFrame(p);
+			if (p < 1) requestAnimationFrame(frame);
+		})();
+	}
+
 	function startDrag(e) {
 		dragging = true;
 		startY = e.type.includes("touch") ? e.touches[0].clientY : e.clientY;
@@ -17,8 +27,7 @@
 
 	function drag(e) {
 		if (!dragging) return;
-		const currentY = e.type.includes("touch") ? e.touches[0].clientY : e.clientY;
-		const delta = Math.max(0, currentY - startY);
+		const delta = Math.max(0, (e.type.includes("touch") ? e.touches[0].clientY : e.clientY) - startY);
 		y = delta;
 		alpha = Math.max(0, 1 - delta / 150);
 		if (delta > 40) hide();
@@ -27,29 +36,20 @@
 	function endDrag() {
 		if (!dragging) return;
 		dragging = false;
-		if (y < 40) animateBack();
-	}
-
-	function animate(from, to, duration, onFrame) {
-		const startTime = Date.now();
-		(function frame() {
-			const p = Math.min((Date.now() - startTime) / duration, 1);
-			onFrame(from, to, p);
-			if (p < 1) requestAnimationFrame(frame);
-		})();
-	}
-
-	function animateBack() {
-		animate(y, 0, 250, (from, to, p) => {
-			y = from * (1 - p);
-			alpha = 1;
-		});
+		if (y < 40) {
+			const startY = y;
+			animate(250, (p) => {
+				y = startY * (1 - p);
+				alpha = 1;
+			});
+		}
 	}
 
 	function hide() {
 		dragging = false;
-		animate(y, 250, 250, (from, to, p) => {
-			y = from + (to - from) * p;
+		const startY = y;
+		animate(250, (p) => {
+			y = startY + (250 - startY) * p;
 			alpha = Math.max(0, 1 - p * 1.5);
 			if (p === 1) minimized = true;
 		});
@@ -59,11 +59,13 @@
 		minimized = false;
 		y = 250;
 		alpha = 0;
-		animate(250, 0, 250, (from, to, p) => {
-			y = from * (1 - p);
+		animate(250, (p) => {
+			y = 250 * (1 - p);
 			alpha = p;
 		});
 	}
+
+	onMount(() => animate(250, (p) => (alpha = p)));
 </script>
 
 {#if currentGame && !minimized}

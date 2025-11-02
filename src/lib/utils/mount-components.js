@@ -2,7 +2,7 @@ import { mount, unmount } from 'svelte';
 import App from '../../App.svelte';
 import Sidebar from '../components/Sidebar.svelte';
 import { activateCSSViewportOverride, deactivateCSSViewportOverride } from './override-css.js';
-import { config } from '../store.js';
+import { config, sidebarCollapsed } from '../store.js';
 import { get } from 'svelte/store';
 
 // State
@@ -150,8 +150,10 @@ export function removeSidebarLayout() {
 
 		// Unwrap or remove inner wrapper
 		if (createdInnerWrapper && innerWrapper) {
-			Array.from(innerWrapper.children).forEach(child => body.insertBefore(child, innerWrapper));
-			body.removeChild(innerWrapper);
+			Array.from(innerWrapper.children).forEach(child => {
+				if (child.parentNode === innerWrapper) body.insertBefore(child, innerWrapper);
+			});
+			innerWrapper.remove();
 		} else if (innerWrapper) innerWrapper.classList.remove('playlight-sdk-inner-wrapper');
 
 		// Restore polyfills and clean up
@@ -164,6 +166,7 @@ export function removeSidebarLayout() {
 		innerWrapper = null;
 		originalBodyClasses = [];
 		createdInnerWrapper = isSidebarLayoutSetup = false;
+		sidebarCollapsed.set(false);
 	} catch (error) {
 		console.error('Error during sidebar removal:', error);
 	}

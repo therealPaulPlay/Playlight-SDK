@@ -11,10 +11,12 @@ export const userIsFromPlaylight = writable(false);
 export const discoveryOpen = writable(false);
 
 // Current game display
-export const likedInThisSession = writable(false);
+export const currentGameIsLiked = writable(false);
+export const currentGameLikeCount = writable(0);
 
 // Sidebar
 export const sidebarVisible = writable(false);
+export const sidebarCollapsed = writable(false);
 
 // Project setup
 export const projectUrl = writable("https://sdk.playlight.dev");
