@@ -111,7 +111,7 @@ export function setupSidebarLayout() {
 		// Apply conditional style overrides based on computed styles
 		const computed = window.getComputedStyle(innerWrapper);
 		if (computed.display === 'contents') innerWrapper.style.setProperty('display', 'block', 'important');
-		if (computed.overflow === 'visible' || computed.overflow === '') innerWrapper.style.setProperty('overflow', 'auto', 'important');
+		if (computed.overflow === 'visible') innerWrapper.style.setProperty('overflow', 'auto', 'important');
 
 		// Mount sidebar as child of <html>
 		sidebarContainer = document.createElement('div');
