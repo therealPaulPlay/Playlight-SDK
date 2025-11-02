@@ -150,8 +150,10 @@ export function removeSidebarLayout() {
 
 		// Unwrap or remove inner wrapper
 		if (createdInnerWrapper && innerWrapper) {
-			Array.from(innerWrapper.children).forEach(child => body.insertBefore(child, innerWrapper));
-			body.removeChild(innerWrapper);
+			Array.from(innerWrapper.children).forEach(child => {
+				if (child.parentNode === innerWrapper) body.insertBefore(child, innerWrapper);
+			});
+			innerWrapper.remove();
 		} else if (innerWrapper) innerWrapper.classList.remove('playlight-sdk-inner-wrapper');
 
 		// Restore polyfills and clean up
