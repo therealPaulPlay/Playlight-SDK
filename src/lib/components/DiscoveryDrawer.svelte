@@ -1,6 +1,7 @@
 <script>
 	import { fly } from "svelte/transition";
 	import CurrentGameDisplay from "./CurrentGameDisplay.svelte";
+	import { onMount } from "svelte";
 
 	let { currentGame } = $props();
 
@@ -64,6 +65,12 @@
 			alpha = p;
 		});
 	}
+
+	onMount(() => {
+		animate(1, 0, 250, (from, to, p) => {
+			alpha = p;
+		});
+	});
 </script>
 
 {#if currentGame && !minimized}

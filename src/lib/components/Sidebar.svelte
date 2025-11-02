@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from "svelte";
 	import { on } from "svelte/events";
-	import { discoveryOpen, projectUrl } from "../store";
+	import { discoveryOpen, projectUrl, sidebarCollapsed } from "../store";
 	import { fetchRecommendedGames } from "../utils/fetch-recommended-games";
 	import api from "../api.js";
 	import { LoaderCircle, Gamepad2, Dices, ChevronsRight, GripVertical, X } from "lucide-svelte";
@@ -13,7 +13,6 @@
 
 	// State
 	let isLoading = $state(false);
-	let collapsed = $state(false);
 	let currentGame = $state();
 
 	// Scroll state for games container
@@ -27,7 +26,7 @@
 
 	$effect.pre(() => {
 		// Default to collapsed sidebar on mobile (before the component renders to avoid collapse animation)
-		if (window.matchMedia("(max-width: 768px)").matches) collapsed = true;
+		$sidebarCollapsed = window.matchMedia("(max-width: 768px)").matches;
 	});
 
 	onMount(async () => {
@@ -91,31 +90,22 @@
 	onmousemove={handleMouseMove}
 	onmouseup={() => (isDragging = false)}
 	ontouchend={() => (isDragging = false)}
+	onresize={() => {
+		if (window.matchMedia("(max-width: 768px)").matches) $sidebarCollapsed = true;
+	}}
 />
 
 <div
-	class="fixed z-1 flex h-dvh overflow-y-auto max-md:top-0 max-md:right-0 max-md:bottom-0 md:relative md:ml-auto {collapsed
+	class="fixed relative z-1 flex h-dvh ml-auto overflow-y-auto {$sidebarCollapsed
 		? 'w-0'
-		: 'w-full border-l md:w-75'} bg-background flex-col items-center gap-12 text-white transition-[width] duration-150 ease-out"
+		: 'w-75 border-l'} bg-background flex-col items-center gap-12 text-white transition-[width] duration-150 ease-out"
 >
-	<div class="w-full">
-		<!-- Mobile close-->
-		<div class="mx-auto flex justify-end border-b p-0 md:hidden">
-			<Button
-				variant="secondary"
-				class="text-muted-foreground border-l outline-none!"
-				onclick={() => (collapsed = true)}
-			>
-				<X />
-			</Button>
-		</div>
-		<!-- Logo -->
-		<img
-			alt="logo"
-			src={$projectUrl + "/static/images/logo-white-small.png"}
-			class="pointer-events-none mx-auto mt-5 w-50 select-none"
-		/>
-	</div>
+	<!-- Logo -->
+	<img
+		alt="logo"
+		src={$projectUrl + "/static/images/logo-white-small.png"}
+		class="pointer-events-none mx-auto mt-5 w-50 select-none"
+	/>
 
 	<!-- Recommended games -->
 	<div class="grow-1 overflow-hidden mask-y-from-90% mask-y-to-100% p-6 py-12 transition-opacity not-hover:opacity-75">
@@ -156,14 +146,7 @@
 
 	<!-- CTA buttons -->
 	<div class="flex w-full flex-col items-center gap-3 px-4">
-		<Button
-			class="w-full"
-			onclick={() => {
-				if (window.matchMedia("(max-width: 768px)").matches) collapsed = true;
-				$discoveryOpen = true;
-			}}
-			disabled={$discoveryOpen}
-		>
+		<Button class="w-full" onclick={() => ($discoveryOpen = true)} disabled={$discoveryOpen}>
 			View all games <Gamepad2 style="margin-top: -1px;" />
 		</Button>
 		<div class="flex w-full items-center gap-4">
@@ -191,11 +174,11 @@
 		</div>
 
 		<!-- Collapse -->
-		<div class="flex justify-end p-0 max-md:hidden">
+		<div class="flex justify-end p-0">
 			<Button
 				variant="secondary"
 				class="text-muted-foreground border-l outline-none!"
-				onclick={() => (collapsed = true)}
+				onclick={() => ($sidebarCollapsed = true)}
 			>
 				<ChevronsRight />
 			</Button>
@@ -203,7 +186,7 @@
 	</div>
 </div>
 
-{#if collapsed}
+{#if $sidebarCollapsed && !$discoveryOpen}
 	<div
 		transition:blur
 		bind:this={buttonElement}
@@ -217,8 +200,18 @@
 		ontouchstart={(e) => handleDragStart(e.touches[0].clientY)}
 	>
 		<GripVertical class="text-muted-foreground aspect-square" />
-		<Button variant="ghost" onclick={() => (collapsed = false)}>
-			<img alt="icon" src={$projectUrl + "/static/images/icon-white-small.png"} class="aspect-square w-8" />
+		<Button
+			variant="ghost"
+			onclick={() => {
+				if (!window.matchMedia("(max-width: 768px)").matches) $sidebarCollapsed = false;
+				else $discoveryOpen = true;
+			}}
+		>
+			<img
+				alt="icon"
+				src={$projectUrl + "/static/images/icon-white-small.png"}
+				class="pointer-events-none aspect-square w-8"
+			/>
 		</Button>
 	</div>
 {/if}

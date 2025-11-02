@@ -5,7 +5,7 @@
 	import api from "../api.js";
 	import Navigation from "./Navigation.svelte";
 	import { onMount } from "svelte";
-	import { discoveryOpen, projectUrl, sidebarVisible } from "../store.js";
+	import { discoveryOpen, projectUrl, sidebarCollapsed, sidebarVisible } from "../store.js";
 	import DiscoveryDrawer from "./DiscoveryDrawer.svelte";
 
 	// States
@@ -155,7 +155,7 @@
 	</div>
 
 	<!-- Current game display -->
-	{#if !$sidebarVisible}
+	{#if !$sidebarVisible || $sidebarCollapsed}
 		<DiscoveryDrawer {currentGame} />
 	{/if}
 

@@ -15,6 +15,7 @@ export const likedInThisSession = writable(false);
 
 // Sidebar
 export const sidebarVisible = writable(false);
+export const sidebarCollapsed = writable(false);
 
 // Project setup
 export const projectUrl = writable("https://sdk.playlight.dev");
