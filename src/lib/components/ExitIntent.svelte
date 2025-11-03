@@ -5,7 +5,7 @@
 	import { backOut } from "svelte/easing";
 	import { triggerEvent } from "../utils/trigger-event.js";
 	import { sidebarVisible } from "../store.js";
-	
+
 	let { enabled = true, onIntent, immediate = false } = $props();
 
 	// Elements

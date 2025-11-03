@@ -1,36 +1,36 @@
 /* Resets to prevent host page overrides (fonts are set further down) */
 .playlight-sdk,
 .playlight-sdk * {
-  box-sizing: border-box !important;
-  margin: 0;
-  padding: 0;
-  border-radius: 0;
-  border: none;
-  border-color: hsl(var(--playlight-border)) !important;
-  scrollbar-width: none;
-  touch-action: manipulation;
-  /* Prevent double-tap to zoom */
-  text-shadow: none;
+	box-sizing: border-box !important;
+	margin: 0;
+	padding: 0;
+	border-radius: 0;
+	border: none;
+	border-color: hsl(var(--playlight-border)) !important;
+	scrollbar-width: none;
+	touch-action: manipulation;
+	/* Prevent double-tap to zoom */
+	text-shadow: none;
 }
 
 /* Base SDK styles */
 .playlight-sdk {
-  position: relative;
-  font-size: 1rem;
-  line-height: 1.5;
-  font-weight: normal;
-  background-color: transparent;
-  isolation: isolate;
-  color: white;
+	position: relative;
+	font-size: 1rem;
+	line-height: 1.5;
+	font-weight: normal;
+	background-color: transparent;
+	isolation: isolate;
+	color: white;
 }
 
 .playlight-sdk p,
 .playlight-sdk span,
 .playlight-sdk button {
-  font-weight: unset;
-  color: unset;
-  font-size: unset;
-  line-height: unset;
+	font-weight: unset;
+	color: unset;
+	font-size: unset;
+	line-height: unset;
 }
 
 /* Button styles - these will affect ALL buttons at ANY depth */
@@ -38,11 +38,11 @@
 .playlight-sdk button:hover,
 .playlight-sdk button:active,
 .playlight-sdk button:focus {
-  appearance: button;
-  cursor: pointer;
-  background: none;
-  box-shadow: none;
-  opacity: unset;
+	appearance: button;
+	cursor: pointer;
+	background: none;
+	box-shadow: none;
+	opacity: unset;
 }
 
 /* Link styles - using multiple selectors to target ALL links at ANY depth */
@@ -50,11 +50,11 @@
 .playlight-sdk a:visited,
 .playlight-sdk a:hover,
 .playlight-sdk a:link {
-  color: unset;
-  font-size: unset;
-  text-decoration: none !important;
-  text-decoration-thickness: 1px;
-  cursor: pointer;
+	color: unset;
+	font-size: unset;
+	text-decoration: none !important;
+	text-decoration-thickness: 1px;
+	cursor: pointer;
 }
 
 /* Form element styles - these will affect ALL form elements at ANY depth */
@@ -73,22 +73,22 @@
 .playlight-sdk textarea:focus,
 .playlight-sdk textarea:active,
 .playlight-sdk textarea {
-  appearance: revert;
-  background: none;
-  font-size: unset;
-  text-align: start;
-  box-shadow: none;
+	appearance: revert;
+	background: none;
+	font-size: unset;
+	text-align: start;
+	box-shadow: none;
 }
 
 /* List styles - these will affect ALL lists at ANY depth */
 .playlight-sdk ul,
 .playlight-sdk ol {
-  list-style: none;
+	list-style: none;
 }
 
 /* Table styles - these will affect ALL tables at ANY depth */
 .playlight-sdk table {
-  border-collapse: collapse;
+	border-collapse: collapse;
 }
 
 /* Import Tailwind AFTER the resets, it should take precedence over them */
@@ -96,102 +96,102 @@
 @config '../tailwind.config.js';
 
 @layer base {
-  :root {
-    --playlight-background: 20 0% 0%;
-    --playlight-foreground: 60 9.1% 97.8%;
-    --playlight-muted: 12 6.5% 15.1%;
-    --playlight-muted-foreground: 24 5.4% 63.9%;
-    --playlight-popover: 20 14.3% 4.1%;
-    --playlight-popover-foreground: 60 9.1% 97.8%;
-    --playlight-card: 20 14.3% 4.1%;
-    --playlight-card-foreground: 60 9.1% 97.8%;
-    --playlight-border: 12 6.5% 15.1%;
-    --playlight-input: 12 6.5% 15.1%;
-    --playlight-primary: 60 9.1% 97.8%;
-    --playlight-primary-foreground: 24 9.8% 10%;
-    --playlight-secondary: 12 6.5% 15.1%;
-    --playlight-secondary-foreground: 60 9.1% 97.8%;
-    --playlight-accent: 12 6.5% 15.1%;
-    --playlight-accent-foreground: 60 9.1% 97.8%;
-    --playlight-destructive: 0 62.8% 30.6%;
-    --playlight-destructive-foreground: 60 9.1% 97.8%;
-    --playlight-ring: 24 5.7% 82.9%;
-    --playlight-radius: 0rem;
-  }
+	:root {
+		--playlight-background: 20 0% 0%;
+		--playlight-foreground: 60 9.1% 97.8%;
+		--playlight-muted: 12 6.5% 15.1%;
+		--playlight-muted-foreground: 24 5.4% 63.9%;
+		--playlight-popover: 20 14.3% 4.1%;
+		--playlight-popover-foreground: 60 9.1% 97.8%;
+		--playlight-card: 20 14.3% 4.1%;
+		--playlight-card-foreground: 60 9.1% 97.8%;
+		--playlight-border: 12 6.5% 15.1%;
+		--playlight-input: 12 6.5% 15.1%;
+		--playlight-primary: 60 9.1% 97.8%;
+		--playlight-primary-foreground: 24 9.8% 10%;
+		--playlight-secondary: 12 6.5% 15.1%;
+		--playlight-secondary-foreground: 60 9.1% 97.8%;
+		--playlight-accent: 12 6.5% 15.1%;
+		--playlight-accent-foreground: 60 9.1% 97.8%;
+		--playlight-destructive: 0 62.8% 30.6%;
+		--playlight-destructive-foreground: 60 9.1% 97.8%;
+		--playlight-ring: 24 5.7% 82.9%;
+		--playlight-radius: 0rem;
+	}
 }
 
 @layer base {
-  body {
-    @apply bg-background text-white;
-  }
+	body {
+		@apply bg-background text-white;
+	}
 }
 
 @font-face {
-  font-family: Geist;
-  /* This gets included in the CSS output as base64 */
-  src: url("/static/fonts/geist-variable-weight.woff2");
+	font-family: Geist;
+	/* This gets included in the CSS output as base64 */
+	src: url("/static/fonts/geist-variable-weight.woff2");
 }
 
 .playlight-sdk,
 .playlight-sdk * {
-  font-family: Geist, sans-serif !important;
-  font-synthesis: none !important;
-  -webkit-font-smoothing: auto;
-  -moz-osx-font-smoothing: auto;
+	font-family: Geist, sans-serif !important;
+	font-synthesis: none !important;
+	-webkit-font-smoothing: auto;
+	-moz-osx-font-smoothing: auto;
 }
 
 /* Main container specific styles */
 .playlight-sdk-container {
-  position: fixed;
-  inset: 0;
-  z-index: 99999;
-  pointer-events: none;
+	position: fixed;
+	inset: 0;
+	z-index: 99999;
+	pointer-events: none;
 }
 
 .playlight-sdk-container * {
-  pointer-events: auto;
+	pointer-events: auto;
 }
 
 /* HTML becomes flex container */
 .playlight-sdk-flex-html {
-  display: flex !important;
-  flex-direction: row !important;
-  gap: 0 !important;
+	display: flex !important;
+	flex-direction: row !important;
+	gap: 0 !important;
 }
 
 /* Outer wrapper (body element) */
 .playlight-sdk-outer-wrapper {
-  flex: 1 !important;
-  /* Create new stacking context for position fixed, absolute etc. and prevent anything from rendering outside of it */
-  contain: paint !important;
-  /* Never scale past the available space */
-  overflow: hidden !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  position: static !important;
-  /* Elements positioned in the body expect a fixed height */
-  height: 100dvh !important;
+	flex: 1 !important;
+	/* Create new stacking context for position fixed, absolute etc. and prevent anything from rendering outside of it */
+	contain: paint !important;
+	/* Never scale past the available space */
+	overflow: hidden !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	position: static !important;
+	/* Elements positioned in the body expect a fixed height */
+	height: 100dvh !important;
 }
 
 /* Inner wrapper (framework root element or custom div) */
 .playlight-sdk-inner-wrapper {
-  /* Like the body, don't grow past viewport height */
-  height: 100dvh !important;
-  width: 100% !important;
-  /* On scroll, move elements relative to this element */
-  position: relative !important;
-  /* Note: overflow and display are conditionally applied via JS based on existing values */
+	/* Like the body, don't grow past viewport height */
+	height: 100dvh !important;
+	width: 100% !important;
+	/* On scroll, move elements relative to this element */
+	position: relative !important;
+	/* Note: overflow and display are conditionally applied via JS based on existing values */
 }
 
 /* Widget specific styles */
 .playlight-sdk-widget {
-  width: 100%;
-  height: 100%;
+	width: 100%;
+	height: 100%;
 }
 
 /* Sidebar styles */
 .playlight-sdk-container-sidebar {
-  box-shadow: 0 0 25px #00000059 !important;
-  /* 1 less z-index compared to regular Playlight components */
-  z-index: 99998 !important;
+	box-shadow: 0 0 25px #00000059 !important;
+	/* 1 less z-index compared to regular Playlight components */
+	z-index: 99998 !important;
 }

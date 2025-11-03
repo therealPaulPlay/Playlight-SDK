@@ -1,253 +1,246 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Playlight SDK Local Integration Example</title>
+		<link rel="stylesheet" href="../dist/playlight-sdk.css" />
+		<link rel="icon" type="image/x-icon" href="./favicon.ico" />
+		<style>
+			body {
+				font-family:
+					system-ui,
+					-apple-system,
+					sans-serif;
+				background: linear-gradient(#e66465, #9198e5);
+				color: #e2e2e2;
+				margin: 0;
+				padding: 0;
+			}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Playlight SDK Local Integration Example</title>
-    <link rel="stylesheet" href="../dist/playlight-sdk.css">
-    <link rel="icon" type="image/x-icon" href="./favicon.ico">
-    <style>
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background: linear-gradient(#e66465, #9198e5);
-            color: #e2e2e2;
-            margin: 0;
-            padding: 0;
-        }
+			.main-element {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				min-height: 100vh;
+				text-align: center;
+			}
 
-        .main-element {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            text-align: center;
-        }
+			.container {
+				width: 800px;
+				max-width: calc(100% - 4rem);
+				margin: 0 auto;
+				padding: 2rem;
+			}
 
-        .container {
-            width: 800px;
-            max-width: calc(100% - 4rem);
-            margin: 0 auto;
-            padding: 2rem;
-        }
+			.game-container {
+				background-color: rgb(30, 30, 30);
+				border-radius: 8px;
+				padding: 2rem;
+				margin-bottom: 2rem;
+			}
 
-        .game-container {
-            background-color: rgb(30, 30, 30);
-            border-radius: 8px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
+			.button {
+				background-color: rgb(5, 5, 5);
+				color: white;
+				border: none;
+				border-radius: 4px;
+				padding: 0.75rem 1.5rem;
+				cursor: pointer;
+				margin: 0.5rem;
+				font-weight: 500;
+				color: white;
+			}
 
-        .button {
-            background-color: rgb(5, 5, 5);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 0.75rem 1.5rem;
-            cursor: pointer;
-            margin: 0.5rem;
-            font-weight: 500;
-            color: white;
-        }
+			.button:hover {
+				opacity: 0.5;
+			}
 
-        .button:hover {
-            opacity: 0.5;
-        }
+			.options {
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+				gap: 0.5rem;
+				margin-top: 2rem;
+			}
 
-        .options {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-top: 2rem;
-        }
+			a {
+				text-decoration: underline;
+			}
 
-        a {
-            text-decoration: underline;
-        }
+			input {
+				background-color: white;
+				border-radius: 5px;
+			}
 
-        input {
-            background-color: white;
-            border-radius: 5px;
-        }
+			.carousel-widget-test {
+				width: calc(100% - 10px);
+				height: 330px;
+				background-color: rgba(0, 0, 0, 0.2);
+				padding: 5px;
+			}
 
-        .carousel-widget-test {
-            width: calc(100% - 10px);
-            height: 330px;
-            background-color: rgba(0, 0, 0, 0.2);
-            padding: 5px;
-        }
+			.expandable-details {
+				max-width: 800px;
+				margin-inline: auto;
+				line-height: 100px;
+			}
 
-        .expandable-details {
-            max-width: 800px;
-            margin-inline: auto;
-            line-height: 100px;
-        }
+			.modal {
+				position: fixed;
+				inset: 0;
+				z-index: 100;
+				background-color: rgba(0, 0, 0, 0.25);
+				display: none;
+				justify-content: center;
+				align-items: center;
+			}
 
-        .modal {
-            position: fixed;
-            inset: 0;
-            z-index: 100;
-            background-color: rgba(0, 0, 0, 0.25);
-            display: none;
-            justify-content: center;
-            align-items: center;
-        }
+			.modal-inner {
+				width: 300px;
+				height: 300px;
+				background-color: white;
+				color: black;
+			}
 
-        .modal-inner {
-            width: 300px;
-            height: 300px;
-            background-color: white;
-            color: black;
-        }
+			.vw-test {
+				width: 50vw;
+				height: 25px;
+				background-color: black;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
 
-        .vw-test {
-            width: 50vw;
-            height: 25px;
-            background-color: black;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+			@media (max-width: 768px) {
+				.vw-test {
+					color: red;
+				}
+			}
+		</style>
+	</head>
 
-        @media (max-width: 768px) {
-            .vw-test {
-                color: red;
-            }
-        }
-    </style>
-</head>
+	<body>
+		<main class="main-element">
+			<div class="container">
+				<div class="game-container">
+					<p>This is a simple example showing the Playlight SDK running on a page.</p>
 
-<body>
-    <main class="main-element">
-        <div class="container">
-            <div class="game-container">
-                <p>This is a simple example showing the Playlight SDK running on a page.</p>
+					<div class="playlight-widget-carousel carousel-widget-test"></div>
 
-                <div class="playlight-widget-carousel carousel-widget-test"></div>
+					<div class="options">
+						<button class="button" id="show-discovery">Open discovery</button>
+						<button class="button" id="toggle-sidebar">Toggle sidebar</button>
+						<button class="button" id="toggle-exit-intent">Toggle exit intent</button>
+					</div>
+				</div>
+			</div>
 
-                <div class="options">
-                    <button class="button" id="show-discovery">Open discovery</button>
-                    <button class="button" id="toggle-sidebar">Toggle sidebar</button>
-                    <button class="button" id="toggle-exit-intent">Toggle exit intent</button>
-                </div>
-            </div>
-        </div>
+			<button class="button" onclick="openModal()">Open modal</button>
 
-        <button class="button" onclick="openModal()">Open modal</button>
+			<div class="vw-test">
+				<p>50vw</p>
+			</div>
 
-        <div class="vw-test">
-            <p>50vw</p>
-        </div>
+			<details class="expandable-details">
+				<summary>Scrollable content test</summary>
+				<p>
+					Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et
+					dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet
+					clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet,
+					consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,
+					sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea
+					takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed
+					diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
+					accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum
+					dolor sit amet. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel
+					illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent
+					luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer
+					adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut
+					wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea
+					commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat,
+					vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit
+					praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Nam liber tempor cum soluta nobis
+					eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Lorem ipsum dolor sit
+					amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam
+					erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut
+					aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie
+					consequat, vel illum dolore eu feugiat nulla facilisis. At vero eos et accusam et justo duo dolores et ea
+					rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor
+					sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna
+					aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
+					gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur
+					sadipscing elitr, At accusam aliquyam diam diam dolore dolores duo eirmod eos erat, et nonumy sed tempor et et
+					invidunt justo labore Stet clita ea et gubergren, kasd magna no rebum. sanctus sea sed takimata ut vero
+					voluptua. est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
+				</p>
+			</details>
 
-        <details class="expandable-details">
-            <summary>Scrollable content test</summary>
-            <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore
-                et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea
-                rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum
-                dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore
-                magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet
-                clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit
-                amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna
-                aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita
-                kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+			<div class="modal" id="modal">
+				<div class="modal-inner">
+					<p>Hey!</p>
+					<button onclick="closeModal()" class="button">Close</button>
+				</div>
+			</div>
+		</main>
 
-                Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum
-                dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent
-                luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet,
-                consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam
-                erat volutpat.
+		<script type="module">
+			try {
+				const module = await import("../dist/playlight-sdk.es.js");
+				const playlightSDK = module.default;
+				await playlightSDK.init();
 
-                Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip
-                ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie
-                consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim
-                qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi.
+				playlightSDK.onEvent("discoveryOpen", () => {
+					console.log("Discovery open event!");
+				});
 
-                Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat
-                facer possim assum. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh
-                euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis
-                nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+				playlightSDK.onEvent("discoveryClose", () => {
+					console.log("Discovery close event!");
+				});
 
-                Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum
-                dolore eu feugiat nulla facilisis.
+				playlightSDK.onEvent("exitIntent", () => {
+					console.log("Exit intent triggered event!");
+				});
 
-                At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
-                sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed
-                diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero
-                eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est
-                Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, At accusam aliquyam
-                diam diam dolore dolores duo eirmod eos erat, et nonumy sed tempor et et invidunt justo labore Stet
-                clita ea et gubergren, kasd magna no rebum. sanctus sea sed takimata ut vero voluptua. est Lorem ipsum
-                dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam</p>
-        </details>
+				// Wait for the SDK to be fully loaded to add event listeners
+				document.getElementById("show-discovery").addEventListener("click", () => {
+					playlightSDK?.setDiscovery(true);
+				});
 
-        <div class="modal" id="modal">
-            <div class="modal-inner">
-                <p>Hey!</p>
-                <button onclick="closeModal()" class="button">Close</button>
-            </div>
-        </div>
-    </main>
+				let discoveryToggled = true;
+				document.getElementById("toggle-exit-intent").addEventListener("click", () => {
+					discoveryToggled = !discoveryToggled;
+					applyConfig();
+				});
 
-    <script type="module">
-        try {
-            const module = await import("../dist/playlight-sdk.es.js");
-            const playlightSDK = module.default;
-            await playlightSDK.init();
+				let sidebarToggled = false;
+				document.getElementById("toggle-sidebar").addEventListener("click", () => {
+					sidebarToggled = !sidebarToggled;
+					applyConfig();
+				});
 
-            playlightSDK.onEvent("discoveryOpen", () => {
-                console.log("Discovery open event!");
-            });
+				function applyConfig() {
+					playlightSDK?.setConfig({
+						exitIntent: {
+							enabled: discoveryToggled,
+						},
+						sidebar: {
+							enableBeta: true /* TODO remove once stable */,
+							forceVisible: sidebarToggled,
+						},
+					});
+				}
+			} catch (error) {
+				console.error("Playlight SDK could not be loaded:", error);
+			}
 
-            playlightSDK.onEvent("discoveryClose", () => {
-                console.log("Discovery close event!");
-            });
-
-            playlightSDK.onEvent("exitIntent", () => {
-                console.log("Exit intent triggered event!");
-            });
-
-            // Wait for the SDK to be fully loaded to add event listeners
-            document.getElementById('show-discovery').addEventListener('click', () => {
-                playlightSDK?.setDiscovery(true);
-            });
-
-            let discoveryToggled = true;
-            document.getElementById('toggle-exit-intent').addEventListener('click', () => {
-                discoveryToggled = !discoveryToggled;
-                applyConfig();
-            });
-
-            let sidebarToggled = false;
-            document.getElementById('toggle-sidebar').addEventListener('click', () => {
-                sidebarToggled = !sidebarToggled;
-                applyConfig();
-            });
-
-            function applyConfig() {
-                playlightSDK?.setConfig({
-                    exitIntent: {
-                        enabled: discoveryToggled
-                    },
-                    sidebar: {
-                        enableBeta: true, /* TODO remove once stable */
-                        forceVisible: sidebarToggled
-                    }
-                });
-            }
-
-        } catch (error) {
-            console.error("Playlight SDK could not be loaded:", error);
-        }
-
-        window.closeModal = () => {
-            document.getElementById("modal").style.display = "none";
-        }
-        window.openModal = () => {
-            document.getElementById("modal").style.display = "flex";
-        }
-    </script>
-</body>
-
+			window.closeModal = () => {
+				document.getElementById("modal").style.display = "none";
+			};
+			window.openModal = () => {
+				document.getElementById("modal").style.display = "flex";
+			};
+		</script>
+	</body>
 </html>

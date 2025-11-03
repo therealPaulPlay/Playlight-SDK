@@ -26,7 +26,7 @@
 
 	$effect.pre(() => {
 		// Default to collapsed sidebar on mobile (before the component renders to avoid collapse animation)
-		$sidebarCollapsed = window.matchMedia("(max-width: 768px)").matches;
+		if (window.matchMedia("(max-width: 768px)").matches) $sidebarCollapsed = true;
 	});
 
 	onMount(async () => {
@@ -96,7 +96,7 @@
 />
 
 <div
-	class="fixed relative z-1 flex h-dvh ml-auto overflow-y-auto {$sidebarCollapsed
+	class="fixed relative z-1 ml-auto flex h-dvh overflow-y-auto {$sidebarCollapsed
 		? 'w-0'
 		: 'w-75 border-l'} bg-background flex-col items-center gap-12 text-white transition-[width] duration-150 ease-out"
 >

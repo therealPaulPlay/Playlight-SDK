@@ -1,8 +1,8 @@
-import tailwindcss from '@tailwindcss/vite';
-import { svelte } from '@sveltejs/vite-plugin-svelte';
-import { defineConfig } from 'vite';
-import { terser } from 'rollup-plugin-terser';
-import { viteStaticCopy } from 'vite-plugin-static-copy';
+import tailwindcss from "@tailwindcss/vite";
+import { svelte } from "@sveltejs/vite-plugin-svelte";
+import { defineConfig } from "vite";
+import { terser } from "rollup-plugin-terser";
+import { viteStaticCopy } from "vite-plugin-static-copy";
 
 export default defineConfig({
 	plugins: [
@@ -11,18 +11,18 @@ export default defineConfig({
 		viteStaticCopy({
 			targets: [
 				{
-					src: 'static/*',
-					dest: 'static'
-				}
-			]
-		})
+					src: "static/*",
+					dest: "static",
+				},
+			],
+		}),
 	],
 	build: {
 		lib: {
-			entry: 'src/index.js',
-			name: 'PlaylightSDK',
+			entry: "src/index.js",
+			name: "PlaylightSDK",
 			fileName: (format) => `playlight-sdk.${format}.js`,
-			formats: ['es', 'iife']
+			formats: ["es", "iife"],
 		},
 		rollupOptions: {
 			plugins: [
@@ -32,18 +32,18 @@ export default defineConfig({
 					ecma: 2020,
 					format: {
 						beautify: true,
-						comments: 'all'
-					}
-				})
+						comments: "all",
+					},
+				}),
 			],
 			output: {
 				// Provide global variables for use in UMD/IIFE build
 				globals: {
-					svelte: 'Svelte'
-				}
-			}
+					svelte: "Svelte",
+				},
+			},
 		},
-		minify: 'terser',
-		sourcemap: true
-	}
+		minify: "terser",
+		sourcemap: true,
+	},
 });
