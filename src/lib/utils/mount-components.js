@@ -1,7 +1,7 @@
 import { mount, unmount } from "svelte";
 import App from "../../App.svelte";
 import Sidebar from "../components/Sidebar.svelte";
-import { activateCSSViewportOverride, deactivateCSSViewportOverride } from "./override-css.js";
+import { activateCSSViewportOverride, deactivateCSSViewportOverride, applyCSSOverrides } from "./override-css.js";
 import { config } from "../store.js";
 import { get } from "svelte/store";
 
@@ -15,6 +15,7 @@ let sidebarComponent = null;
 // State
 let isSidebarLayoutSetup = false;
 let originalInnerWidthDescriptor = null;
+let originalMatchMedia = null;
 let createdInnerWrapper = false;
 let originalBodyClasses = [];
 
@@ -23,25 +24,41 @@ let sidebarStructureObserver = null;
 let sidebarRemountTimeout = null;
 let appRemountTimeout = null;
 
-// Polyfill window.innerWidth to return inner wrapper width when sidebar is active
+// Polyfill window.innerWidth and window.matchMedia to account for sidebar
 function setupWindowDimensionPolyfill() {
 	try {
+		// Polyfill window.innerWidth
 		originalInnerWidthDescriptor = Object.getOwnPropertyDescriptor(window, "innerWidth");
 		Object.defineProperty(window, "innerWidth", {
-			get: () => innerWrapper?.clientWidth || document.documentElement.clientWidth,
+			get: () => document.body.clientWidth,
 			configurable: true,
 		});
+
+		// Polyfill window.matchMedia
+		originalMatchMedia = window.matchMedia;
+		window.matchMedia = function (query) {
+			const adjustedWidth = document.body.clientWidth;
+			const sidebarWidth = document.documentElement.clientWidth - adjustedWidth;
+			const adjustedQuery = applyCSSOverrides(query, adjustedWidth, window.innerHeight, sidebarWidth);
+			return originalMatchMedia.call(this, adjustedQuery);
+		};
 	} catch (error) {
-		console.warn("Could not polyfill window.innerWidth:", error);
+		console.warn("Could not polyfill window dimensions:", error);
 	}
 }
 
 function restoreWindowDimensionPolyfill() {
 	try {
-		Object.defineProperty(window, "innerWidth", originalInnerWidthDescriptor);
-		originalInnerWidthDescriptor = null;
+		if (originalInnerWidthDescriptor) {
+			Object.defineProperty(window, "innerWidth", originalInnerWidthDescriptor);
+			originalInnerWidthDescriptor = null;
+		}
+		if (originalMatchMedia) {
+			window.matchMedia = originalMatchMedia;
+			originalMatchMedia = null;
+		}
 	} catch (error) {
-		console.warn("Could not restore original window.innerWidth:", error);
+		console.warn("Could not restore window dimension polyfills:", error);
 	}
 }
 

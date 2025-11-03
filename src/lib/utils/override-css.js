@@ -15,9 +15,6 @@ export function activateCSSViewportOverride(outerWrapper) {
 		Array.from(document.styleSheets).forEach((sheet) =>
 			replaceStylesheet(sheet, adjustedWidth, window.innerHeight, sidebarWidth),
 		);
-		// Only dispatch resize event if sidebar width actually changed (not just window resize)
-		if (lastSidebarWidth !== sidebarWidth) window.dispatchEvent(new Event("resize")); // For game engines
-		lastSidebarWidth = sidebarWidth;
 	};
 
 	const scheduleUpdate = () => {
@@ -30,8 +27,13 @@ export function activateCSSViewportOverride(outerWrapper) {
 	};
 
 	resizeObserver = new ResizeObserver(() => {
-		clearTimeout(resizeTimeout);
-		resizeTimeout = setTimeout(scheduleUpdate, 50); // Debounce to prevent rapid updates
+		const sidebarWidth = document.documentElement.clientWidth - outerWrapper.clientWidth;
+		if (lastSidebarWidth !== sidebarWidth) {
+			lastSidebarWidth = sidebarWidth;
+			window.dispatchEvent(new Event("resize")); // For game engines to adjust the canvas
+			clearTimeout(resizeTimeout);
+			resizeTimeout = setTimeout(scheduleUpdate, 50); // Debounce to prevent rapid updates
+		}
 	});
 	resizeObserver.observe(outerWrapper);
 
@@ -89,28 +91,35 @@ function replaceStylesheet(sheet, adjustedWidth, windowHeight, sidebarWidth) {
 				styleElement.setAttribute("data-playlight-original-href", ownerNode.href);
 				originalSheets.set(styleElement, { originalCSS, originalElement: ownerNode });
 				ownerNode.replaceWith(styleElement);
-				applyTransform(styleElement, originalCSS, adjustedWidth, windowHeight, sidebarWidth);
+				transformSheet(styleElement, originalCSS, adjustedWidth, windowHeight, sidebarWidth);
 			} else {
 				originalSheets.set(ownerNode, { originalCSS, originalElement: null });
-				applyTransform(ownerNode, originalCSS, adjustedWidth, windowHeight, sidebarWidth);
+				transformSheet(ownerNode, originalCSS, adjustedWidth, windowHeight, sidebarWidth);
 			}
 		} else {
 			// Re-transform from original
-			applyTransform(ownerNode, originalSheets.get(ownerNode).originalCSS, adjustedWidth, windowHeight, sidebarWidth);
+			transformSheet(ownerNode, originalSheets.get(ownerNode).originalCSS, adjustedWidth, windowHeight, sidebarWidth);
 		}
 	} catch (error) {
 		console.warn(`Playlight cannot process stylesheet ${sheet.href || "inline"} due to CORS restrictions.`);
 	}
 }
 
-function applyTransform(styleElement, originalCSS, adjustedWidth, windowHeight, sidebarWidth) {
-	const actualWidth = adjustedWidth + sidebarWidth;
-	const vwRatio = adjustedWidth / actualWidth;
-	const orientationBreakpoint = windowHeight + sidebarWidth;
-
+function transformSheet(styleElement, originalCSS, adjustedWidth, windowHeight, sidebarWidth) {
 	// Get base URL for resolving relative paths (for converted <link> elements)
 	const baseHref = styleElement.getAttribute("data-playlight-original-href");
 	let css = baseHref ? makeURLsAbsolute(originalCSS, baseHref) : originalCSS;
+
+	css = applyCSSOverrides(css, adjustedWidth, windowHeight, sidebarWidth); // Apply all CSS overrides
+	styleElement.textContent = css;
+	styleElement.setAttribute("data-playlight-modified", "true");
+}
+
+// Apply all CSS overrides
+export function applyCSSOverrides(css, adjustedWidth, windowHeight, sidebarWidth) {
+	const actualWidth = adjustedWidth + sidebarWidth;
+	const vwRatio = adjustedWidth / actualWidth;
+	const orientationBreakpoint = windowHeight + sidebarWidth;
 
 	// Adjust viewport units (skip html selectors)
 	css = css.replace(/(\d+(?:\.\d+)?)(vw|svw|lvw|dvw)/gi, (match, value, unit, offset) => {
@@ -152,8 +161,7 @@ function applyTransform(styleElement, originalCSS, adjustedWidth, windowHeight, 
 		(_, content) => `.playlight-sdk-inner-wrapper {${content.replace(/\s*!important\s*/gi, "")}}`,
 	);
 
-	styleElement.textContent = css;
-	styleElement.setAttribute("data-playlight-modified", "true");
+	return css;
 }
 
 function makeURLsAbsolute(css, baseHref) {
