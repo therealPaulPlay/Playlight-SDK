@@ -112,7 +112,7 @@ function applyTransform(styleElement, originalCSS, adjustedWidth, windowHeight, 
 	const baseHref = styleElement.getAttribute("data-playlight-original-href");
 	let css = baseHref ? makeURLsAbsolute(originalCSS, baseHref) : originalCSS;
 
-	// Adjust viewport units (skip html selectors to avoid breaking sites)
+	// Adjust viewport units (skip html selectors)
 	css = css.replace(/(\d+(?:\.\d+)?)(vw|svw|lvw|dvw)/gi, (match, value, unit, offset) => {
 		const beforeMatch = css.substring(0, offset);
 		const lastOpen = beforeMatch.lastIndexOf("{");
@@ -124,24 +124,23 @@ function applyTransform(styleElement, originalCSS, adjustedWidth, windowHeight, 
 		return `${(parseFloat(value) * vwRatio).toFixed(2)}${unit}`;
 	});
 
-	// Adjust media query width breakpoints (px only)
-	css = css.replace(
-		/(\((?:min-|max-)?width:\s*)(\d+(?:\.\d+)?)(px\))/gi,
-		(_, prefix, value, suffix) => `${prefix}${parseFloat(value) + sidebarWidth}${suffix}`,
-	);
+	// Adjust media query width breakpoints (simple values only, no calc)
+	css = css.replace(/\((min-width|max-width):\s*([\d.]+[a-z]+)\)/gi, (_, prop, value) => {
+		return `(${prop}: calc(${value} + ${sidebarWidth}px))`;
+	});
 
-	// Adjust range syntax
-	css = css.replace(
-		/(width\s*[<>=]+\s*)(\d+(?:\.\d+)?)(px)/gi,
-		(_, prefix, value, unit) => `${prefix}${parseFloat(value) + sidebarWidth}${unit}`,
-	);
+	// Handle double-sided range: (value < width < value)
+	css = css.replace(/\(([\d.]+[a-z]+)\s*([<>=]+)\s*width\s*([<>=]+)\s*([\d.]+[a-z]+)\)/gi, (_, val1, op1, op2, val2) => {
+		return `(calc(${val1} + ${sidebarWidth}px) ${op1} width ${op2} calc(${val2} + ${sidebarWidth}px))`;
+	});
 
-	// Adjust double-sided ranges
-	css = css.replace(
-		/(\d+(?:\.\d+)?)(px\s*[<>=]+\s*width\s*[<>=]+\s*)(\d+(?:\.\d+)?)(px)/gi,
-		(_, val1, middle, val2, unit) =>
-			`${parseFloat(val1) + sidebarWidth}px${middle}${parseFloat(val2) + sidebarWidth}${unit}`,
-	);
+	// Handle single-sided range: (width < value) or (value < width)
+	css = css.replace(/\(width\s*([<>=]+)\s*([\d.]+[a-z]+)\)/gi, (_, operator, value) => {
+		return `(width ${operator} calc(${value} + ${sidebarWidth}px))`;
+	});
+	css = css.replace(/\(([\d.]+[a-z]+)\s*([<>=]+)\s*width\)/gi, (_, value, operator) => {
+		return `(calc(${value} + ${sidebarWidth}px) ${operator} width)`;
+	});
 
 	// Convert orientation queries
 	css = css.replace(/\(\s*orientation:\s*portrait\s*\)/gi, `(max-width: ${orientationBreakpoint}px)`);

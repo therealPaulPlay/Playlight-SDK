@@ -14,7 +14,7 @@ class PlaylightSDK {
 	 * @param {object} [userConfig] - The playlight configuration object
 	 */
 	async init(userConfig = {}) {
-		if (typeof window === "undefined") return console.error("Playlight cannot run on the server, as it depends on browser APIs.");
+		if (typeof window === "undefined") return console.error("Playlight cannot run on the server.");
 		if (window.playlightInitialized) return console.warn("Playlight SDK is already initialized!");
 
 		// Initialize configuration with defaults and user overrides
