@@ -8,10 +8,9 @@
 	"scripts": {
 		"dev": "vite dev --port 3000",
 		"build": "vite build",
-		"postbuild": "node process-css.cjs",
+		"postbuild": "node process-css.js",
 		"preview": "vite preview",
-		"format": "prettier --write .",
-		"lint": "prettier --check ."
+		"format": "prettier --write ."
 	},
 	"devDependencies": {
 		"@sveltejs/vite-plugin-svelte": "^5.0.0",

@@ -25,31 +25,32 @@ export const projectUrl = writable("https://sdk.playlight.dev");
 let originalOverflow;
 
 discoveryOpen.subscribe((v) => {
-    try {
-        if (v) {
-            api.trackOpen();
-            triggerEvent("discoveryOpen");
-            originalOverflow = document.body.style.overflow;
-            document.body.style.setProperty("overflow", "hidden", "important"); // Prevent scroll propagation
-        } else {
-            triggerEvent("discoveryClose");
-            document.body.style.overflow = originalOverflow;
-        }
-    } catch (error) {
-        console.error("Error in discoveryOpen store subscription:", error);
-    }
+	try {
+		if (v) {
+			api.trackOpen();
+			triggerEvent("discoveryOpen");
+			originalOverflow = document.body.style.overflow;
+			document.body.style.setProperty("overflow", "hidden", "important"); // Prevent scroll propagation
+		} else {
+			triggerEvent("discoveryClose");
+			document.body.style.overflow = originalOverflow;
+		}
+	} catch (error) {
+		console.error("Error in discoveryOpen store subscription:", error);
+	}
 });
 
 config.subscribe((value) => {
-    if (value?.sidebar?.forceVisible || (get(userIsFromPlaylight) && value?.sidebar?.enableBeta)) sidebarVisible.set(true);
-    else sidebarVisible.set(false);
+	if (value?.sidebar?.forceVisible || (get(userIsFromPlaylight) && value?.sidebar?.enableBeta))
+		sidebarVisible.set(true);
+	else sidebarVisible.set(false);
 });
 
 userIsFromPlaylight.subscribe((value) => {
-    if (value && get(config)?.sidebar?.enableBeta) sidebarVisible.set(true);
+	if (value && get(config)?.sidebar?.enableBeta) sidebarVisible.set(true);
 });
 
 sidebarVisible.subscribe((visible) => {
-    if (visible) setupSidebarLayout();
-    else removeSidebarLayout();
+	if (visible) setupSidebarLayout();
+	else removeSidebarLayout();
 });

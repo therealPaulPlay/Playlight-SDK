@@ -26,7 +26,7 @@
 
 	$effect.pre(() => {
 		// Default to collapsed sidebar on mobile (before the component renders to avoid collapse animation)
-		$sidebarCollapsed = window.matchMedia("(max-width: 768px)").matches;
+		if (document.documentElement.clientWidth <= 768) $sidebarCollapsed = true;
 	});
 
 	onMount(async () => {
@@ -91,12 +91,12 @@
 	onmouseup={() => (isDragging = false)}
 	ontouchend={() => (isDragging = false)}
 	onresize={() => {
-		if (window.matchMedia("(max-width: 768px)").matches) $sidebarCollapsed = true;
+		if (document.documentElement.clientWidth <= 768) $sidebarCollapsed = true;
 	}}
 />
 
 <div
-	class="fixed relative z-1 flex h-dvh ml-auto overflow-y-auto {$sidebarCollapsed
+	class="fixed relative z-1 ml-auto flex h-dvh overflow-y-auto {$sidebarCollapsed
 		? 'w-0'
 		: 'w-75 border-l'} bg-background flex-col items-center gap-12 text-white transition-[width] duration-150 ease-out"
 >
@@ -203,7 +203,7 @@
 		<Button
 			variant="ghost"
 			onclick={() => {
-				if (!window.matchMedia("(max-width: 768px)").matches) $sidebarCollapsed = false;
+				if (document.documentElement.clientWidth > 768) $sidebarCollapsed = false;
 				else $discoveryOpen = true;
 			}}
 		>
