@@ -143,6 +143,11 @@
 			<p>50vw</p>
 		</div>
 
+		<div style="margin-top: 2rem; text-align: center;">
+			<p>regular matchMedia event listener: <span id="mq-before">-</span></p>
+			<p>polyfilled matchMedia event listener: <span id="mq-after">-</span></p>
+		</div>
+
 		<details class="expandable-details">
 			<summary>Scrollable content test</summary>
 			<p>
@@ -211,10 +216,17 @@
 	</main>
 
 	<script type="module">
+		// matchMedia listener BEFORE SDK init
+		const mqBefore = window.matchMedia("(max-width: 768px)");
+		document.getElementById("mq-before").textContent = mqBefore.matches;
+		mqBefore.addEventListener("change", (e) => {
+			document.getElementById("mq-before").textContent = e.matches;
+		});
+
 		try {
 			const module = await import("../dist/playlight-sdk.es.js");
 			const playlightSDK = module.default;
-			await playlightSDK.init();
+			playlightSDK.init();
 
 			playlightSDK.onEvent("discoveryOpen", () => {
 				console.log("Discovery open event!");
@@ -240,9 +252,20 @@
 			});
 
 			let sidebarToggled = false;
+			let mediaQueryListenerCreated = false;
 			document.getElementById("toggle-sidebar").addEventListener("click", () => {
 				sidebarToggled = !sidebarToggled;
 				applyConfig();
+
+				// Create matchMedia listener AFTER sidebar becomes visible for the first time
+				if (sidebarToggled && !mediaQueryListenerCreated) {
+					mediaQueryListenerCreated = true;
+					const query = window.matchMedia("(max-width: 768px)");
+					document.getElementById("mq-after").textContent = query.matches;
+					query.addEventListener("change", (e) => {
+						document.getElementById("mq-after").textContent = e.matches;
+					});
+				}
 			});
 
 			function applyConfig() {

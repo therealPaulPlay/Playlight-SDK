@@ -60,6 +60,7 @@ export function activateCSSViewportOverride(outerWrapper) {
 
 export function deactivateCSSViewportOverride() {
 	resizeObserver?.disconnect();
+	window.dispatchEvent(new Event("resize")); // Dispatch one last time since sidebar got removed
 	mutationObserver?.disconnect();
 	clearTimeout(resizeTimeout);
 	resizeObserver = mutationObserver = resizeTimeout = lastSidebarWidth = null;

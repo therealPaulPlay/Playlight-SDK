@@ -27,8 +27,7 @@ class PlayLightAPI {
 				} finally {
 					if (response.status !== 429 && response.status !== 404)
 						throw new Error(data?.error || data?.message || response.status);
-					else if (response.status === 429)
-						return console.warn("Playlight request didn't go through due to rate limiting.");
+					else if (response.status === 429) return console.warn("Playlight request failed due to rate limiting.");
 					else
 						return console.warn(
 							"Playlight game not found. This is normal in a test / local environment, but should not appear in production.",
@@ -68,7 +67,7 @@ class PlayLightAPI {
 	// Get game suggestions, optionally filtered by category
 	async getCurrentGameInfo() {
 		if (this.currentGame) return this.currentGame; // Cached
-		let endpoint = "/game-by-domain/" + this.#getHostnameWithoutWWW();
+		const endpoint = "/game-by-domain/" + this.#getHostnameWithoutWWW();
 		this.currentGame = await this.request(endpoint);
 		return this.currentGame ? { ...this.currentGame } : undefined;
 	}

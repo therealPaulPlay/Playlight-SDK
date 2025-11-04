@@ -13,7 +13,7 @@ class PlaylightSDK {
 	 * Initialize Playlight
 	 * @param {object} [userConfig] - The playlight configuration object
 	 */
-	async init(userConfig = {}) {
+	init(userConfig = {}) {
 		if (typeof window === "undefined") return console.error("Playlight cannot run on the server.");
 		if (window.playlightInitialized) return console.warn("Playlight SDK is already initialized!");
 
@@ -33,9 +33,6 @@ class PlaylightSDK {
 
 		// Set initialized
 		window.playlightInitialized = true;
-
-		// Fetch current game info to cache it
-		await api.getCurrentGameInfo();
 	}
 
 	/**

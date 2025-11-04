@@ -48,8 +48,7 @@
 	});
 
 	onMount(async () => {
-		currentGame = await api.getCurrentGameInfo();
-		categories = await api.getCategories();
+		[currentGame, categories] = await Promise.all([api.getCurrentGameInfo(), api.getCategories()]);
 		selectedCategory = currentGame?.category || categories?.[categories?.length - 1];
 		isLoading = false; // Initial loading done, but loading will be set to true again by fetchGames
 		await loadNewFeed();
@@ -86,9 +85,7 @@
 				fetchAllGames = true;
 				page = 1;
 			} else hasMoreGames = false;
-		} else {
-			page += 1;
-		}
+		} else page += 1;
 
 		// Disable loading state
 		isLoading = false;
