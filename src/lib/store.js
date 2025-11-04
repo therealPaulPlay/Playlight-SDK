@@ -24,9 +24,9 @@ export const projectUrl = writable("https://sdk.playlight.dev");
 // Subscriptions --------------------------------------------------------------------------------------
 let originalOverflow;
 
-discoveryOpen.subscribe((v) => {
+discoveryOpen.subscribe((value) => {
 	try {
-		if (v) {
+		if (value) {
 			api.trackOpen();
 			triggerEvent("discoveryOpen");
 			originalOverflow = document.body.style.overflow;

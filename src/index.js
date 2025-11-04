@@ -1,4 +1,4 @@
-import { initializeConfig } from "./lib/config.js";
+import { createConfig } from "./lib/config.js";
 import { config, discoveryOpen, userIsFromPlaylight } from "./lib/store.js";
 import { eventCallbacks } from "./lib/utils/trigger-event.js";
 import api from "./lib/api.js";
@@ -60,7 +60,7 @@ class PlaylightSDK {
 	 * @param {object} [configParam] - Playlight configuration object
 	 */
 	setConfig(configParam = {}) {
-		config.set(initializeConfig(configParam));
+		config.set(createConfig(configParam));
 	}
 }
 
