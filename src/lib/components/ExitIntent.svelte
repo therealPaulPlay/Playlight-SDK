@@ -37,7 +37,7 @@
 				if (!immediate) {
 					triggerEvent("exitIntent");
 					showIntentBar = true;
-					previewGames = await fetchQuickRecommendations(3);
+					if (!previewGames?.length) previewGames = await fetchQuickRecommendations(3);
 				} else {
 					triggerEvent("exitIntent");
 					onIntent?.();
