@@ -153,14 +153,14 @@
 }
 
 /* HTML becomes flex container */
-.playlight-sdk-flex-html {
+.playlight-sdk-html {
 	display: flex !important;
 	flex-direction: row !important;
 	gap: 0 !important;
 }
 
 /* Outer wrapper (body element) */
-.playlight-sdk-outer-wrapper {
+.playlight-sdk-body {
 	flex: 1 !important;
 	/* Create new stacking context for position fixed, absolute etc. and prevent anything from rendering outside of it */
 	contain: paint !important;

@@ -5,40 +5,57 @@ class PlayLightAPI {
 		this.baseUrl = "https://api.playlight.dev/platform";
 		this.cachedCategories = null;
 		this.currentGame = null;
+		this.pendingCacheRequests = new Map();
 	}
 
 	async request(endpoint, options = {}) {
-		try {
-			const url = `${this.baseUrl}${endpoint}`;
-			const response = await fetch(url, {
-				...options,
-				headers: {
-					"Content-Type": "application/json",
-					...options.headers,
-				},
-			});
+		const { deduplicate, ...fetchOptions } = options;
 
-			if (!response.ok) {
-				let data;
-				try {
-					data = await response.json();
-				} catch {
-					// Do nothing...
-				} finally {
-					if (response.status !== 429 && response.status !== 404)
-						throw new Error(data?.error || data?.message || response.status);
-					else if (response.status === 429) return console.warn("Playlight request failed due to rate limiting.");
-					else
-						return console.warn(
+		// If deduplicating, check for pending request and return same promise
+		if (deduplicate && this.pendingCacheRequests.has(endpoint)) return this.pendingCacheRequests.get(endpoint);
+
+		const makeRequest = async () => {
+			try {
+				const url = `${this.baseUrl}${endpoint}`;
+				const response = await fetch(url, {
+					...fetchOptions,
+					headers: {
+						"Content-Type": "application/json",
+						...fetchOptions.headers,
+					},
+				});
+
+				if (!response.ok) {
+					let data;
+					try {
+						data = await response.json();
+					} catch {
+						// Do nothing...
+					} finally {
+						if (response.status !== 429 && response.status !== 404) throw new Error(data?.error || data?.message || response.status);
+						else if (response.status === 429) return console.warn("Playlight request failed due to rate limiting.");
+						else if (response.status === 404) return console.warn(
 							"Playlight game not found. This is normal in a test / local environment, but should not appear in production.",
 						);
+					}
 				}
-			}
 
-			return await response.json();
-		} catch (error) {
-			toast.error("Request failed: " + error.message);
-			console.error("Playlight API request error:", error);
+				return await response.json();
+			} catch (error) {
+				toast.error("Request failed: " + error.message);
+				console.error("Playlight API request error:", error);
+			}
+		};
+
+		if (deduplicate) {
+			const promise = makeRequest().then((data) => {
+				this.pendingCacheRequests.delete(endpoint);
+				return data;
+			});
+			this.pendingCacheRequests.set(endpoint, promise);
+			return promise;
+		} else {
+			return makeRequest();
 		}
 	}
 
@@ -50,7 +67,7 @@ class PlayLightAPI {
 	// Get all categories
 	async getCategories() {
 		if (this.cachedCategories) return this.cachedCategories; // Cached
-		const data = await this.request("/categories");
+		const data = await this.request("/categories", { deduplicate: true });
 		this.cachedCategories = data;
 		return data;
 	}
@@ -64,12 +81,12 @@ class PlayLightAPI {
 		return await this.request(endpoint);
 	}
 
-	// Get game suggestions, optionally filtered by category
+	// Get current game info
 	async getCurrentGameInfo() {
 		if (this.currentGame) return this.currentGame; // Cached
 		const endpoint = "/game-by-domain/" + this.#getHostnameWithoutWWW();
-		this.currentGame = await this.request(endpoint);
-		return this.currentGame ? { ...this.currentGame } : undefined;
+		this.currentGame = await this.request(endpoint, { deduplicate: true });
+		return this.currentGame ? { ...this.currentGame } : null;
 	}
 
 	// Track discovery overlay open

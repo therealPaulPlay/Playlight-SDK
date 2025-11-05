@@ -103,30 +103,6 @@ function restoreWindowDimensionPolyfill() {
 	}
 }
 
-// Monitor the sidebar document structure and remount when needed
-function watchSidebarStructure() {
-	sidebarStructureObserver = new MutationObserver(() => {
-		const htmlClassMissing = !document.documentElement.classList.contains("playlight-sdk-flex-html");
-		const bodyClassMissing = !document.body.classList.contains("playlight-sdk-outer-wrapper");
-		const wrapperMissing = innerWrapper && !document.body.contains(innerWrapper);
-		const sidebarMissing = sidebarContainer && !document.documentElement.contains(sidebarContainer);
-
-		if (htmlClassMissing || bodyClassMissing || wrapperMissing || sidebarMissing) {
-			clearTimeout(sidebarRemountTimeout);
-			sidebarRemountTimeout = setTimeout(() => {
-				console.warn("Re-mounting Playlight's sidebar container as it was removed!");
-				removeSidebarLayout();
-				setupSidebarLayout();
-			}, 0);
-		}
-	});
-	sidebarStructureObserver.observe(document.documentElement, {
-		attributes: true,
-		attributeFilter: ["class"],
-	});
-	sidebarStructureObserver.observe(document.body, { childList: true });
-}
-
 // Mount the main Playlight app
 export function mountPlaylight() {
 	try {
@@ -156,7 +132,11 @@ export function mountPlaylight() {
 	}
 }
 
-// Setup DOM layout and mount sidebar
+// Page content is normally wrapped in <body> ("inner wrapper") which is a child of <html> ("outer wrapper").
+// With the sidebar active, we use CSS to create a new GPU compositing layer on the body and wrap it's children in a new ("inner") wrapper
+// to emulate how <html> and <body> behave. This way, <html> can contain the sidebar & <body>.
+// Frameworks like React break when elements under their control are moved, which is why we use this strategy in favor of creating two wrappers.
+// For the inner wrapper we use the framework's root element (when available, e.g. React, Svelte, Vue).
 export function setupSidebarLayout() {
 	if (isSidebarLayoutSetup) return;
 	try {
@@ -199,8 +179,8 @@ export function setupSidebarLayout() {
 		if (!innerWrapper) innerWrapper = createWrapper();
 
 		// Apply structure classes
-		html.classList.add("playlight-sdk-flex-html");
-		body.classList.add("playlight-sdk-outer-wrapper");
+		html.classList.add("playlight-sdk-html");
+		body.classList.add("playlight-sdk-body");
 		innerWrapper.classList.add("playlight-sdk-inner-wrapper");
 
 		// Activate CSS overrides (must happen before transferring styles)
@@ -232,6 +212,30 @@ export function setupSidebarLayout() {
 	}
 }
 
+// Monitor the sidebar structure and remount when needed
+function watchSidebarStructure() {
+	sidebarStructureObserver = new MutationObserver(() => {
+		const htmlClassMissing = !document.documentElement.classList.contains("playlight-sdk-html");
+		const bodyClassMissing = !document.body.classList.contains("playlight-sdk-body");
+		const wrapperMissing = innerWrapper && !document.body.contains(innerWrapper);
+		const sidebarMissing = sidebarContainer && !document.documentElement.contains(sidebarContainer);
+
+		if (htmlClassMissing || bodyClassMissing || wrapperMissing || sidebarMissing) {
+			clearTimeout(sidebarRemountTimeout);
+			sidebarRemountTimeout = setTimeout(() => {
+				console.warn("Re-mounting Playlight's sidebar container as it was removed!");
+				removeSidebarLayout();
+				setupSidebarLayout();
+			}, 0);
+		}
+	});
+	sidebarStructureObserver.observe(document.documentElement, {
+		attributes: true,
+		attributeFilter: ["class"],
+	});
+	sidebarStructureObserver.observe(document.body, { childList: true });
+}
+
 // Remove sidebar layout and unmount sidebar
 export function removeSidebarLayout() {
 	if (!isSidebarLayoutSetup) return;
@@ -239,15 +243,15 @@ export function removeSidebarLayout() {
 		const body = document.body;
 		const html = document.documentElement;
 
-		// Disconnect observer and unmount sidebar
+		// Disconnect structure observer and unmount sidebar
 		sidebarStructureObserver?.disconnect();
 		clearTimeout(sidebarRemountTimeout);
 		if (sidebarComponent) unmount(sidebarComponent);
 		if (sidebarContainer?.parentNode) html.removeChild(sidebarContainer);
 
 		// Remove classes
-		html.classList.remove("playlight-sdk-flex-html");
-		body.classList.remove("playlight-sdk-outer-wrapper");
+		html.classList.remove("playlight-sdk-html");
+		body.classList.remove("playlight-sdk-body");
 
 		// Restore body classes
 		originalBodyClasses.forEach((cls) => {
@@ -255,7 +259,7 @@ export function removeSidebarLayout() {
 			innerWrapper.classList.remove(cls);
 		});
 
-		// Unwrap or remove inner wrapper
+		// Unwrap inner wrapper if created
 		if (createdInnerWrapper) {
 			if (innerWrapper.parentNode === body) {
 				Array.from(innerWrapper.children).forEach((child) => {
