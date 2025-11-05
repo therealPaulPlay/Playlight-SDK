@@ -26,83 +26,6 @@ let sidebarStructureObserver = null;
 let sidebarRemountTimeout = null;
 let appRemountTimeout = null;
 
-// Polyfill window.innerWidth and window.matchMedia to account for sidebar
-function setupWindowDimensionPolyfill() {
-	try {
-		// Polyfill window.innerWidth
-		originalInnerWidthDescriptor = Object.getOwnPropertyDescriptor(window, "innerWidth");
-		Object.defineProperty(window, "innerWidth", {
-			get: () => document.body.clientWidth,
-			configurable: true,
-		});
-
-		// Polyfill window.matchMedia
-		originalMatchMedia = window.matchMedia;
-		window.matchMedia = function (query) {
-			const getAdjustedMQL = () => {
-				const mqlFn = originalMatchMedia || window.matchMedia;
-				const adjustedWidth = document.body.clientWidth;
-				const sidebarWidth = document.documentElement.clientWidth - adjustedWidth;
-				const adjustedQuery = applyCSSOverrides(query, adjustedWidth, window.innerHeight, sidebarWidth);
-				return mqlFn.call(window, adjustedQuery);
-			};
-
-			const mql = getAdjustedMQL();
-
-			// Create entry for this query if not present
-			if (!mediaQueryListeners.has(query)) mediaQueryListeners.set(query, { listeners: new Set(), lastMatches: mql.matches });
-			const entry = mediaQueryListeners.get(query);
-
-			// Override event methods directly on the native object
-			const originalAdd = mql.addEventListener.bind(mql);
-			const originalRemove = mql.removeEventListener.bind(mql);
-
-			// Handle the "change" event with a custom listener system
-			mql.addEventListener = (type, listener, ...args) => {
-				if (type === "change") entry.listeners.add(listener);
-				else originalAdd(type, listener, ...args);
-			};
-			mql.removeEventListener = (type, listener, ...args) => {
-				if (type === "change") entry.listeners.delete(listener);
-				else originalRemove(type, listener, ...args);
-			};
-
-			return mql;
-		};
-
-		// Trigger on resize (we dispatch resize events for sidebar resize in a different file)
-		// Only maintain one listenter that persists when the sidebar gets unmounted to preserve functionality
-		if (!windowResizeListener) {
-			windowResizeListener = window.addEventListener("resize", () => {
-				for (const [query, { listeners, lastMatches }] of mediaQueryListeners.entries()) {
-					const newMQL = window.matchMedia(query); // Polyfill recomputes adjustedQuery internally
-
-					if (newMQL.matches !== lastMatches) {
-						mediaQueryListeners.get(query).lastMatches = newMQL.matches;
-						const event = new MediaQueryListEvent("change", { matches: newMQL.matches, media: newMQL.media });
-						listeners.forEach(listener => listener(event));
-					}
-				}
-			});
-		}
-	} catch (error) {
-		console.warn("Could not polyfill window dimensions:", error);
-	}
-}
-
-function restoreWindowDimensionPolyfill() {
-	try {
-		if (originalInnerWidthDescriptor && originalMatchMedia) {
-			Object.defineProperty(window, "innerWidth", originalInnerWidthDescriptor);
-			window.matchMedia = originalMatchMedia;
-			originalInnerWidthDescriptor = null;
-			originalMatchMedia = null;
-		}
-	} catch (error) {
-		console.warn("Could not restore window dimension polyfills:", error);
-	}
-}
-
 // Mount the main Playlight app
 export function mountPlaylight() {
 	try {
@@ -209,6 +132,83 @@ export function setupSidebarLayout() {
 		isSidebarLayoutSetup = true;
 	} catch (error) {
 		console.error("Error during sidebar setup:", error);
+	}
+}
+
+// Polyfill window.innerWidth and window.matchMedia to account for sidebar
+function setupWindowDimensionPolyfill() {
+	try {
+		// Polyfill window.innerWidth
+		originalInnerWidthDescriptor = Object.getOwnPropertyDescriptor(window, "innerWidth");
+		Object.defineProperty(window, "innerWidth", {
+			get: () => document.body.clientWidth,
+			configurable: true,
+		});
+
+		// Polyfill window.matchMedia
+		originalMatchMedia = window.matchMedia;
+		window.matchMedia = function (query) {
+			const getAdjustedMQL = () => {
+				const mqlFn = originalMatchMedia || window.matchMedia;
+				const adjustedWidth = document.body.clientWidth;
+				const sidebarWidth = document.documentElement.clientWidth - adjustedWidth;
+				const adjustedQuery = applyCSSOverrides(query, adjustedWidth, window.innerHeight, sidebarWidth);
+				return mqlFn.call(window, adjustedQuery);
+			};
+
+			const mql = getAdjustedMQL();
+
+			// Create entry for this query if not present
+			if (!mediaQueryListeners.has(query)) mediaQueryListeners.set(query, { listeners: new Set(), lastMatches: mql.matches });
+			const entry = mediaQueryListeners.get(query);
+
+			// Override event methods directly on the native object
+			const originalAdd = mql.addEventListener.bind(mql);
+			const originalRemove = mql.removeEventListener.bind(mql);
+
+			// Handle the "change" event with a custom listener system
+			mql.addEventListener = (type, listener, ...args) => {
+				if (type === "change") entry.listeners.add(listener);
+				else originalAdd(type, listener, ...args);
+			};
+			mql.removeEventListener = (type, listener, ...args) => {
+				if (type === "change") entry.listeners.delete(listener);
+				else originalRemove(type, listener, ...args);
+			};
+
+			return mql;
+		};
+
+		// Trigger on resize (we dispatch resize events for sidebar resize in a different file)
+		// Only maintain one listenter that persists when the sidebar gets unmounted to preserve functionality
+		if (!windowResizeListener) {
+			windowResizeListener = window.addEventListener("resize", () => {
+				for (const [query, { listeners, lastMatches }] of mediaQueryListeners.entries()) {
+					const newMQL = window.matchMedia(query); // Polyfill recomputes adjustedQuery internally
+
+					if (newMQL.matches !== lastMatches) {
+						mediaQueryListeners.get(query).lastMatches = newMQL.matches;
+						const event = new MediaQueryListEvent("change", { matches: newMQL.matches, media: newMQL.media });
+						listeners.forEach(listener => listener(event));
+					}
+				}
+			});
+		}
+	} catch (error) {
+		console.warn("Could not polyfill window dimensions:", error);
+	}
+}
+
+function restoreWindowDimensionPolyfill() {
+	try {
+		if (originalInnerWidthDescriptor && originalMatchMedia) {
+			Object.defineProperty(window, "innerWidth", originalInnerWidthDescriptor);
+			window.matchMedia = originalMatchMedia;
+			originalInnerWidthDescriptor = null;
+			originalMatchMedia = null;
+		}
+	} catch (error) {
+		console.warn("Could not restore window dimension polyfills:", error);
 	}
 }
 
