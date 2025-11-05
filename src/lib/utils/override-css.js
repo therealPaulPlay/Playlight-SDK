@@ -140,9 +140,12 @@ export function applyCSSOverrides(css, adjustedWidth, windowHeight, sidebarWidth
 	});
 
 	// Handle double-sided range: (value < width < value)
-	css = css.replace(/\(([\d.]+[a-z]+)\s*([<>=]+)\s*width\s*([<>=]+)\s*([\d.]+[a-z]+)\)/gi, (_, val1, op1, op2, val2) => {
-		return `(calc(${val1} + ${sidebarWidth}px) ${op1} width ${op2} calc(${val2} + ${sidebarWidth}px))`;
-	});
+	css = css.replace(
+		/\(([\d.]+[a-z]+)\s*([<>=]+)\s*width\s*([<>=]+)\s*([\d.]+[a-z]+)\)/gi,
+		(_, val1, op1, op2, val2) => {
+			return `(calc(${val1} + ${sidebarWidth}px) ${op1} width ${op2} calc(${val2} + ${sidebarWidth}px))`;
+		},
+	);
 
 	// Handle single-sided range: (width < value) or (value < width)
 	css = css.replace(/\(width\s*([<>=]+)\s*([\d.]+[a-z]+)\)/gi, (_, operator, value) => {

@@ -7,7 +7,7 @@ export async function fetchQuickRecommendations(refetchThreshold = 10) {
 
 	// First try with category
 	const result = await api.getSuggestions(selectedCategory, 1);
-	if (result?.pageSize < refetchThreshold) console.error("Threshold must not be greater than the page size, as that would always trigger a re-fetch!")
+	if (result?.pageSize < refetchThreshold) console.error("Threshold must be < than page size to avoid always triggering a re-fetch!");
 	let fetchedGames = result?.games || [];
 
 	// If not enough games, try without category
