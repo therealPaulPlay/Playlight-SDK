@@ -6,6 +6,8 @@
 	padding: 0;
 	border-radius: 0;
 	border: none;
+	overflow: visible;
+	transform: none;
 	border-color: hsl(var(--playlight-border)) !important;
 	scrollbar-width: none;
 	touch-action: manipulation;
@@ -153,14 +155,14 @@
 }
 
 /* HTML becomes flex container */
-.playlight-sdk-flex-html {
+.playlight-sdk-html {
 	display: flex !important;
 	flex-direction: row !important;
 	gap: 0 !important;
 }
 
 /* Outer wrapper (body element) */
-.playlight-sdk-outer-wrapper {
+.playlight-sdk-body {
 	flex: 1 !important;
 	/* Create new stacking context for position fixed, absolute etc. and prevent anything from rendering outside of it */
 	contain: paint !important;
@@ -175,7 +177,7 @@
 
 /* Inner wrapper (framework root element or custom div) */
 .playlight-sdk-inner-wrapper {
-	/* Like the body, don't grow past viewport height */
+	/* Needed to emulate <body>'s scroll ability */
 	height: 100dvh !important;
 	width: 100% !important;
 	/* On scroll, move elements relative to this element */

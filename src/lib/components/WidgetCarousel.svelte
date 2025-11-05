@@ -3,10 +3,9 @@
 	import { discoveryOpen } from "../store.js";
 	import { ChevronLeft, ChevronRight, LoaderCircle } from "lucide-svelte";
 	import GameCard from "./GameCard.svelte";
-	import api from "../api.js";
 	import { blur } from "svelte/transition";
 	import Button from "./ui/Button.svelte";
-	import { fetchRecommendedGames } from "../utils/fetch-recommended-games.js";
+	import { fetchQuickRecommendations } from "../utils/quick-recommendations.js";
 
 	// State
 	let isLoading = $state(true);
@@ -21,10 +20,7 @@
 
 	onMount(async () => {
 		isLoading = true;
-		const categories = await api.getCategories();
-		const currentGame = await api.getCurrentGameInfo();
-		const selectedCategory = currentGame?.category || categories?.[categories?.length - 1];
-		games = await fetchRecommendedGames(selectedCategory);
+		games = await fetchQuickRecommendations();
 		isLoading = false;
 
 		// Wait for games to be rendered, then adjust mask image

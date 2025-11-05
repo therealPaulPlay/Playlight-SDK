@@ -11,13 +11,9 @@ const defaultConfig = {
 	},
 };
 
-// Store the active configuration
-let activeConfig = { ...defaultConfig };
-
-// Initialize configuration by merging defaults with user config
-export function initializeConfig(userConfig = {}) {
-	activeConfig = deepMerge(defaultConfig, userConfig); // Deep merge config objects
-	return activeConfig;
+// Create configuration by merging defaults with user config
+export function createConfig(userConfig = {}) {
+	return deepMerge(defaultConfig, userConfig);
 }
 
 // Helper for deep merging objects

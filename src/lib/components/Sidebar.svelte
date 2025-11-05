@@ -2,9 +2,9 @@
 	import { onMount } from "svelte";
 	import { on } from "svelte/events";
 	import { discoveryOpen, projectUrl, sidebarCollapsed } from "../store";
-	import { fetchRecommendedGames } from "../utils/fetch-recommended-games";
+	import { fetchQuickRecommendations } from "../utils/quick-recommendations";
 	import api from "../api.js";
-	import { LoaderCircle, Gamepad2, Dices, ChevronsRight, GripVertical, X } from "lucide-svelte";
+	import { LoaderCircle, Gamepad2, Dices, ChevronsRight, GripVertical } from "lucide-svelte";
 	import GameCard from "./GameCard.svelte";
 	import CurrentGameDisplay from "./CurrentGameDisplay.svelte";
 	import Button from "./ui/Button.svelte";
@@ -31,10 +31,8 @@
 
 	onMount(async () => {
 		isLoading = true;
-		const categories = await api.getCategories();
+		games = await fetchQuickRecommendations();
 		currentGame = await api.getCurrentGameInfo();
-		const selectedCategory = currentGame?.category || categories?.[categories?.length - 1];
-		games = await fetchRecommendedGames(selectedCategory);
 		isLoading = false;
 	});
 

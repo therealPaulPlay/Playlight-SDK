@@ -60,6 +60,7 @@ export function activateCSSViewportOverride(outerWrapper) {
 
 export function deactivateCSSViewportOverride() {
 	resizeObserver?.disconnect();
+	window.dispatchEvent(new Event("resize")); // Dispatch one last time since sidebar got removed
 	mutationObserver?.disconnect();
 	clearTimeout(resizeTimeout);
 	resizeObserver = mutationObserver = resizeTimeout = lastSidebarWidth = null;
@@ -91,21 +92,21 @@ function replaceStylesheet(sheet, adjustedWidth, windowHeight, sidebarWidth) {
 				styleElement.setAttribute("data-playlight-original-href", ownerNode.href);
 				originalSheets.set(styleElement, { originalCSS, originalElement: ownerNode });
 				ownerNode.replaceWith(styleElement);
-				transformSheet(styleElement, originalCSS, adjustedWidth, windowHeight, sidebarWidth);
+				transformStylesheet(styleElement, originalCSS, adjustedWidth, windowHeight, sidebarWidth);
 			} else {
 				originalSheets.set(ownerNode, { originalCSS, originalElement: null });
-				transformSheet(ownerNode, originalCSS, adjustedWidth, windowHeight, sidebarWidth);
+				transformStylesheet(ownerNode, originalCSS, adjustedWidth, windowHeight, sidebarWidth);
 			}
 		} else {
 			// Re-transform from original
-			transformSheet(ownerNode, originalSheets.get(ownerNode).originalCSS, adjustedWidth, windowHeight, sidebarWidth);
+			transformStylesheet(ownerNode, originalSheets.get(ownerNode).originalCSS, adjustedWidth, windowHeight, sidebarWidth);
 		}
 	} catch (error) {
 		console.warn(`Playlight cannot process stylesheet ${sheet.href || "inline"} due to CORS restrictions.`);
 	}
 }
 
-function transformSheet(styleElement, originalCSS, adjustedWidth, windowHeight, sidebarWidth) {
+function transformStylesheet(styleElement, originalCSS, adjustedWidth, windowHeight, sidebarWidth) {
 	// Get base URL for resolving relative paths (for converted <link> elements)
 	const baseHref = styleElement.getAttribute("data-playlight-original-href");
 	let css = baseHref ? makeURLsAbsolute(originalCSS, baseHref) : originalCSS;
@@ -139,9 +140,12 @@ export function applyCSSOverrides(css, adjustedWidth, windowHeight, sidebarWidth
 	});
 
 	// Handle double-sided range: (value < width < value)
-	css = css.replace(/\(([\d.]+[a-z]+)\s*([<>=]+)\s*width\s*([<>=]+)\s*([\d.]+[a-z]+)\)/gi, (_, val1, op1, op2, val2) => {
-		return `(calc(${val1} + ${sidebarWidth}px) ${op1} width ${op2} calc(${val2} + ${sidebarWidth}px))`;
-	});
+	css = css.replace(
+		/\(([\d.]+[a-z]+)\s*([<>=]+)\s*width\s*([<>=]+)\s*([\d.]+[a-z]+)\)/gi,
+		(_, val1, op1, op2, val2) => {
+			return `(calc(${val1} + ${sidebarWidth}px) ${op1} width ${op2} calc(${val2} + ${sidebarWidth}px))`;
+		},
+	);
 
 	// Handle single-sided range: (width < value) or (value < width)
 	css = css.replace(/\(width\s*([<>=]+)\s*([\d.]+[a-z]+)\)/gi, (_, operator, value) => {

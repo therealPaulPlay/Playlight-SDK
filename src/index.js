@@ -1,4 +1,4 @@
-import { initializeConfig } from "./lib/config.js";
+import { createConfig } from "./lib/config.js";
 import { config, discoveryOpen, userIsFromPlaylight } from "./lib/store.js";
 import { eventCallbacks } from "./lib/utils/trigger-event.js";
 import api from "./lib/api.js";
@@ -13,7 +13,7 @@ class PlaylightSDK {
 	 * Initialize Playlight
 	 * @param {object} [userConfig] - The playlight configuration object
 	 */
-	async init(userConfig = {}) {
+	init(userConfig = {}) {
 		if (typeof window === "undefined") return console.error("Playlight cannot run on the server.");
 		if (window.playlightInitialized) return console.warn("Playlight SDK is already initialized!");
 
@@ -33,9 +33,6 @@ class PlaylightSDK {
 
 		// Set initialized
 		window.playlightInitialized = true;
-
-		// Fetch current game info to cache it
-		await api.getCurrentGameInfo();
 	}
 
 	/**
@@ -63,7 +60,7 @@ class PlaylightSDK {
 	 * @param {object} [configParam] - Playlight configuration object
 	 */
 	setConfig(configParam = {}) {
-		config.set(initializeConfig(configParam));
+		config.set(createConfig(configParam));
 	}
 }
 

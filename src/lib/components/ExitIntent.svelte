@@ -5,12 +5,16 @@
 	import { backOut } from "svelte/easing";
 	import { triggerEvent } from "../utils/trigger-event.js";
 	import { sidebarVisible } from "../store.js";
+	import { fetchQuickRecommendations } from "../utils/quick-recommendations.js";
 
 	let { enabled = true, onIntent, immediate = false } = $props();
 
 	// Elements
 	let detectorElement = $state();
 	let barElement = $state();
+
+	// Games
+	let previewGames = $state([]);
 
 	// Interactions
 	let lastMouseInteraction;
@@ -26,14 +30,14 @@
 	}
 
 	function handleBarTrigger() {
-		setTimeout(() => {
+		setTimeout(async () => {
 			if (lastMouseInteraction < Date.now() - 50) {
 				clearTimeout(hideIntentBarTimeout);
 				hideIntentBarTimeout = null;
 				if (!immediate) {
-					loadInitialSuggestions();
 					triggerEvent("exitIntent");
 					showIntentBar = true;
+					if (!previewGames?.length) previewGames = await fetchQuickRecommendations(3);
 				} else {
 					triggerEvent("exitIntent");
 					onIntent?.();
@@ -51,19 +55,6 @@
 		"A new adventure awaits.",
 		"There’s always time for one more.",
 	];
-
-	// Load suggestion preview (3 small icons) ---------------------------------------------------------------------
-	let selectedCategory = $state();
-	let previewGames = $state([]);
-
-	async function loadInitialSuggestions() {
-		const categories = await api.getCategories();
-		const currentGame = await api.getCurrentGameInfo();
-		if (!selectedCategory) selectedCategory = currentGame?.category || categories?.[categories?.length - 1];
-		let result = await api.getSuggestions(selectedCategory, 1);
-		let fetchedGames = result?.games || [];
-		previewGames = fetchedGames.slice(0, 3);
-	}
 </script>
 
 <svelte:window onmousemove={trackMouse} />
