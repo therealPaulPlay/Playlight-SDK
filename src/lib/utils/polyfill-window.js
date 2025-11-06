@@ -83,21 +83,39 @@ export function setupWindowPolyfills(outerWrapper, innerWrapper) {
 			if (!mediaQueryListeners.has(query)) mediaQueryListeners.set(query, { listeners: new Set(), lastMatches: mql.matches });
 			const entry = mediaQueryListeners.get(query);
 
-			// Override event methods directly on the native object
-			const originalAdd = mql.addEventListener.bind(mql);
-			const originalRemove = mql.removeEventListener.bind(mql);
+			// Return a Proxy that intercepts property access to keep matches up-to-date
+			return new Proxy(mql, {
+				get(target, prop) {
+					// Intercept media to return the original query string
+					if (prop === "media") return query;
 
-			// Handle the "change" event with a custom listener system
-			mql.addEventListener = (type, listener, ...args) => {
-				if (type === "change") entry.listeners.add(listener);
-				else originalAdd(type, listener, ...args);
-			};
-			mql.removeEventListener = (type, listener, ...args) => {
-				if (type === "change") entry.listeners.delete(listener);
-				else originalRemove(type, listener, ...args);
-			};
+					// Intercept matches to return current value
+					if (prop === "matches") {
+						const currentMQL = getAdjustedMQL();
+						return currentMQL.matches;
+					}
 
-			return mql;
+					// Intercept addEventListener to use custom listener system for "change" event
+					if (prop === "addEventListener") {
+						return (type, listener, ...args) => {
+							if (type === "change") entry.listeners.add(listener);
+							else target.addEventListener(type, listener, ...args);
+						};
+					}
+
+					// Intercept removeEventListener to use custom listener system for "change" event
+					if (prop === "removeEventListener") {
+						return (type, listener, ...args) => {
+							if (type === "change") entry.listeners.delete(listener);
+							else target.removeEventListener(type, listener, ...args);
+						};
+					}
+
+					// For all other properties, return the target's value
+					const value = target[prop];
+					return typeof value === "function" ? value.bind(target) : value;
+				}
+			});
 		};
 
 		// Trigger on resize (we dispatch resize events for sidebar resize in a different file)
