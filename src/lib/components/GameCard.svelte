@@ -151,7 +151,7 @@
 		<img
 			src={game.logo_url}
 			alt="game logo"
-			class="prevent-image-select absolute right-0 -bottom-[18%] left-0 z-10 mx-auto aspect-square w-1/5 rounded-full object-center opacity-0 transition group-hover:outline-2"
+			class="prevent-image-select absolute right-0 -bottom-[18%] left-0 z-10 mx-auto aspect-square w-1/5 overflow-hidden rounded-full object-center opacity-0 transition group-hover:outline-2"
 			class:opacity-100={logoImageLoaded}
 			fetchpriority="high"
 			onload={() => {
