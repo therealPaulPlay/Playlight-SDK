@@ -96,13 +96,13 @@
 <div
 	class="fixed relative z-1 ml-auto flex h-dvh overflow-y-auto {$sidebarCollapsed
 		? 'w-0'
-		: 'w-75 border-l'} bg-background flex-col items-center gap-12 text-white transition-[width] duration-150 ease-out"
+		: 'w-75 border-l'} bg-background flex-col items-center gap-8 text-white transition-[width] duration-150 ease-out"
 >
 	<!-- Logo -->
 	<img
 		alt="logo"
 		src={$projectUrl + "/static/images/logo-white-small.png"}
-		class="pointer-events-none mx-auto mt-5 w-50 select-none"
+		class="pointer-events-none mx-auto mt-4 -mb-1 w-50 select-none"
 	/>
 
 	<!-- Recommended games -->
@@ -143,15 +143,10 @@
 	</div>
 
 	<!-- CTA buttons -->
-	<div class="flex w-full flex-col items-center gap-3 px-4">
+	<div class="flex w-full flex-col items-center gap-4 px-4">
 		<Button class="w-full" onclick={() => ($discoveryOpen = true)} disabled={$discoveryOpen}>
 			View all games <Gamepad2 style="margin-top: -1px;" />
 		</Button>
-		<div class="flex w-full items-center gap-4">
-			<div class="bg-border h-px grow-1"></div>
-			<p class="text-muted-foreground text-sm">Or</p>
-			<div class="bg-border h-px grow-1"></div>
-		</div>
 		<Button
 			class="w-full"
 			variant="secondary"
@@ -167,7 +162,7 @@
 
 	<!-- Currently playing -->
 	<div class="w-full">
-		<div class="mt-auto border-y p-6">
+		<div class="mt-auto border-y p-6 py-4">
 			<CurrentGameDisplay {currentGame} />
 		</div>
 
