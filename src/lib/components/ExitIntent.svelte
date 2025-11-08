@@ -5,7 +5,7 @@
 	import { backOut } from "svelte/easing";
 	import { triggerEvent } from "../utils/trigger-event.js";
 	import { sidebarVisible } from "../store.js";
-	import { fetchQuickRecommendations } from "../utils/quick-recommendations.js";
+	import { fetchQuickSuggestions } from "../utils/quick-suggestions.js";
 
 	let { enabled = true, onIntent, immediate = false } = $props();
 
@@ -37,7 +37,7 @@
 				if (!immediate) {
 					triggerEvent("exitIntent");
 					showIntentBar = true;
-					if (!previewGames?.length) previewGames = await fetchQuickRecommendations(3);
+					if (!previewGames?.length) previewGames = await fetchQuickSuggestions(3);
 				} else {
 					triggerEvent("exitIntent");
 					onIntent?.();

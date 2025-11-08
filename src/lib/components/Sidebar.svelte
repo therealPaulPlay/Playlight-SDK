@@ -2,7 +2,7 @@
 	import { onMount } from "svelte";
 	import { on } from "svelte/events";
 	import { discoveryOpen, projectUrl, sidebarCollapsed } from "../store";
-	import { fetchQuickRecommendations } from "../utils/quick-recommendations";
+	import { fetchQuickSuggestions } from "../utils/quick-suggestions";
 	import api from "../api.js";
 	import { LoaderCircle, Gamepad2, Dices, ChevronsRight, GripVertical } from "lucide-svelte";
 	import GameCard from "./GameCard.svelte";
@@ -31,7 +31,7 @@
 
 	onMount(async () => {
 		isLoading = true;
-		games = await fetchQuickRecommendations();
+		games = await fetchQuickSuggestions(14, true);
 		currentGame = await api.getCurrentGameInfo();
 		isLoading = false;
 	});

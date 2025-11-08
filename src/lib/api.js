@@ -3,8 +3,7 @@ import { toast } from "svelte-sonner";
 class PlayLightAPI {
 	constructor() {
 		this.baseUrl = "https://api.playlight.dev/platform";
-		this.cachedCategories = null;
-		this.currentGame = null;
+		this.cachedRequests = new Map();
 		this.pendingCacheRequests = new Map();
 	}
 
@@ -29,14 +28,17 @@ class PlayLightAPI {
 					let data;
 					try {
 						data = await response.json();
-					} catch {
-						// Do nothing...
-					} finally {
-						if (response.status !== 429 && response.status !== 404) throw new Error(data?.error || data?.message || response.status);
-						else if (response.status === 429) return console.warn("Playlight request failed due to rate limiting.");
-						else if (response.status === 404) return console.warn(
-							"Playlight game not found. This is normal in a test / local environment, but should not appear in production.",
-						);
+					} catch { /* Do nothing... */ }
+
+					switch (response.status) {
+						case 429:
+							console.warn("Playlight request failed due to rate limiting.");
+							return null;
+						case 404:
+							console.warn("Playlight game not found. This is normal in a test / local environment, but should not appear in production.");
+							return null;
+						default:
+							throw new Error(data?.error || data?.message || response.status);
 					}
 				}
 
@@ -66,27 +68,32 @@ class PlayLightAPI {
 
 	// Get all categories
 	async getCategories() {
-		if (this.cachedCategories) return this.cachedCategories; // Cached
-		const data = await this.request("/categories", { deduplicate: true });
-		this.cachedCategories = data;
-		return data;
+		const endpoint = "/categories";
+		if (this.cachedRequests.has(endpoint)) return structuredClone(this.cachedRequests.get(endpoint)); // Cache
+		const data = await this.request(endpoint, { deduplicate: true });
+		if (data) this.cachedRequests.set(endpoint, data);
+		return structuredClone(data);
 	}
 
 	// Get game suggestions, optionally filtered by category
-	async getSuggestions(category = null, page = 1) {
+	async getSuggestions(category, page = 1) {
 		let endpoint = "/suggestions";
 		if (category) endpoint += "/" + category;
-		if (page) endpoint += "?page=" + page;
-		endpoint += "&without=" + this.#getHostnameWithoutWWW();
-		return await this.request(endpoint);
+		endpoint += "?without=" + this.#getHostnameWithoutWWW();
+		if (page) endpoint += "&page=" + page;
+		if (this.cachedRequests.has(endpoint)) return structuredClone(this.cachedRequests.get(endpoint)); // Cache
+		const result = await this.request(endpoint, { deduplicate: true });
+		if (result) this.cachedRequests.set(endpoint, result);
+		return structuredClone(result);
 	}
 
 	// Get current game info
 	async getCurrentGameInfo() {
-		if (this.currentGame) return this.currentGame; // Cached
 		const endpoint = "/game-by-domain/" + this.#getHostnameWithoutWWW();
-		this.currentGame = await this.request(endpoint, { deduplicate: true });
-		return this.currentGame ? { ...this.currentGame } : null;
+		if (this.cachedRequests.has(endpoint)) return structuredClone(this.cachedRequests.get(endpoint)); // Cache
+		const data = await this.request(endpoint, { deduplicate: true });
+		if (data) this.cachedRequests.set(endpoint, data);
+		return data ? structuredClone(data) : {};
 	}
 
 	// Track discovery overlay open
