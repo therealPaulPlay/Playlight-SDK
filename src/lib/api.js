@@ -93,7 +93,7 @@ class PlayLightAPI {
 		if (this.cachedRequests.has(endpoint)) return structuredClone(this.cachedRequests.get(endpoint)); // Cache
 		const data = await this.request(endpoint, { deduplicate: true });
 		if (data) this.cachedRequests.set(endpoint, data);
-		return data ? structuredClone(data) : {};
+		return structuredClone(data);
 	}
 
 	// Track discovery overlay open
