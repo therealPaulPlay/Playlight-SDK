@@ -5,7 +5,7 @@
 	import GameCard from "./GameCard.svelte";
 	import { blur } from "svelte/transition";
 	import Button from "./ui/Button.svelte";
-	import { fetchQuickRecommendations } from "../utils/quick-recommendations.js";
+	import { fetchQuickSuggestions } from "../utils/quick-suggestions.js";
 
 	// State
 	let isLoading = $state(true);
@@ -20,7 +20,7 @@
 
 	onMount(async () => {
 		isLoading = true;
-		games = await fetchQuickRecommendations();
+		games = await fetchQuickSuggestions(10, true);
 		isLoading = false;
 
 		// Wait for games to be rendered, then adjust mask image
