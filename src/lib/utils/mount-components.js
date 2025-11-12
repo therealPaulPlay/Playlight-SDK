@@ -79,19 +79,18 @@ export function setupSidebarLayout() {
 			return wrapper;
 		};
 
-		// Detect framework root using depth heuristic
+		// Detect framework root
 		if (get(config)?.sidebar?.hasFrameworkRoot !== false && bodyDivs.length > 0) {
 			if (bodyDivs.length === 1) {
+				// Single body div - use it as framework root
 				innerWrapper = bodyDivs[0];
 				createdInnerWrapper = false;
-			} else {
+			} else if (get(config)?.sidebar?.hasFrameworkRoot === true) {
+				// Multiple body divs but explicitly set to hasFrameworkRoot - pick the deepest one
 				const depths = bodyDivs.map((div) => div.querySelectorAll("*").length);
 				const maxDepth = Math.max(...depths);
-				const avgDepth = depths.reduce((a, b) => a + b) / depths.length;
-				if (get(config)?.sidebar?.hasFrameworkRoot === true || maxDepth > avgDepth * 3) {
-					innerWrapper = bodyDivs[depths.indexOf(maxDepth)];
-					createdInnerWrapper = false;
-				}
+				innerWrapper = bodyDivs[depths.indexOf(maxDepth)];
+				createdInnerWrapper = false;
 			}
 		}
 
