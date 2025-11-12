@@ -191,7 +191,7 @@
 	height: 100%;
 }
 
-/* Sidebar styles */
+/* Sidebar styles (also inherits from .playlight-sdk!) */
 .playlight-sdk-container-sidebar {
 	box-shadow: 0 0 25px #00000059 !important;
 	/* 1 less z-index compared to regular Playlight components */
