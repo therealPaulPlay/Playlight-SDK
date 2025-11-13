@@ -41,7 +41,7 @@
 	});
 
 	// Draggable button ---------------------------------------------------
-	let buttonY = $state(80); // Start slightly below top
+	let buttonY = $state(100); // Start slightly below top
 	let isDragging = $state(false);
 	let dragStartY = $state(0);
 	let buttonStartY = $state(0);
@@ -93,8 +93,9 @@
 	}}
 />
 
+<!-- Sidebar (pos. relative to support z-index) -->
 <div
-	class="z-1 ml-auto flex h-dvh overflow-y-auto {$sidebarCollapsed
+	class="z-1 relative ml-auto flex h-dvh overflow-y-auto {$sidebarCollapsed
 		? 'w-0'
 		: 'w-75 border-l'} bg-background flex-col items-center gap-8 text-white transition-[width] duration-150 ease-out"
 >
@@ -179,13 +180,14 @@
 	</div>
 </div>
 
+<!-- Draggable expand button -->
 {#if $sidebarCollapsed && !$discoveryOpen}
 	<div
 		transition:blur
 		bind:this={buttonElement}
 		role="button"
 		tabindex="0"
-		class="bg-background fixed right-0 flex items-center gap-2 border p-2 shadow-xl {isDragging
+		class="bg-background/85 backdrop-blur-xl fixed right-0 flex items-center gap-2 border p-2 shadow-xl {isDragging
 			? 'cursor-grabbing'
 			: 'cursor-grab'}"
 		style:top={buttonY + "px"}
