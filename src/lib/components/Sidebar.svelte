@@ -24,20 +24,33 @@
 	let leftGames = $derived(games?.filter((_, i) => i % 2 === 0) || []);
 	let rightGames = $derived(games?.filter((_, i) => i % 2 === 1) || []);
 
+	// Persist sidebar state across page navigations on MPAs
+	function saveSidebarState() {
+		sessionStorage.setItem("playlightSidebarState", JSON.stringify({ collapsed: $sidebarCollapsed, buttonY }));
+	}
+
+	function getSidebarState() {
+		try {
+			return JSON.parse(sessionStorage.getItem("playlightSidebarState") || "{}");
+		} catch {}
+	}
+
 	$effect.pre(() => {
-		// Default to collapsed sidebar on mobile (before the component renders to avoid collapse animation)
-		if (document.documentElement.clientWidth <= 768) $sidebarCollapsed = true;
+		const isMobile = document.documentElement.clientWidth <= 768;
+		$sidebarCollapsed = isMobile || Boolean(getSidebarState()?.collapsed);
 	});
 
 	onMount(async () => {
+		buttonY = getSidebarState()?.buttonY ?? buttonY; // Restore button Y
+
+		// Fetch data
 		isLoading = true;
 		games = await fetchQuickSuggestions(14, true);
 		currentGame = await api.getCurrentGameInfo();
 		isLoading = false;
-	});
 
-	onMount(() => {
-		return on(window, "touchmove", handleTouchMove, { passive: false }); // Add non-passive touch listener to prevent scrolling during button drag
+		// Non-passive touch listener to prevent scrolling during button drag
+		return on(window, "touchmove", handleTouchMove, { passive: false });
 	});
 
 	// Draggable button ---------------------------------------------------
@@ -64,6 +77,8 @@
 		handleDragMove(e.touches[0].clientY);
 	}
 
+	let saveAfterDrag;
+
 	function handleDragMove(clientY) {
 		if (!isDragging) return;
 
@@ -71,6 +86,8 @@
 		const newY = buttonStartY + deltaY;
 		const buttonHeight = buttonElement?.offsetHeight; // Get actual button height
 		buttonY = Math.max(0, Math.min(window.innerHeight - buttonHeight, newY)); // Constrain to screen bounds (0 to window height minus button height)
+		cancelAnimationFrame(saveAfterDrag);
+		saveAfterDrag = requestAnimationFrame(saveSidebarState);
 	}
 
 	// Handle scroll on the games container ----------------------------------
@@ -95,7 +112,7 @@
 
 <!-- Sidebar (pos. relative to support z-index) -->
 <div
-	class="z-1 relative ml-auto flex h-dvh overflow-y-auto {$sidebarCollapsed
+	class="relative z-1 ml-auto flex h-dvh overflow-y-auto {$sidebarCollapsed
 		? 'w-0'
 		: 'w-75 border-l'} bg-background flex-col items-center gap-8 text-white transition-[width] duration-150 ease-out"
 >
@@ -172,7 +189,10 @@
 			<Button
 				variant="secondary"
 				class="text-muted-foreground border-l outline-none!"
-				onclick={() => ($sidebarCollapsed = true)}
+				onclick={() => {
+					$sidebarCollapsed = true;
+					saveSidebarState();
+				}}
 			>
 				<ChevronsRight />
 			</Button>
@@ -187,7 +207,7 @@
 		bind:this={buttonElement}
 		role="button"
 		tabindex="0"
-		class="bg-background/85 backdrop-blur-xl fixed right-0 flex items-center gap-2 border p-2 shadow-xl {isDragging
+		class="bg-background/85 fixed right-0 flex items-center gap-2 border p-2 shadow-xl backdrop-blur-xl {isDragging
 			? 'cursor-grabbing'
 			: 'cursor-grab'}"
 		style:top={buttonY + "px"}
@@ -198,8 +218,10 @@
 		<Button
 			variant="ghost"
 			onclick={() => {
-				if (document.documentElement.clientWidth > 768) $sidebarCollapsed = false;
-				else $discoveryOpen = true;
+				if (document.documentElement.clientWidth > 768) {
+					$sidebarCollapsed = false;
+					saveSidebarState();
+				} else $discoveryOpen = true;
 			}}
 		>
 			<img
