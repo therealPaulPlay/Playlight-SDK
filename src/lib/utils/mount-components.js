@@ -63,9 +63,10 @@ export function setupSidebarLayout() {
 		const body = document.body;
 		const html = document.documentElement;
 
-		// Find potential framework root divs
-		const bodyDivs = Array.from(body.children).filter(
-			(child) => child.tagName === "DIV" && !child.id?.includes("playlight") && child.children.length > 0,
+		// Find all containing elements inside of body (direct children)
+		const containerTags = ["DIV", "MAIN", "ARTICLE", "SECTION", "HEADER", "FOOTER", "NAV", "ASIDE", "FORM"];
+		const containers = Array.from(body.children).filter(
+			(child) => containerTags.includes(child.tagName) && !child.id?.includes("playlight") && child.children.length > 0,
 		);
 
 		const createWrapper = () => {
@@ -80,16 +81,16 @@ export function setupSidebarLayout() {
 		};
 
 		// Detect framework root
-		if (get(config)?.sidebar?.hasFrameworkRoot !== false && bodyDivs.length > 0) {
-			if (bodyDivs.length === 1) {
-				// Single body div - use it as framework root
-				innerWrapper = bodyDivs[0];
+		if (get(config)?.sidebar?.hasFrameworkRoot !== false && containers.length > 0) {
+			if (containers.length === 1) {
+				// Single container - use it as framework root
+				innerWrapper = containers[0];
 				createdInnerWrapper = false;
 			} else if (get(config)?.sidebar?.hasFrameworkRoot === true) {
-				// Multiple body divs but explicitly set to hasFrameworkRoot - pick the deepest one
-				const depths = bodyDivs.map((div) => div.querySelectorAll("*").length);
+				// Multiple containers but explicitly set to hasFrameworkRoot - pick the deepest one
+				const depths = containers.map((container) => container.querySelectorAll("*").length);
 				const maxDepth = Math.max(...depths);
-				innerWrapper = bodyDivs[depths.indexOf(maxDepth)];
+				innerWrapper = containers[depths.indexOf(maxDepth)];
 				createdInnerWrapper = false;
 			}
 		}
@@ -163,21 +164,13 @@ export function removeSidebarLayout() {
 		const body = document.body;
 		const html = document.documentElement;
 
-		// Disconnect structure observer and unmount sidebar
+		// Disconnect structure observer
 		sidebarStructureObserver?.disconnect();
 		clearTimeout(sidebarRemountTimeout);
+
+		// Unmount sidebar
 		if (sidebarComponent) unmount(sidebarComponent);
 		if (sidebarContainer?.parentNode) html.removeChild(sidebarContainer);
-
-		// Remove classes
-		html.classList.remove("playlight-sdk-html");
-		body.classList.remove("playlight-sdk-body");
-
-		// Restore body classes
-		originalBodyClasses.forEach((cls) => {
-			body.classList.add(cls);
-			innerWrapper.classList.remove(cls);
-		});
 
 		// Unwrap inner wrapper if created
 		if (createdInnerWrapper) {
@@ -188,6 +181,16 @@ export function removeSidebarLayout() {
 			}
 			innerWrapper.remove();
 		} else innerWrapper.classList.remove("playlight-sdk-inner-wrapper");
+
+		// Remove classes
+		html.classList.remove("playlight-sdk-html");
+		body.classList.remove("playlight-sdk-body");
+
+		// Restore body classes
+		originalBodyClasses.forEach((cls) => {
+			body.classList.add(cls);
+			innerWrapper.classList.remove(cls);
+		});
 
 		// Restore polyfills and clean up (has to happen after the unmount)
 		restoreWindowPolyfills(innerWrapper);
