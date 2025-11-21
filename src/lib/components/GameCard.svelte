@@ -56,7 +56,7 @@
 <!-- Badge like NEW or FEATURED -->
 {#snippet gameBadge(isHovered, text)}
 	<div
-		class="bg-background absolute top-4 right-4 z-12 px-2 py-0.5 transition-opacity select-none"
+		class="bg-background absolute top-4 right-4 z-3 px-2 py-0.5 transition-opacity select-none"
 		class:opacity-0={isHovered}
 	>
 		<p class="font-bold text-white uppercase">{text}</p>
@@ -93,7 +93,7 @@
 		<video
 			bind:this={videoElement}
 			src={game.cover_video_url}
-			class="absolute top-0 left-0 z-5 aspect-[2/3] w-full object-cover opacity-0"
+			class="absolute top-0 left-0 aspect-[2/3] w-full object-cover opacity-0 z-1"
 			class:opacity-100={isHovered && videoLoaded && game.cover_video_url}
 			muted
 			playsinline
@@ -108,7 +108,7 @@
 	<img
 		src={game.cover_image_url}
 		alt="cover"
-		class="prevent-image-select absolute top-0 left-0 z-10 aspect-[2/3] w-full object-cover opacity-0 transition"
+		class="prevent-image-select absolute top-0 left-0 aspect-[2/3] w-full object-cover opacity-0 transition"
 		class:opacity-100={coverImageLoaded && (!isHovered || !videoLoaded || !game.cover_video_url)}
 		fetchpriority="high"
 		onload={() => {
@@ -119,7 +119,7 @@
 	{#if isHovered && !small}
 		<div
 			transition:slide
-			class="bg-background/75 absolute right-0 bottom-0 left-0 z-11 flex max-h-1/3 flex-col overflow-hidden text-white backdrop-blur-xl"
+			class="bg-background/75 absolute right-0 bottom-0 left-0 flex max-h-1/3 z-2 flex-col overflow-hidden text-white backdrop-blur-xl"
 		>
 			<div class="h-full w-full overflow-y-auto p-3">
 				<h3 class="mb-2 truncate text-center text-lg font-bold">{game.name}</h3>
@@ -129,7 +129,7 @@
 			</div>
 			{#if isTouchDevice}
 				<div
-					class="bg-background/25 text-muted-foreground z-12 flex items-center justify-center gap-1 border-t p-1 px-2 text-sm"
+					class="bg-background/25 text-muted-foreground flex items-center justify-center gap-1 border-t p-1 px-2 text-sm"
 				>
 					<Info size={15} />
 					<p class="text-muted-foreground text-sm">Tap again to open</p>
@@ -146,12 +146,12 @@
 	{#if !small}
 		<!-- Skeleton for circular image -->
 		<div
-			class="prevent-image-select bg-background absolute right-0 -bottom-[18%] left-0 z-9 mx-auto aspect-square w-1/5 animate-pulse rounded-full shadow-xl"
+			class="prevent-image-select bg-background absolute right-0 -bottom-[18%] left-0 mx-auto aspect-square w-1/5 animate-pulse rounded-full shadow-xl"
 		></div>
 		<img
 			src={game.logo_url}
 			alt="game logo"
-			class="prevent-image-select absolute right-0 -bottom-[18%] left-0 z-10 mx-auto aspect-square w-1/5 overflow-hidden rounded-full object-center opacity-0 transition group-hover:outline-2"
+			class="prevent-image-select absolute right-0 -bottom-[18%] left-0 mx-auto aspect-square w-1/5 overflow-hidden rounded-full object-center opacity-0 transition group-hover:outline-2"
 			class:opacity-100={logoImageLoaded}
 			fetchpriority="high"
 			onload={() => {

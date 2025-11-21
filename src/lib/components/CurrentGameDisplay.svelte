@@ -42,7 +42,7 @@
 			<img
 				src={currentGame?.logo_url}
 				alt="logo"
-				class="bg-muted-foreground size-5 text-[0px]! select-none"
+				class="bg-muted-foreground/50 size-5 text-[0px]! select-none"
 				class:animate-pulse={!logoImageLoaded}
 				onload={() => {
 					logoImageLoaded = true;
