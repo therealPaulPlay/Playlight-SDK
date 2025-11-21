@@ -22,8 +22,8 @@
 		.main-element {
 			display: flex;
 			flex-direction: column;
-			align-items: center;
-			justify-content: center;
+			align-items: safe center;
+			justify-content: safe center;
 			min-height: 100vh;
 			text-align: center;
 		}
@@ -273,7 +273,6 @@
 						enabled: discoveryToggled,
 					},
 					sidebar: {
-						enableBeta: true /* TODO remove once stable */,
 						forceVisible: sidebarToggled,
 					},
 				});
