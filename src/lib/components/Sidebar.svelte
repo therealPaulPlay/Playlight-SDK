@@ -4,7 +4,7 @@
 	import { discoveryOpen, projectUrl, sidebarCollapsed } from "../store";
 	import { fetchQuickSuggestions } from "../utils/quick-suggestions";
 	import api from "../api.js";
-	import { LoaderCircle, Gamepad2, Dices, ChevronsRight, GripVertical } from "lucide-svelte";
+	import { LoaderCircle, Gamepad2, Dices, ChevronsRight, GripVertical } from "@lucide/svelte";
 	import GameCard from "./GameCard.svelte";
 	import CurrentGameDisplay from "./CurrentGameDisplay.svelte";
 	import Button from "./ui/Button.svelte";

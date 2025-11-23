@@ -3,7 +3,7 @@
 	import { fade, scale } from "svelte/transition";
 	import { backInOut, sineOut } from "svelte/easing";
 	import { flip } from "svelte/animate";
-	import { Search, ChevronDown } from "lucide-svelte";
+	import { Search, ChevronDown } from "@lucide/svelte";
 
 	let { categories = [], selectedCategory = $bindable(), onCategoryChange } = $props();
 

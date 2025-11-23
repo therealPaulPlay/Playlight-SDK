@@ -2,7 +2,7 @@
 	import { slide } from "svelte/transition";
 	import { playSound } from "../utils/play-sound.js";
 	import { projectUrl } from "../store.js";
-	import { Info } from "lucide-svelte";
+	import { Info } from "@lucide/svelte";
 	import { openGame } from "../utils/open-game.js";
 
 	let { game, compact = false, small = false } = $props();
