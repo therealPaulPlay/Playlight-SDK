@@ -119,7 +119,7 @@
 	<!-- Logo -->
 	<img
 		alt="logo"
-		src={$projectUrl + "/static/images/logo-white-small.png"}
+		src={$projectUrl + "/assets/images/logo-white-small.png"}
 		class="pointer-events-none mx-auto mt-4 -mb-1 w-50 select-none"
 	/>
 
@@ -226,7 +226,7 @@
 		>
 			<img
 				alt="icon"
-				src={$projectUrl + "/static/images/icon-white-small.png"}
+				src={$projectUrl + "/assets/images/icon-white-small.png"}
 				class="pointer-events-none aspect-square w-8"
 			/>
 		</Button>
