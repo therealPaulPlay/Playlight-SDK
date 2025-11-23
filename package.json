@@ -1,6 +1,6 @@
 {
 	"name": "playlight-sdk",
-	"version": "0.3.2",
+	"version": "0.3.3",
 	"type": "module",
 	"description": "The SDK for Playlight - a discovery platform, built into your own game.",
 	"main": "dist/playlight-sdk.es.js",
@@ -29,7 +29,8 @@
 		"lucide-svelte": "^0.476.0"
 	},
 	"files": [
-		"dist"
+		"dist/*",
+		"!dist/assets"
 	],
 	"repository": {
 		"type": "git",
