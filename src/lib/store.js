@@ -2,6 +2,7 @@ import { get, writable } from "svelte/store";
 import api from "./api";
 import { triggerEvent } from "./utils/trigger-event";
 import { removeSidebarLayout, setupSidebarLayout } from "./utils/mount-components";
+import { getAssetBaseUrl } from "./utils/asset-url";
 
 // Config
 export const config = writable(null);
@@ -19,7 +20,7 @@ export const sidebarEnabled = writable(false);
 export const sidebarCollapsed = writable(false);
 
 // Project setup
-export const projectUrl = writable("https://sdk.playlight.dev");
+export const projectUrl = writable(getAssetBaseUrl());
 
 // Subscriptions --------------------------------------------------------------------------------------
 let originalOverflow;

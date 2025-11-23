@@ -130,7 +130,7 @@
 @font-face {
 	font-family: Geist;
 	/* This gets included in the CSS output as base64 */
-	src: url("/static/fonts/geist-variable-weight.woff2");
+	src: url("/assets/fonts/geist-variable-weight.woff2");
 }
 
 .playlight-sdk,

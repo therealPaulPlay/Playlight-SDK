@@ -23,7 +23,7 @@
 	let cardElement = $state();
 
 	function handleHover() {
-		if (!isHovered && !isTouchDevice) playSound($projectUrl + "/static/sounds/hover-selection.ogg", 0.25);
+		if (!isHovered && !isTouchDevice) playSound($projectUrl + "/assets/sounds/hover-selection.ogg", 0.25);
 		isHovered = true;
 		clearTimeout(hoverTimeout);
 		hoverTimeout = setTimeout(() => (isFullyHovered = true), 300);
