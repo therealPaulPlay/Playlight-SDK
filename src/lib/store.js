@@ -15,7 +15,7 @@ export const currentGameIsLiked = writable(false);
 export const currentGameLikeCount = writable(0);
 
 // Sidebar
-export const sidebarVisible = writable(false);
+export const sidebarEnabled = writable(false);
 export const sidebarCollapsed = writable(false);
 
 // Project setup
@@ -41,15 +41,20 @@ discoveryOpen.subscribe((value) => {
 });
 
 config.subscribe((value) => {
-	if (value?.sidebar?.forceVisible || get(userIsFromPlaylight)) sidebarVisible.set(true);
-	else sidebarVisible.set(false);
+	if (value?.sidebar?.forceVisible || get(userIsFromPlaylight)) sidebarEnabled.set(true);
+	else sidebarEnabled.set(false);
 });
 
 userIsFromPlaylight.subscribe((value) => {
-	if (value) sidebarVisible.set(true);
+	if (value) sidebarEnabled.set(true);
 });
 
-sidebarVisible.subscribe((visible) => {
-	if (visible) setupSidebarLayout();
-	else removeSidebarLayout();
+sidebarEnabled.subscribe((enabled) => {
+	if (enabled) {
+		setupSidebarLayout();
+		triggerEvent("sidebarEnable");
+	} else {
+		removeSidebarLayout();
+		triggerEvent("sidebarDisable");
+	}
 });

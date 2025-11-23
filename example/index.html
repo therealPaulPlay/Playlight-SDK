@@ -225,7 +225,6 @@
 		try {
 			const module = await import("../dist/playlight-sdk.es.js");
 			const playlightSDK = module.default;
-			playlightSDK.init();
 
 			playlightSDK.onEvent("discoveryOpen", () => {
 				console.log("Discovery open event!");
@@ -238,6 +237,16 @@
 			playlightSDK.onEvent("exitIntent", () => {
 				console.log("Exit intent triggered event!");
 			});
+
+			playlightSDK.onEvent("sidebarEnable", () => {
+				console.log("Sidebar enable event!");
+			});
+
+			playlightSDK.onEvent("sidebarDisable", () => {
+				console.log("Sidebar disable event!");
+			});
+
+			playlightSDK.init();
 
 			// Wait for the SDK to be fully loaded to add event listeners
 			document.getElementById("show-discovery").addEventListener("click", () => {
