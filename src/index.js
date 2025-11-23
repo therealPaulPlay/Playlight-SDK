@@ -1,7 +1,6 @@
 import { createConfig } from "./lib/config.js";
 import { config, discoveryOpen, userIsFromPlaylight } from "./lib/store.js";
 import { eventCallbacks } from "./lib/utils/trigger-event.js";
-import api from "./lib/api.js";
 import { initWidgets, setupWidgetObserver } from "./lib/utils/mount-widgets.js";
 import { mountPlaylight } from "./lib/utils/mount-components.js";
 
@@ -49,7 +48,7 @@ class PlaylightSDK {
 	 * @param {object} callback - Callback function
 	 */
 	onEvent(event, callback) {
-		const validEvents = ["discoveryOpen", "discoveryClose", "exitIntent"];
+		const validEvents = ["discoveryOpen", "discoveryClose", "exitIntent", "sidebarEnable", "sidebarDisable"];
 		if (!validEvents.includes(event)) return console.warn(`Invalid event type "${event}!"`);
 		if (!eventCallbacks.has(event)) eventCallbacks.set(event, []);
 		eventCallbacks.get(event).push(callback);
