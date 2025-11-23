@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from "svelte";
 	import { discoveryOpen } from "../store.js";
-	import { ChevronLeft, ChevronRight, LoaderCircle } from "lucide-svelte";
+	import { ChevronLeft, ChevronRight, LoaderCircle } from "@lucide/svelte";
 	import GameCard from "./GameCard.svelte";
 	import { blur } from "svelte/transition";
 	import Button from "./ui/Button.svelte";

@@ -1,6 +1,6 @@
 <script>
 	import { blur } from "svelte/transition";
-	import { X, ExternalLink, LoaderCircle } from "lucide-svelte";
+	import { X, ExternalLink, LoaderCircle } from "@lucide/svelte";
 	import GameCard from "./GameCard.svelte";
 	import api from "../api.js";
 	import Navigation from "./Navigation.svelte";

@@ -1,7 +1,7 @@
 <script>
 	import { currentGameIsLiked, currentGameLikeCount } from "../store";
 	import api from "../api";
-	import { ThumbsUp } from "lucide-svelte";
+	import { ThumbsUp } from "@lucide/svelte";
 
 	let { currentGame } = $props();
 
