@@ -207,7 +207,7 @@
 		bind:this={buttonElement}
 		role="button"
 		tabindex="0"
-		class="bg-background/85 fixed right-0 flex items-center gap-2 border p-2 shadow-xl backdrop-blur-xl {isDragging
+		class="bg-background/85 fixed right-0 flex items-center gap-2 border border-r-0 p-2 shadow-xl backdrop-blur-xl {isDragging
 			? 'cursor-grabbing'
 			: 'cursor-grab'}"
 		style:top={buttonY + "px"}

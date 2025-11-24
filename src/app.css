@@ -58,7 +58,7 @@
 	cursor: pointer;
 }
 
-/* Form element styles - these will affect ALL form elements at ANY depth */
+/* Form element styles - these will affect all form elements */
 .playlight-sdk input,
 .playlight-sdk input[type="text"],
 .playlight-sdk input[type="email"],
