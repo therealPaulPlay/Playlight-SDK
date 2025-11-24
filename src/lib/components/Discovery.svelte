@@ -172,7 +172,7 @@
 				<p class="text-white">No games found that match the filter.</p>
 			</div>
 		{:else}
-			<div class="pointer-events-none mx-auto flex h-fit flex-wrap content-start justify-center gap-10 lg:max-w-4/5">
+			<div class="pointer-events-none mx-auto flex h-fit flex-wrap content-start justify-center gap-10 md:max-w-4/5">
 				{#each games as game, i}
 					{@const firstGameFromDiffCategory = games.findIndex((e) => e.category !== selectedCategory && !e.featured)}
 					{#if i == firstGameFromDiffCategory}
@@ -197,7 +197,7 @@
 	<a
 		href="https://playlight.dev"
 		target="_blank"
-		class="text-muted-foreground fixed right-4 bottom-4 flex items-center gap-1 text-sm transition hover:text-white"
+		class="text-muted-foreground fixed right-4 bottom-4 flex items-center gap-1 text-sm transition hover:text-white max-lg:invisible"
 	>
 		Game dev? Join Playlight <ExternalLink size={14} />
 	</a>

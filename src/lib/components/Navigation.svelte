@@ -82,7 +82,7 @@
 					<input
 						type="text"
 						placeholder="Search categories..."
-						class="w-full border-0 p-1 pl-10 text-white focus:ring-0 focus:outline-none"
+						class="w-full border-0 p-1 pl-10 text-white focus:ring-0 focus:outline-none bg-transparent"
 						bind:value={searchTerm}
 					/>
 				</div>

@@ -70,7 +70,7 @@
 
 {#if currentGame && !minimized}
 	<div
-		class="bg-background/85 fixed bottom-4 left-4 z-2 touch-none border-1 p-4 shadow-lg backdrop-blur-xl max-sm:right-4 sm:w-72"
+		class="bg-background/85 fixed bottom-4 left-4 z-2 touch-none border p-4 shadow-lg backdrop-blur-xl max-sm:right-4 sm:w-72"
 		style="transform: translateY({y}px); opacity: {alpha}; cursor: grab;"
 		role="button"
 		tabindex="0"
@@ -90,7 +90,7 @@
 	<div class="fixed bottom-0 z-3 shadow-xl max-sm:right-4 max-sm:left-4 sm:left-4 sm:w-72">
 		<button
 			transition:fly={{ delay: 150, y: 30 }}
-			class="bg-background/85 hover:bg-background/95 w-full rounded-t-md border px-4 py-1.5 backdrop-blur-sm transition"
+			class="bg-background/85 hover:bg-background/95 w-full rounded-t-md border border-b-0 px-4 py-2 backdrop-blur-sm transition"
 			aria-label="Show game display"
 			onmousedown={restore}
 			ontouchstart={restore}
