@@ -5,7 +5,7 @@
 	import { Info } from "@lucide/svelte";
 	import { openGame } from "../utils/open-game.js";
 
-	let { game, compact = false, small = false } = $props();
+	let { game, inWidget = false, inSidebar = false } = $props();
 
 	// State
 	let isHovered = $state(false);
@@ -68,7 +68,7 @@
 	bind:this={cardElement}
 	class="highlight-border group relative flex aspect-[2/3] cursor-pointer flex-col shadow-xl transition hover:outline-2 {coverImageLoaded
 		? ''
-		: 'animate-pulse'} {small ? 'h-42' : compact ? 'h-62' : 'h-92'} {small
+		: 'animate-pulse'} {inSidebar ? 'h-44' : inWidget ? 'h-62' : 'h-92'} {inSidebar
 		? 'bg-muted'
 		: 'bg-background mt-5 mb-[calc(3dvh+1.5vw)]'}"
 	onmouseenter={handleHover}
@@ -76,11 +76,11 @@
 	role="button"
 	tabindex="0"
 	onclick={() => {
-		if (isTouchDevice && !isFullyHovered && !small) {
+		if (isTouchDevice && !isFullyHovered && !inSidebar) {
 			handleHover();
 			return;
 		}
-		openGame(game.domain, game.id);
+		openGame(game.domain, game.id, inWidget ? "widget" : inSidebar ? "sidebar" : "discovery");
 	}}
 >
 	{#if game?.featured}
@@ -93,7 +93,7 @@
 		<video
 			bind:this={videoElement}
 			src={game.cover_video_url}
-			class="absolute top-0 left-0 aspect-[2/3] w-full object-cover opacity-0 z-1"
+			class="absolute top-0 left-0 z-1 aspect-[2/3] w-full object-cover opacity-0"
 			class:opacity-100={isHovered && videoLoaded && game.cover_video_url}
 			muted
 			playsinline
@@ -116,10 +116,10 @@
 		}}
 	/>
 
-	{#if isHovered && !small}
+	{#if isHovered && !inSidebar}
 		<div
 			transition:slide
-			class="bg-background/75 absolute right-0 bottom-0 left-0 flex max-h-1/3 z-2 flex-col overflow-hidden text-white backdrop-blur-xl"
+			class="bg-background/75 absolute right-0 bottom-0 left-0 z-2 flex max-h-1/3 flex-col overflow-hidden text-white backdrop-blur-xl"
 		>
 			<div class="h-full w-full overflow-y-auto p-3">
 				<h3 class="mb-2 truncate text-center text-lg font-bold">{game.name}</h3>
@@ -143,7 +143,7 @@
 		</div>
 	{/if}
 
-	{#if !small}
+	{#if !inSidebar}
 		<!-- Skeleton for circular image -->
 		<div
 			class="prevent-image-select bg-background absolute right-0 -bottom-[18%] left-0 mx-auto aspect-square w-1/5 animate-pulse rounded-full shadow-xl"

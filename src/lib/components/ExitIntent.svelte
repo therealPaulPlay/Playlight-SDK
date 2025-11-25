@@ -4,8 +4,8 @@
 	import { backOut } from "svelte/easing";
 	import { triggerEvent } from "../utils/trigger-event.js";
 	import { fetchQuickSuggestions } from "../utils/quick-suggestions.js";
-
-	let { enabled = true, onIntent, immediate = false } = $props();
+	import { config } from "../store";
+	import { openDiscovery } from "../utils/open-discovery";
 
 	// Elements
 	let detectorElement = $state();
@@ -22,7 +22,8 @@
 	let hideIntentBarTimeout = $state();
 
 	function trackMouse(event) {
-		if (!enabled || detectorElement?.contains(event.target) || barElement?.contains(event.target)) return;
+		if (!$config?.exitIntent?.enabled) return;
+		if (detectorElement?.contains(event.target) || barElement?.contains(event.target)) return;
 		if (!hideIntentBarTimeout && showIntentBar) hideIntentBarTimeout = setTimeout(() => (showIntentBar = false), 1500);
 		lastMouseInteraction = Date.now();
 	}
@@ -32,13 +33,13 @@
 			if (lastMouseInteraction < Date.now() - 50) {
 				clearTimeout(hideIntentBarTimeout);
 				hideIntentBarTimeout = null;
-				if (!immediate) {
+				if (!$config?.exitIntent?.immediate) {
 					triggerEvent("exitIntent");
 					showIntentBar = true;
 					if (!previewGames?.length) previewGames = await fetchQuickSuggestions(3);
 				} else {
 					triggerEvent("exitIntent");
-					onIntent?.();
+					openDiscovery("exit intent");
 				}
 			}
 		}, 150);
@@ -57,7 +58,7 @@
 
 <svelte:window onmousemove={trackMouse} />
 
-{#if enabled}
+{#if $config?.exitIntent?.enabled}
 	<!-- svelte-ignore a11y_mouse_events_have_key_events -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
@@ -87,7 +88,7 @@
 		<Button
 			class="group"
 			onclick={() => {
-				onIntent?.();
+				openDiscovery("exit intent");
 				setTimeout(() => (showIntentBar = false), 150); // Don't clear the timeout, that is already done onmouseenter
 			}}
 		>

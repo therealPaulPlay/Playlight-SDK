@@ -1,5 +1,4 @@
-import { get, writable } from "svelte/store";
-import api from "./api";
+import { get, readable, writable } from "svelte/store";
 import { triggerEvent } from "./utils/trigger-event";
 import { removeSidebarLayout, setupSidebarLayout } from "./utils/mount-components";
 
@@ -27,7 +26,6 @@ let originalOverflow;
 discoveryOpen.subscribe((value) => {
 	try {
 		if (value) {
-			api.trackOpen();
 			triggerEvent("discoveryOpen");
 			originalOverflow = document.body.style.overflow;
 			document.body.style.setProperty("overflow", "hidden", "important"); // Prevent scroll propagation

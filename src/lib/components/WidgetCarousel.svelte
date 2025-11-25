@@ -1,11 +1,11 @@
 <script>
 	import { onMount } from "svelte";
-	import { discoveryOpen } from "../store.js";
 	import { ChevronLeft, ChevronRight, LoaderCircle } from "@lucide/svelte";
 	import GameCard from "./GameCard.svelte";
 	import { blur } from "svelte/transition";
 	import Button from "./ui/Button.svelte";
 	import { fetchQuickSuggestions } from "../utils/quick-suggestions.js";
+	import { openDiscovery } from "../utils/open-discovery.js";
 
 	// State
 	let isLoading = $state(true);
@@ -76,7 +76,7 @@
 		{:else}
 			{#each games as game, i}
 				<div class="snap-center px-2" bind:clientWidth={cardWidth}>
-					<GameCard {game} compact={true} />
+					<GameCard {game} inWidget={true} />
 				</div>
 			{/each}
 
@@ -85,7 +85,7 @@
 				class="bg-background/85 my-auto mr-3 mb-30 ml-2 flex min-w-40 snap-center flex-wrap items-center justify-center gap-4 p-4 pb-6 shadow-lg backdrop-blur-xl"
 			>
 				<p class="w-full text-center text-lg font-semibold text-white">Fancy more?</p>
-				<Button onclick={() => ($discoveryOpen = true)}>See all</Button>
+				<Button onclick={() => openDiscovery("widget")}>See all</Button>
 			</div>
 		{/if}
 	</div>

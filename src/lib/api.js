@@ -97,24 +97,26 @@ class PlayLightAPI {
 	}
 
 	// Track discovery overlay open
-	async trackOpen() {
+	async trackOpen(format) {
 		const currentDomain = this.#getHostnameWithoutWWW();
 		await this.request("/event/open", {
 			method: "POST",
 			body: JSON.stringify({
 				domain: currentDomain,
+				format,
 			}),
 		});
 	}
 
 	// Track game click (pass id of the game that was clicked on)
-	async trackClick(gameId) {
+	async trackClick(gameId, format) {
 		const currentDomain = this.#getHostnameWithoutWWW();
 		await this.request("/event/click", {
 			method: "POST",
 			body: JSON.stringify({
 				sourceDomain: currentDomain,
 				gameId,
+				format,
 			}),
 		});
 	}

@@ -3,12 +3,12 @@
 	import { on } from "svelte/events";
 	import { discoveryOpen, projectUrl, sidebarCollapsed } from "../store";
 	import { fetchQuickSuggestions } from "../utils/quick-suggestions";
+	import { openDiscovery } from "../utils/open-discovery";
 	import api from "../api.js";
-	import { LoaderCircle, Gamepad2, Dices, ChevronsRight, GripVertical } from "@lucide/svelte";
+	import { LoaderCircle, Gamepad2, ChevronsRight, GripVertical } from "@lucide/svelte";
 	import GameCard from "./GameCard.svelte";
 	import CurrentGameDisplay from "./CurrentGameDisplay.svelte";
 	import Button from "./ui/Button.svelte";
-	import { openGame } from "../utils/open-game";
 	import { blur } from "svelte/transition";
 
 	// State
@@ -114,44 +114,35 @@
 <div
 	class="relative z-1 ml-auto flex h-dvh overflow-y-auto {$sidebarCollapsed
 		? 'w-0'
-		: 'w-75 border-l'} bg-background flex-col items-center gap-8 text-white transition-[width] duration-150 ease-out"
+		: 'w-75 border-l'} bg-background flex-col items-center gap-4 text-white transition-[width] duration-150 ease-out"
 >
 	<!-- Logo -->
 	<img
 		alt="logo"
 		src={$projectUrl + "/assets/images/logo-white-small.png"}
-		class="pointer-events-none mx-auto mt-4 -mb-1 w-50 select-none"
+		class="pointer-events-none mx-auto mt-4 w-50 select-none"
 	/>
 
 	<!-- Recommended games -->
-	<div class="grow-1 overflow-hidden mask-y-from-90% mask-y-to-100% p-6 py-12 transition-opacity not-hover:opacity-75">
+	<div class="grow-1 overflow-hidden mask-y-from-90% mask-y-to-100% p-5 transition-opacity">
 		{#if isLoading}
 			<div class="flex h-full w-full items-center justify-center">
 				<LoaderCircle class="animate-spin opacity-75" size={30} strokeWidth={2.5} />
 			</div>
 		{:else if games?.length}
-			<div class="scroll-container grid grid-cols-2 gap-6" onwheel={handleWheel}>
-				<div class="flex flex-col gap-6">
+			<div class="grid grid-cols-2 gap-5" onwheel={handleWheel}>
+				{#each { length: 2 }, index}
+					{@const gamesArray = index == 0 ? leftGames : rightGames}
 					<div
 						bind:this={scrollColumn}
-						class="animate-scroll-column flex flex-col gap-6"
+						class="mt-8 flex flex-col gap-5"
 						style:transform="translateY(calc(-33.333% + {scrollOffset}px))"
 					>
-						{#each [...leftGames, ...leftGames, ...leftGames] as game}
-							<GameCard {game} small={true} />
+						{#each [...gamesArray, ...gamesArray, ...gamesArray] as game}
+							<GameCard {game} inSidebar={true} />
 						{/each}
 					</div>
-				</div>
-				<div class="mt-15 flex flex-col gap-6">
-					<div
-						class="animate-scroll-column-offset flex flex-col gap-6"
-						style:transform="translateY(calc(-33.333% + {scrollOffset}px))"
-					>
-						{#each [...rightGames, ...rightGames, ...rightGames] as game}
-							<GameCard {game} small={true} />
-						{/each}
-					</div>
-				</div>
+				{/each}
 			</div>
 		{:else}
 			<div class="flex h-full w-full items-center justify-center">
@@ -161,42 +152,27 @@
 	</div>
 
 	<!-- CTA buttons -->
-	<div class="flex w-full flex-col items-center gap-4 px-4">
-		<Button class="w-full" onclick={() => ($discoveryOpen = true)} disabled={$discoveryOpen}>
-			View all games <Gamepad2 style="margin-top: -1px;" />
-		</Button>
-		<Button
-			class="w-full"
-			variant="secondary"
-			onclick={() => {
-				const randomIndex = Math.floor(Math.random() * games?.length);
-				const randomGame = games?.[randomIndex];
-				openGame(randomGame?.domain, randomGame?.id);
-			}}
-		>
-			Random game <Dices style="margin-top: -2px;" />
+	<div class="flex w-full items-center gap-4 px-4 pb-2">
+		<Button class="w-full py-2.5" onclick={() => openDiscovery("sidebar")} disabled={$discoveryOpen}>
+			All games <Gamepad2 style="margin-top: -1px;" />
 		</Button>
 	</div>
 
 	<!-- Currently playing -->
-	<div class="w-full">
-		<div class="mt-auto border-y p-6 py-4">
+	<div class="flex w-full border-t">
+		<div class="mt-auto p-4">
 			<CurrentGameDisplay {currentGame} />
 		</div>
-
-		<!-- Collapse -->
-		<div class="flex justify-end p-0">
-			<Button
-				variant="secondary"
-				class="text-muted-foreground border-l outline-none!"
-				onclick={() => {
-					$sidebarCollapsed = true;
-					saveSidebarState();
-				}}
-			>
-				<ChevronsRight />
-			</Button>
-		</div>
+		<Button
+			variant="secondary"
+			class="text-muted-foreground border-l outline-none!"
+			onclick={() => {
+				$sidebarCollapsed = true;
+				saveSidebarState();
+			}}
+		>
+			<ChevronsRight />
+		</Button>
 	</div>
 </div>
 
@@ -221,7 +197,7 @@
 				if (document.documentElement.clientWidth > 768) {
 					$sidebarCollapsed = false;
 					saveSidebarState();
-				} else $discoveryOpen = true;
+				} else openDiscovery("sidebar");
 			}}
 		>
 			<img
@@ -232,26 +208,3 @@
 		</Button>
 	</div>
 {/if}
-
-<style>
-	@keyframes scroll-column {
-		0% {
-			translate: 0 0;
-		}
-		100% {
-			translate: 0 calc(-100% / 3);
-		}
-	}
-
-	.animate-scroll-column,
-	.animate-scroll-column-offset {
-		animation: scroll-column 90s linear infinite;
-		transition: opacity 200ms;
-	}
-
-	.scroll-container:hover .animate-scroll-column,
-	.scroll-container:hover .animate-scroll-column-offset {
-		animation-play-state: paused;
-		opacity: 1;
-	}
-</style>
