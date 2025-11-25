@@ -25,28 +25,36 @@ export function setupWindowPolyfills(outerWrapper, innerWrapper) {
 		});
 
 		// Window.scrollY
-		originalScrollYDescriptor = Object.getOwnPropertyDescriptor(window, "scrollY") || Object.getOwnPropertyDescriptor(Window.prototype, "scrollY");
+		originalScrollYDescriptor =
+			Object.getOwnPropertyDescriptor(window, "scrollY") ||
+			Object.getOwnPropertyDescriptor(Window.prototype, "scrollY");
 		Object.defineProperty(window, "scrollY", {
 			get: () => innerWrapper.scrollTop,
 			configurable: true,
 		});
 
 		// Window.pageYOffset (alias for scrollY)
-		originalPageYOffsetDescriptor = Object.getOwnPropertyDescriptor(window, "pageYOffset") || Object.getOwnPropertyDescriptor(Window.prototype, "pageYOffset");
+		originalPageYOffsetDescriptor =
+			Object.getOwnPropertyDescriptor(window, "pageYOffset") ||
+			Object.getOwnPropertyDescriptor(Window.prototype, "pageYOffset");
 		Object.defineProperty(window, "pageYOffset", {
 			get: () => innerWrapper.scrollTop,
 			configurable: true,
 		});
 
 		// Window.scrollX
-		originalScrollXDescriptor = Object.getOwnPropertyDescriptor(window, "scrollX") || Object.getOwnPropertyDescriptor(Window.prototype, "scrollX");
+		originalScrollXDescriptor =
+			Object.getOwnPropertyDescriptor(window, "scrollX") ||
+			Object.getOwnPropertyDescriptor(Window.prototype, "scrollX");
 		Object.defineProperty(window, "scrollX", {
 			get: () => innerWrapper.scrollLeft,
 			configurable: true,
 		});
 
 		// Window.pageXOffset (alias for scrollX)
-		originalPageXOffsetDescriptor = Object.getOwnPropertyDescriptor(window, "pageXOffset") || Object.getOwnPropertyDescriptor(Window.prototype, "pageXOffset");
+		originalPageXOffsetDescriptor =
+			Object.getOwnPropertyDescriptor(window, "pageXOffset") ||
+			Object.getOwnPropertyDescriptor(Window.prototype, "pageXOffset");
 		Object.defineProperty(window, "pageXOffset", {
 			get: () => innerWrapper.scrollLeft,
 			configurable: true,
@@ -80,7 +88,8 @@ export function setupWindowPolyfills(outerWrapper, innerWrapper) {
 			const mql = getAdjustedMQL();
 
 			// Create entry for this query if not present
-			if (!mediaQueryListeners.has(query)) mediaQueryListeners.set(query, { listeners: new Set(), lastMatches: mql.matches });
+			if (!mediaQueryListeners.has(query))
+				mediaQueryListeners.set(query, { listeners: new Set(), lastMatches: mql.matches });
 			const entry = mediaQueryListeners.get(query);
 
 			// Return a Proxy that intercepts property access to keep matches up-to-date
@@ -114,7 +123,7 @@ export function setupWindowPolyfills(outerWrapper, innerWrapper) {
 					// For all other properties, return the target's value
 					const value = target[prop];
 					return typeof value === "function" ? value.bind(target) : value;
-				}
+				},
 			});
 		};
 
@@ -128,7 +137,7 @@ export function setupWindowPolyfills(outerWrapper, innerWrapper) {
 					if (newMQL.matches !== lastMatches) {
 						mediaQueryListeners.get(query).lastMatches = newMQL.matches;
 						const event = new MediaQueryListEvent("change", { matches: newMQL.matches, media: newMQL.media });
-						listeners.forEach(listener => listener(event));
+						listeners.forEach((listener) => listener(event));
 					}
 				}
 			});

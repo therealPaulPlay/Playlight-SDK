@@ -3,6 +3,7 @@ import { config, discoveryOpen, userIsFromPlaylight } from "./lib/store.js";
 import { eventCallbacks } from "./lib/utils/trigger-event.js";
 import { initWidgets, setupWidgetObserver } from "./lib/utils/mount-widgets.js";
 import { mountPlaylight } from "./lib/utils/mount-components.js";
+import { openDiscovery } from "./lib/utils/open-discovery.js";
 
 /**
  * The PlaylightSDK class
@@ -39,7 +40,8 @@ class PlaylightSDK {
 	 * @param {boolean} [value=true] - Whether to show the discovery
 	 */
 	setDiscovery(value = true) {
-		discoveryOpen.set(value);
+		if (value) openDiscovery("custom");
+		else discoveryOpen.set(false);
 	}
 
 	/**

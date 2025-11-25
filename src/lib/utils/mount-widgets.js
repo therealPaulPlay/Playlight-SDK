@@ -4,13 +4,13 @@ import WidgetCarousel from "../components/WidgetCarousel.svelte";
 // Initialize any existing widget containers on the page
 export function initWidgets() {
 	try {
-		const carouselContainers = document.querySelectorAll(".playlight-widget-carousel"); // Look for any carousel widgets
-		if (carouselContainers.length > 0) {
-			carouselContainers.forEach((containerElement) => {
+		const containers = document.querySelectorAll(".playlight-widget-carousel"); // Look for any carousel widgets
+		if (containers.length > 0) {
+			containers.forEach((containerElement) => {
 				if (!containerElement.dataset.playlightInitialized) {
 					containerElement.dataset.playlightInitialized = "true";
 
-					// Mount the carousel widget
+					// Mount the widget
 					mount(WidgetCarousel, {
 						target: containerElement,
 					});

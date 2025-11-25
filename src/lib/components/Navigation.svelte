@@ -82,7 +82,7 @@
 					<input
 						type="text"
 						placeholder="Search categories..."
-						class="w-full border-0 p-1 pl-10 text-white focus:ring-0 focus:outline-none bg-transparent"
+						class="w-full border-0 bg-transparent p-1 pl-10 text-white focus:ring-0 focus:outline-none"
 						bind:value={searchTerm}
 					/>
 				</div>
@@ -95,7 +95,7 @@
 				{:else if filteredCategories.length === 0}
 					<div class="text-muted-foreground p-4 text-center">No categories found.</div>
 				{:else}
-					<div class="space-y-1 p-1">
+					<div class="space-y-2 p-2">
 						{#each filteredCategories as category (category)}
 							<button
 								class="w-full cursor-pointer px-4 py-2 text-left transition-colors {selectedCategory != category
