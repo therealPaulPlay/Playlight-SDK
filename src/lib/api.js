@@ -1,8 +1,9 @@
 import { toast } from "svelte-sonner";
+import { get } from "svelte/store";
+import { apiURL } from "./store";
 
 class PlayLightAPI {
 	constructor() {
-		this.baseUrl = "https://api.playlight.dev/platform";
 		this.cachedRequests = new Map();
 		this.pendingCacheRequests = new Map();
 	}
@@ -15,7 +16,7 @@ class PlayLightAPI {
 
 		const makeRequest = async () => {
 			try {
-				const url = `${this.baseUrl}${endpoint}`;
+				const url = `${get(apiURL)}${endpoint}`;
 				const response = await fetch(url, {
 					...fetchOptions,
 					headers: {

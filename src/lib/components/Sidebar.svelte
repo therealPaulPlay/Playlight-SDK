@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from "svelte";
 	import { on } from "svelte/events";
-	import { discoveryOpen, projectUrl, sidebarCollapsed } from "../store";
+	import { discoveryOpen, cdnURL, sidebarCollapsed } from "../store";
 	import { fetchQuickSuggestions } from "../utils/quick-suggestions";
 	import { openDiscovery } from "../utils/open-discovery";
 	import api from "../api.js";
@@ -119,7 +119,7 @@
 	<!-- Logo -->
 	<img
 		alt="logo"
-		src={$projectUrl + "/assets/images/logo-white-small.png"}
+		src={$cdnURL + "/assets/images/logo-white-small.png"}
 		class="pointer-events-none mx-auto mt-4 w-50 select-none"
 	/>
 
@@ -202,7 +202,7 @@
 		>
 			<img
 				alt="icon"
-				src={$projectUrl + "/assets/images/icon-white-small.png"}
+				src={$cdnURL + "/assets/images/icon-white-small.png"}
 				class="pointer-events-none aspect-square w-8"
 			/>
 		</Button>
