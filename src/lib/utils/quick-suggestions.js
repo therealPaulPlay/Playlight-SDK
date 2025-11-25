@@ -7,7 +7,7 @@ export async function fetchQuickSuggestions(refetchThreshold = 10, mix = false) 
 
 	// First fetch from same category
 	const result = await api.getSuggestions(selectedCategory, 1);
-	if (result?.pageSize < refetchThreshold) console.error("Threshold must be <= than page size to avoid always triggering a re-fetch!");
+	if (result?.pageSize < refetchThreshold) console.error("Threshold must be <= than page size to avoid guaranteed re-fetch!");
 	let fetchedGames = result?.games || [];
 
 	// If mixing is enabled, cut fetched games from the same category in half

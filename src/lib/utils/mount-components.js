@@ -132,7 +132,6 @@ export function setupSidebarLayout() {
 	}
 }
 
-
 // Monitor the sidebar structure and remount when needed
 function watchSidebarStructure() {
 	sidebarStructureObserver = new MutationObserver(() => {

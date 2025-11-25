@@ -99,7 +99,13 @@ function replaceStylesheet(sheet, adjustedWidth, windowHeight, sidebarWidth) {
 			}
 		} else {
 			// Re-transform from original
-			transformStylesheet(ownerNode, originalSheets.get(ownerNode).originalCSS, adjustedWidth, windowHeight, sidebarWidth);
+			transformStylesheet(
+				ownerNode,
+				originalSheets.get(ownerNode).originalCSS,
+				adjustedWidth,
+				windowHeight,
+				sidebarWidth,
+			);
 		}
 	} catch (error) {
 		console.warn(`Playlight cannot process stylesheet ${sheet.href || "inline"} due to CORS restrictions.`);
