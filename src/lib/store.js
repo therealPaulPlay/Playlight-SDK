@@ -2,7 +2,7 @@ import { get, readable, writable } from "svelte/store";
 import { triggerEvent } from "./utils/trigger-event";
 import { removeSidebarLayout, setupSidebarLayout } from "./utils/mount-components";
 
-// Config
+// SDK configuration
 export const config = writable(null);
 export const userIsFromPlaylight = writable(false);
 
@@ -17,8 +17,9 @@ export const currentGameLikeCount = writable(0);
 export const sidebarEnabled = writable(false);
 export const sidebarCollapsed = writable(false);
 
-// Project setup
-export const projectUrl = writable("https://sdk.playlight.dev");
+// Hosting configuration
+export const cdnURL = readable("https://sdk.playlight.dev");
+export const apiURL = readable("https://api.playlight.dev/platform");
 
 // Subscriptions --------------------------------------------------------------------------------------
 let originalOverflow;

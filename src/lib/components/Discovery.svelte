@@ -5,7 +5,7 @@
 	import api from "../api.js";
 	import Navigation from "./Navigation.svelte";
 	import { onMount } from "svelte";
-	import { discoveryOpen, projectUrl, sidebarCollapsed, sidebarEnabled } from "../store.js";
+	import { discoveryOpen, cdnURL, sidebarCollapsed, sidebarEnabled } from "../store.js";
 	import DiscoveryDrawer from "./DiscoveryDrawer.svelte";
 
 	// States
@@ -136,7 +136,7 @@
 	<div class="pointer-events-none flex items-center justify-between p-4">
 		<img
 			alt="logo"
-			src={$projectUrl + "/assets/images/logo-white-small.png"}
+			src={$cdnURL + "/assets/images/logo-white-small.png"}
 			class="pointer-events-none ml-3 w-50 select-none max-sm:w-40"
 		/>
 		<div class="mt-3.5 mr-4 flex items-center justify-evenly gap-8 overflow-hidden max-sm:mt-3">

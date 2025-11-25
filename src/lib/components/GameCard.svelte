@@ -1,7 +1,7 @@
 <script>
 	import { slide } from "svelte/transition";
 	import { playSound } from "../utils/play-sound.js";
-	import { projectUrl } from "../store.js";
+	import { cdnURL } from "../store.js";
 	import { Info } from "@lucide/svelte";
 	import { openGame } from "../utils/open-game.js";
 
@@ -23,7 +23,7 @@
 	let cardElement = $state();
 
 	function handleHover() {
-		if (!isHovered && !isTouchDevice) playSound($projectUrl + "/assets/sounds/hover-selection.ogg", 0.25);
+		if (!isHovered && !isTouchDevice) playSound($cdnURL + "/assets/sounds/hover-selection.ogg", 0.25);
 		isHovered = true;
 		clearTimeout(hoverTimeout);
 		hoverTimeout = setTimeout(() => (isFullyHovered = true), 300);
