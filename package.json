@@ -1,6 +1,6 @@
 {
 	"name": "playlight-sdk",
-	"version": "0.3.5",
+	"version": "0.3.6",
 	"type": "module",
 	"description": "The SDK for Playlight - a discovery platform, built into your own game.",
 	"main": "dist/playlight-sdk.es.js",
@@ -13,6 +13,7 @@
 		"format": "prettier --write ."
 	},
 	"devDependencies": {
+		"@lucide/svelte": "^0.555.0",
 		"@sveltejs/vite-plugin-svelte": "^5.0.0",
 		"@tailwindcss/vite": "^4.0.0",
 		"prettier": "^3.4.2",
@@ -24,9 +25,6 @@
 		"tailwindcss": "^4.0.0",
 		"vite": "^6.0.0",
 		"vite-plugin-static-copy": "^2.3.0"
-	},
-	"dependencies": {
-		"@lucide/svelte": "^0.554.0"
 	},
 	"files": [
 		"dist/playlight-sdk.es.js",
