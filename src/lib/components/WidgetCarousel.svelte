@@ -66,7 +66,7 @@
 			hasRightScroll = el.scrollLeft < el.scrollWidth - el.clientWidth - 20;
 			updateMask(el.scrollLeft, el.scrollWidth - el.clientWidth - el.scrollLeft);
 		}}
-		class="relative flex h-full w-full snap-x gap-2 overflow-x-auto"
+		class="relative flex h-full w-full snap-x gap-6 px-0.5 overflow-x-auto"
 		style={maskStyle}
 	>
 		{#if isLoading}
@@ -75,14 +75,14 @@
 			</div>
 		{:else}
 			{#each games as game, i}
-				<div class="snap-center px-2" bind:clientWidth={cardWidth}>
+				<div class="snap-center" bind:clientWidth={cardWidth}>
 					<GameCard {game} inWidget={true} />
 				</div>
 			{/each}
 
 			<!-- View more card -->
 			<div
-				class="bg-background/85 my-auto mr-3 mb-30 ml-2 flex min-w-40 snap-center flex-wrap items-center justify-center gap-4 p-4 pb-6 shadow-lg backdrop-blur-xl"
+				class="bg-background/85 my-auto mb-30 flex min-w-40 snap-center flex-wrap items-center justify-center gap-4 p-4 pb-6 shadow-lg backdrop-blur-xl"
 			>
 				<p class="w-full text-center text-lg font-semibold text-white">Fancy more?</p>
 				<Button onclick={() => openDiscovery("widget")}>See all</Button>
