@@ -4,7 +4,7 @@
 	import { backOut } from "svelte/easing";
 	import { triggerEvent } from "../utils/trigger-event.js";
 	import { fetchQuickSuggestions } from "../utils/quick-suggestions.js";
-	import { config } from "../store";
+	import { config, discoveryOpen } from "../store";
 	import { openDiscovery } from "../utils/open-discovery";
 
 	// Elements
@@ -65,7 +65,7 @@
 		class="fixed top-0 right-0 left-0 h-4 max-lg:hidden"
 		bind:this={detectorElement}
 		onpointerover={(e) => {
-			if (e.pointerType !== "touch") handleBarTrigger();
+			if (e.pointerType !== "touch" && !$discoveryOpen) handleBarTrigger();
 		}}
 	></div>
 {/if}
