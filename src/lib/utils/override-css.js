@@ -83,32 +83,41 @@ function replaceStylesheet(sheet, adjustedWidth, windowHeight, sidebarWidth) {
 		if (!originalSheets.has(ownerNode)) {
 			if (!sheet.cssRules?.length) return;
 
-			const originalCSS = Array.from(sheet.cssRules)
-				.map((r) => r.cssText)
-				.join("\n");
-
 			if (ownerNode.tagName === "LINK") {
-				const styleElement = document.createElement("style");
-				styleElement.setAttribute("data-playlight-original-href", ownerNode.href);
-				originalSheets.set(styleElement, { originalCSS, originalElement: ownerNode });
-				ownerNode.replaceWith(styleElement);
-				transformStylesheet(styleElement, originalCSS, adjustedWidth, windowHeight, sidebarWidth);
+				const href = sheet.href;
+				// Mark as pending to prevent duplicate fetches on subsequent update cycles
+				originalSheets.set(ownerNode, { originalCSS: null, originalElement: null });
+				// Fetch raw CSS because cssText can't serialize var() in shorthands when
+				// a longhand override follows (e.g. padding: var(...) + padding-bottom: 35px)
+				// Replace the <link> only after fetch completes to avoid unstyled flash
+				fetch(href)
+					.then((r) => r.text())
+					.then((rawCSS) => {
+						if (!originalSheets.has(ownerNode)) return; // Overrides deactivated during fetch, exit to avoid race condition
+						originalSheets.delete(ownerNode);
+						const styleElement = document.createElement("style");
+						styleElement.setAttribute("data-playlight-original-href", ownerNode.href);
+						originalSheets.set(styleElement, { originalCSS: rawCSS, originalElement: ownerNode });
+						ownerNode.replaceWith(styleElement);
+						transformStylesheet(styleElement, rawCSS, adjustedWidth, windowHeight, sidebarWidth);
+					})
+					.catch((error) => {
+						console.warn(`Playlight failed to process stylesheet ${sheet.href || "inline"}:`, error);
+					});
 			} else {
+				// Use raw textContent to avoid cssText losing var() values in shorthands
+				const originalCSS = ownerNode.textContent;
 				originalSheets.set(ownerNode, { originalCSS, originalElement: null });
 				transformStylesheet(ownerNode, originalCSS, adjustedWidth, windowHeight, sidebarWidth);
 			}
 		} else {
-			// Re-transform from original
-			transformStylesheet(
-				ownerNode,
-				originalSheets.get(ownerNode).originalCSS,
-				adjustedWidth,
-				windowHeight,
-				sidebarWidth,
-			);
+			// Re-transform from original (skip if fetch still pending)
+			const { originalCSS } = originalSheets.get(ownerNode);
+			if (originalCSS === null) return;
+			transformStylesheet(ownerNode, originalCSS, adjustedWidth, windowHeight, sidebarWidth);
 		}
 	} catch (error) {
-		console.warn(`Playlight cannot process stylesheet ${sheet.href || "inline"} due to CORS restrictions.`);
+		console.warn(`Playlight cannot process stylesheet ${sheet.href || "inline"}, likely due to CORS restrictions:`, error);
 	}
 }
 
