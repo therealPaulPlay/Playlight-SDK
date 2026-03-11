@@ -105,8 +105,14 @@ function replaceStylesheet(sheet, adjustedWidth, windowHeight, sidebarWidth) {
 						console.warn(`Playlight failed to process stylesheet ${sheet.href || "inline"}:`, error);
 					});
 			} else {
-				// Use raw textContent to avoid cssText losing var() values in shorthands
-				const originalCSS = ownerNode.textContent;
+				// Prefer textContent to preserve var() in expanded shorthands, but fall back to
+				// cssRules for CSS-in-JS libraries that inject styles via CSSOM (empty textContent)
+				const rawText = ownerNode.textContent.trim();
+				const originalCSS = rawText
+					? rawText
+					: Array.from(sheet.cssRules)
+						.map((r) => r.cssText)
+						.join("\n");
 				originalSheets.set(ownerNode, { originalCSS, originalElement: null });
 				transformStylesheet(ownerNode, originalCSS, adjustedWidth, windowHeight, sidebarWidth);
 			}
