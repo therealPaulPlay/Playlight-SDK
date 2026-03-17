@@ -56,8 +56,12 @@
 <!-- Badge like NEW or FEATURED -->
 {#snippet gameBadge(isHovered, text)}
 	<div
-		class="bg-background absolute top-4 right-4 z-3 px-2 py-0.5 transition-opacity select-none"
+		class="bg-background absolute {inSidebar
+			? 'top-2 right-2'
+			: 'top-3 right-3'} z-3 px-2 py-0.5 transition-opacity select-none"
 		class:opacity-0={isHovered}
+		class:text-xs={inSidebar}
+		class:text-sm={inWidget}
 	>
 		<p class="font-bold text-white uppercase">{text}</p>
 	</div>
