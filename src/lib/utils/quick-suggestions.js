@@ -1,28 +1,7 @@
 import api from "../api.js";
 
-export async function fetchQuickSuggestions(refetchThreshold = 10, mix = false) {
-	// Get categories and current game data
-	const [categories, currentGame] = await Promise.all([api.getCategories(), api.getCurrentGameInfo()]);
-	const selectedCategory = currentGame?.category || categories?.[categories?.length - 1];
-
-	// First fetch from same category
-	const result = await api.getSuggestions(selectedCategory, 1);
-	if (result?.pageSize < refetchThreshold) console.error("Threshold must be <= than page size to avoid guaranteed re-fetch!");
-	let fetchedGames = result?.games || [];
-
-	// If mixing is enabled, cut fetched games from the same category in half
-	if (mix) fetchedGames = fetchedGames.slice(0, Math.ceil(refetchThreshold / 2));
-
-	// If not enough games or mixing, fetch again without category
-	if (fetchedGames.length < refetchThreshold || mix) {
-		const moreResult = await api.getSuggestions(null, 1);
-		const moreGames = moreResult?.games || [];
-
-		// Filter out duplicates
-		const uniqueGames = moreGames.filter((newGame) => !fetchedGames.some((existing) => existing.id === newGame.id));
-		fetchedGames = [...fetchedGames, ...uniqueGames];
-	}
-
-	// Limit the number of games to threshold
-	return fetchedGames.slice(0, refetchThreshold);
+export async function fetchQuickSuggestions(truncate = 10) {
+	if (truncate > 10) throw new Error("Can't truncate to more than 10");
+	const result = await api.getSuggestions(1);
+	return (result?.games || []).slice(0, truncate);
 }

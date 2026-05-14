@@ -1,89 +1,42 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import postcss from "postcss";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const cssPath = path.resolve(__dirname, "dist/playlight-sdk.css");
+const cssPath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "dist/playlight-sdk.css");
+
+const prefixVars = (s) => s.replace(/--tw-/g, "--playlight-tw-");
 
 function prefixSelector(selector) {
-	if (selector === ":root") return selector;
-	if (selector.startsWith(".playlight-sdk") || selector.includes("#playlight-sdk")) return selector;
-	if (selector === "html") return ".playlight-sdk";
+	const s = selector.trim();
+	if (s === ":root" || s.startsWith(".playlight-sdk") || s.includes("#playlight-sdk")) return selector;
+	if (s === "html") return ".playlight-sdk";
 	return `.playlight-sdk ${selector}`;
 }
 
-function prefixTailwindVars(text) {
-	return text.replace(/--tw-([a-zA-Z0-9-]+)/g, "--playlight-tw-$1");
+function isKeyframeRule(rule) {
+	for (let p = rule.parent; p; p = p.parent) if (p.type === "atrule" && /^(-webkit-)?keyframes$/i.test(p.name)) return true;
+	return false;
 }
 
-function processCssRule(selector, declarations) {
-	if (selector.trim().startsWith("@") || selector.trim().startsWith("__AT_RULE_"))
-		return `${selector}{${declarations}}`;
+const root = postcss.parse(fs.readFileSync(cssPath, "utf8"));
 
-	const selectors = selector
-		.split(",")
-		.map((s) => s.trim())
-		.filter(Boolean);
-	const prefixedSelectors = selectors.map(prefixSelector);
-	const prefixedDeclarations = prefixTailwindVars(declarations);
+root.walkAtRules("property", (r) => (r.params = prefixVars(r.params)));
 
-	return `${prefixedSelectors.join(", ")} {${prefixedDeclarations}}`;
-}
-
-function transformCss(css) {
-	const atRules = [];
-	let processedCss = css;
-
-	// Extract at-rules (both block and simple)
-	processedCss = processedCss.replace(/@[^{]*\{[^]*?\}/g, (match) => {
-		const placeholder = `__AT_RULE_${atRules.length}__`;
-		atRules.push({ placeholder, rule: match });
-		return placeholder;
+root.walkRules((rule) => {
+	if (isKeyframeRule(rule)) return;
+	const inThemeLayer = rule.parent?.type === "atrule" && rule.parent.name === "layer" && rule.parent.params === "theme";
+	const mapped = rule.selectors.map((s) => {
+		if (inThemeLayer && /^(:root|:host)$/.test(s.trim())) return ".playlight-sdk";
+		return prefixSelector(s);
 	});
-	processedCss = processedCss.replace(/@[^{]*;/g, (match) => {
-		const placeholder = `__AT_RULE_${atRules.length}__`;
-		atRules.push({ placeholder, rule: match });
-		return placeholder;
-	});
+	rule.selectors = [...new Set(mapped)];
+});
 
-	// Process regular CSS rules
-	processedCss = processedCss.replace(/([^{}]+)\{([^{}]*)\}/g, (_, selector, declarations) =>
-		processCssRule(selector, declarations),
-	);
+root.walkDecls((decl) => {
+	decl.prop = prefixVars(decl.prop);
+	decl.value = prefixVars(decl.value);
+});
 
-	// Process at-rules
-	atRules.reverse().forEach(({ placeholder, rule }) => {
-		let processedRule = rule;
-
-		if (rule.startsWith("@keyframes") || rule.startsWith("@-webkit-keyframes")) {
-			processedRule = rule.replace(
-				/\{([^{}]*)\{([^{}]*)\}\}/g,
-				(_, keyframeSelector, declarations) => `{${keyframeSelector}{${prefixTailwindVars(declarations)}}}`,
-			);
-		} else if (rule.startsWith("@media") || rule.startsWith("@supports") || rule.startsWith("@layer base")) {
-			processedRule = rule.replace(/html\s*,/g, ".playlight-sdk ,");
-			processedRule = processedRule.replace(/([^{}]+)\{([^{}]*)\}/g, (match, selector, declarations) =>
-				processCssRule(selector, declarations),
-			);
-		} else if (rule.startsWith("@layer theme")) {
-			processedRule = rule.replace(/(:root|:host)(\s*,\s*)*(:root|:host)?(\s*)\{/g, ".playlight-sdk {");
-			processedRule = prefixTailwindVars(processedRule);
-		} else if (rule.startsWith("@property")) {
-			processedRule = rule.replace(/@property --tw-([a-zA-Z0-9-]+)/g, "@property --playlight-tw-$1");
-		} else {
-			processedRule = prefixTailwindVars(rule);
-		}
-
-		processedCss = processedCss.replace(placeholder, processedRule);
-	});
-
-	// Update var() references
-	processedCss = processedCss.replace(/var\(--tw-([a-zA-Z0-9-]+)([^)]*)\)/g, "var(--playlight-tw-$1$2)");
-
-	return processedCss;
-}
-
-const css = fs.readFileSync(cssPath, "utf8");
-const transformedCss = transformCss(css);
-fs.writeFileSync(cssPath, transformedCss);
+fs.writeFileSync(cssPath, root.toString());
 console.log("CSS successfully transformed with .playlight-sdk prefix and Tailwind variable prefixing");

@@ -3,7 +3,7 @@
 	import Discovery from "./lib/components/Discovery.svelte";
 	import { Toaster } from "svelte-sonner";
 	import ExitIntent from "./lib/components/ExitIntent.svelte";
-	import { discoveryOpen, sidebarEnabled } from "./lib/store.js";
+	import { discoveryOpen } from "./lib/store.js";
 </script>
 
 <!-- Discovery overlay -->
@@ -15,6 +15,6 @@
 <ExitIntent />
 
 <!-- Toaster for notifications -->
-{#if $discoveryOpen || $sidebarEnabled}
+{#if $discoveryOpen}
 	<Toaster />
 {/if}

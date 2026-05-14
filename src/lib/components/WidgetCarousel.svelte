@@ -20,7 +20,7 @@
 
 	onMount(async () => {
 		isLoading = true;
-		games = await fetchQuickSuggestions(10, true);
+		games = await fetchQuickSuggestions(10);
 		isLoading = false;
 
 		// Wait for games to be rendered, then adjust mask image

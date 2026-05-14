@@ -67,19 +67,9 @@ class PlayLightAPI {
 		return hostname.startsWith("www.") ? hostname.substring(4) : hostname;
 	}
 
-	// Get all categories
-	async getCategories() {
-		const endpoint = "/categories";
-		if (this.cachedRequests.has(endpoint)) return structuredClone(this.cachedRequests.get(endpoint)); // Cache
-		const data = await this.request(endpoint, { deduplicate: true });
-		if (data) this.cachedRequests.set(endpoint, data);
-		return structuredClone(data);
-	}
-
-	// Get game suggestions, optionally filtered by category
-	async getSuggestions(category, page = 1) {
+	// Get game suggestions
+	async getSuggestions(page = 1) {
 		let endpoint = "/suggestions";
-		if (category) endpoint += "/" + category;
 		endpoint += "?without=" + this.#getHostnameWithoutWWW();
 		if (page) endpoint += "&page=" + page;
 		if (this.cachedRequests.has(endpoint)) return structuredClone(this.cachedRequests.get(endpoint)); // Cache
