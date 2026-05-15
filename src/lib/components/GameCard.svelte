@@ -69,7 +69,7 @@
 	bind:this={cardElement}
 	class="highlight-border group bg-background relative mb-[calc(4dvh+1vw)] block aspect-[2/3] shrink-0 cursor-pointer shadow-xl transition hover:outline-2 {coverImageLoaded
 		? ''
-		: 'animate-pulse'} {inWidget ? 'mt-5 h-62' : 'mt-5 w-[clamp(min(85vw,16rem),calc((100%-10.5rem)/4),24rem)]'}"
+		: 'animate-pulse'} {inWidget ? 'mt-5 h-62' : 'mt-5 w-[clamp(min(85vw,17.75rem),calc((100%-10.5rem)/4),25rem)]'}"
 	onmouseenter={handleHover}
 	onmouseleave={handleUnhover}
 	role="button"

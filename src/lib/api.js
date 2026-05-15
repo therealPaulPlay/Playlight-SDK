@@ -111,15 +111,6 @@ class PlayLightAPI {
 			}),
 		});
 	}
-
-	// Like or unlike a game (pass gameId and true to like, false to unlike)
-	async toggleLike(gameId, isLike = true) {
-		const action = isLike ? "like" : "unlike";
-		const result = await this.request(`/rating/${gameId}/${action}`, {
-			method: "POST",
-		});
-		return result?.success || false;
-	}
 }
 
 // Create and export a singleton instance

@@ -45,14 +45,14 @@
 		}, 150);
 	}
 
-	// Prompts ------------------------------------------------------------------------------------------------------
+	// Prompts
 	let barPrompts = [
-		"The cure for boredom.",
+		"The cure for boredom",
 		"Ready for what’s next?",
 		"Why stop the fun now?",
-		"Games don’t play themselves.",
-		"A new adventure awaits.",
-		"There’s always time for one more.",
+		"Games don’t play themselves",
+		"A new adventure awaits",
+		"There’s always time for one more",
 	];
 </script>
 
@@ -80,7 +80,7 @@
 		role="menu"
 		tabindex="0"
 		transition:fly={{ y: -100, easing: backOut, duration: 500 }}
-		class="bg-background/85 fixed top-4 right-4 left-4 mx-auto flex w-fit max-w-[calc(100%-2rem)] flex-wrap items-center gap-4 overflow-hidden border-1 p-4 shadow-lg backdrop-blur-xl"
+		class="bg-background/85 fixed top-6 right-6 left-6 mx-auto flex w-fit max-w-[calc(100%-2rem)] flex-wrap items-center gap-4 overflow-hidden border-1 p-4 shadow-lg backdrop-blur-xl"
 	>
 		<p class="truncate text-lg font-semibold text-nowrap text-white">
 			{barPrompts[Math.floor(Math.random() * barPrompts.length)]}
