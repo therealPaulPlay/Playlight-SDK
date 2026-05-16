@@ -1,4 +1,3 @@
-import { toast } from "svelte-sonner";
 import { get } from "svelte/store";
 import { apiURL } from "./store";
 
@@ -45,7 +44,6 @@ class PlayLightAPI {
 
 				return await response.json();
 			} catch (error) {
-				toast.error("Request failed: " + error.message);
 				console.error("Playlight API request error:", error);
 			}
 		};

@@ -2,21 +2,23 @@
 	import { blur, fly } from "svelte/transition";
 	import { X, LoaderCircle } from "@lucide/svelte";
 	import GameCard from "./GameCard.svelte";
+	import Button from "./ui/Button.svelte";
 	import api from "../api.js";
 	import { onMount } from "svelte";
 	import { discoveryOpen, cdnURL } from "../store.js";
 	import { backOut } from "svelte/easing";
 
-	// States
+	// State
 	let isLoading = $state(true);
 	let isLoadingMore = $state(false);
+	let hasLoadError = $state(false);
+	let currentGame = $state();
 	let loadMoreMargin = $state(1000);
+
+	// Scrolling
 	let scrollTop = $state(0);
 	let showScrollHint = $state(false);
 	let isScrollable = $state(false);
-
-	// Info
-	let currentGame = $state();
 
 	// Fetch games params
 	let games = $state([]);
@@ -28,6 +30,7 @@
 	let resizeObserver;
 	let bottomDetector = $state();
 	let scrollContainer = $state();
+	let firstCard = $state();
 
 	// Timeout
 	let showScrollHintTimeout;
@@ -95,6 +98,7 @@
 		const result = await api.getSuggestions(page);
 
 		if (result) {
+			hasLoadError = false;
 			const returnedGames = result.games || [];
 			const pageSize = result.pageSize;
 
@@ -106,6 +110,8 @@
 
 			if (returnedGames.length < pageSize) hasMoreGames = false;
 			else page += 1;
+		} else {
+			hasLoadError = true;
 		}
 
 		// Disable loading state
@@ -159,28 +165,36 @@
 	<!-- Scroll hint -->
 	{#if showScrollHint && isScrollable}
 		<div
-			role="menu"
-			tabindex="0"
 			transition:fly={{ y: 100, easing: backOut, duration: 500 }}
-			class="bg-foreground fixed right-6 bottom-6 left-6 z-2 mx-auto flex w-fit max-w-[calc(100%-2rem)] flex-wrap items-center gap-4 overflow-hidden p-4 shadow-lg backdrop-blur-xl max-lg:hidden"
+			class="fixed right-6 bottom-6 left-6 z-2 mx-auto w-fit max-w-[calc(100%-2rem)] max-lg:hidden"
 		>
-			<svg
-				width="18px"
-				height="28px"
-				viewBox="-10 -10 267 410"
-				version="1.1"
-				xmlns="http://www.w3.org/2000/svg"
-				xmlns:xlink="http://www.w3.org/1999/xlink"
-				style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;"
+			<Button
+				size="lg"
+				uppercase={false}
+				onclick={() => {
+					// Card height + logo overflow (18% of card height) + half the row gap (gap-14 = 3.5rem)
+					if (firstCard) scrollContainer.scrollBy({ top: firstCard.getBoundingClientRect().height * 1.18 + 28, behavior: "smooth" });
+				}}
+				class="shadow-lg backdrop-blur-xl"
 			>
-				<circle id="wheel" cx="123.359" cy="125" r="44" style="fill:hsl(var(--playlight-background));" />
-				<path
-					id="mouse"
-					d="M236.717,123.359c0,-62.565 -50.794,-113.359 -113.358,-113.359c-62.565,0 -113.359,50.794 -113.359,113.359l0,143.237c0,62.565 50.794,113.359 113.359,113.359c62.564,0 113.358,-50.794 113.358,-113.359l0,-143.237Z"
-					style="fill:none;stroke:hsl(var(--playlight-background));stroke-width:32px;"
-				/>
-			</svg>
-			<p class="text-background truncate text-lg font-semibold text-nowrap">Scroll to view more</p>
+				<svg
+					width="18px"
+					height="28px"
+					viewBox="-10 -10 267 410"
+					version="1.1"
+					xmlns="http://www.w3.org/2000/svg"
+					xmlns:xlink="http://www.w3.org/1999/xlink"
+					style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;"
+				>
+					<circle id="wheel" cx="123.359" cy="125" r="44" style="fill:currentColor;" />
+					<path
+						id="mouse"
+						d="M236.717,123.359c0,-62.565 -50.794,-113.359 -113.358,-113.359c-62.565,0 -113.359,50.794 -113.359,113.359l0,143.237c0,62.565 50.794,113.359 113.359,113.359c62.564,0 113.358,-50.794 113.358,-113.359l0,-143.237Z"
+						style="fill:none;stroke:currentColor;stroke-width:32px;"
+					/>
+				</svg>
+				Scroll to view more
+			</Button>
 		</div>
 	{/if}
 
@@ -193,19 +207,23 @@
 		onscroll={(e) => (scrollTop = e.currentTarget.scrollTop)}
 	>
 		{#if isLoading && games.length === 0}
-			<div class="flex h-4/5 items-center justify-center gap-4">
+			<div class="flex h-full items-center justify-center gap-4">
 				<LoaderCircle class="animate-spin opacity-75" size={50} strokeWidth={2.25} />
 			</div>
 		{:else if games.length === 0 && !isLoading}
-			<div class="pointer-events-none flex h-4/5 items-center justify-center gap-4">
-				<p class="text-white">No games found that match the filter.</p>
+			<div class="pointer-events-none flex h-full items-center justify-center gap-4">
+				<p class="text-white">{hasLoadError ? "Failed to load games." : "No games available."}</p>
 			</div>
 		{:else}
 			<div
 				class="pointer-events-none container mx-auto flex h-fit flex-wrap content-start justify-center gap-14 sm:!px-14 2xl:!max-w-[1420px]"
 			>
 				{#each games as game, i}
-					<GameCard {game} />
+					{#if i === 0}
+						<GameCard {game} bind:cardElement={firstCard} />
+					{:else}
+						<GameCard {game} />
+					{/if}
 				{/each}
 
 				<!-- Bottom detector with loading icon -->
@@ -222,28 +240,24 @@
 </div>
 
 <style>
-	:global([data-expanded]) {
-		border-radius: 0 !important;
-	}
-
 	.mask-fade {
 		mask-image: linear-gradient(
 			to bottom,
 			transparent 0%,
-			rgba(0, 0, 0, 0.326) 1%,
-			rgba(0, 0, 0, 0.554) 2%,
-			rgba(0, 0, 0, 0.74) 3%,
-			rgba(0, 0, 0, 0.86) 4%,
-			rgba(0, 0, 0, 0.954) 5%,
-			rgba(0, 0, 0, 0.982) 6%,
-			black 7%,
-			black 93%,
-			rgba(0, 0, 0, 0.982) 94%,
-			rgba(0, 0, 0, 0.954) 95%,
-			rgba(0, 0, 0, 0.86) 96%,
-			rgba(0, 0, 0, 0.74) 97%,
-			rgba(0, 0, 0, 0.554) 98%,
-			rgba(0, 0, 0, 0.326) 99%,
+			rgba(0, 0, 0, 0.326) 1.5%,
+			rgba(0, 0, 0, 0.554) 3%,
+			rgba(0, 0, 0, 0.74) 4.5%,
+			rgba(0, 0, 0, 0.86) 6%,
+			rgba(0, 0, 0, 0.954) 7.5%,
+			rgba(0, 0, 0, 0.982) 9%,
+			black 10%,
+			black 90%,
+			rgba(0, 0, 0, 0.982) 91%,
+			rgba(0, 0, 0, 0.954) 92.5%,
+			rgba(0, 0, 0, 0.86) 94%,
+			rgba(0, 0, 0, 0.74) 95.5%,
+			rgba(0, 0, 0, 0.554) 97%,
+			rgba(0, 0, 0, 0.326) 98.5%,
 			transparent 100%
 		);
 	}

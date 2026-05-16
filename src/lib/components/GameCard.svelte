@@ -5,7 +5,7 @@
 	import { Info } from "@lucide/svelte";
 	import { openGame } from "../utils/open-game.js";
 
-	let { game, inWidget = false } = $props();
+	let { game, inWidget = false, cardElement = $bindable() } = $props();
 
 	// State
 	let isHovered = $state(false);
@@ -20,14 +20,16 @@
 	// Elements
 	let videoElement = $state();
 	let videoLoaded = $state(false);
-	let cardElement = $state();
 
 	function handleHover() {
 		if (!isHovered && !isTouchDevice) playSound($cdnURL + "/assets/sounds/hover-selection.ogg", 0.25);
 		isHovered = true;
 		clearTimeout(hoverTimeout);
 		hoverTimeout = setTimeout(() => (isFullyHovered = true), 300);
-		if (videoElement && game.cover_video_url) videoElement.play().catch((err) => console.error("Video error:", err));
+		if (videoElement && game.cover_video_url) {
+			videoElement.currentTime = 0;
+			videoElement.play().catch((err) => console.error("Video error:", err));
+		}
 	}
 
 	function handleUnhover() {
@@ -53,7 +55,7 @@
 	onpointermove={(event) => (isTouchDevice = event.pointerType === "touch")}
 />
 
-<!-- Badge like NEW or FEATURED -->
+<!-- Badge NEW or FEATURED -->
 {#snippet gameBadge(isHovered, text)}
 	<div
 		class="bg-background absolute top-3 right-3 z-3 px-2 py-0.5 transition-opacity select-none"
@@ -67,7 +69,7 @@
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
 	bind:this={cardElement}
-	class="highlight-border group bg-background relative mb-[calc(4dvh+1vw)] block aspect-[2/3] shrink-0 cursor-pointer shadow-xl transition hover:outline-2 {coverImageLoaded
+	class="highlight-border group bg-background relative mb-[calc(min(5dvh,55px)+min(1vw,20px))] block aspect-[2/3] shrink-0 cursor-pointer shadow-xl transition hover:outline-2 {coverImageLoaded
 		? ''
 		: 'animate-pulse'} {inWidget ? 'mt-5 h-62' : 'mt-5 w-[clamp(min(85vw,17.75rem),calc((100%-10.5rem)/4),25rem)]'}"
 	onmouseenter={handleHover}
