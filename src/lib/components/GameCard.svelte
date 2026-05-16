@@ -5,7 +5,7 @@
 	import { Info } from "@lucide/svelte";
 	import { openGame } from "../utils/open-game.js";
 
-	let { game, inWidget = false, inSidebar = false } = $props();
+	let { game, inWidget = false, cardElement = $bindable() } = $props();
 
 	// State
 	let isHovered = $state(false);
@@ -20,14 +20,16 @@
 	// Elements
 	let videoElement = $state();
 	let videoLoaded = $state(false);
-	let cardElement = $state();
 
 	function handleHover() {
 		if (!isHovered && !isTouchDevice) playSound($cdnURL + "/assets/sounds/hover-selection.ogg", 0.25);
 		isHovered = true;
 		clearTimeout(hoverTimeout);
 		hoverTimeout = setTimeout(() => (isFullyHovered = true), 300);
-		if (videoElement && game.cover_video_url) videoElement.play().catch((err) => console.error("Video error:", err));
+		if (videoElement && game.cover_video_url) {
+			videoElement.currentTime = 0;
+			videoElement.play().catch((err) => console.error("Video error:", err));
+		}
 	}
 
 	function handleUnhover() {
@@ -53,14 +55,11 @@
 	onpointermove={(event) => (isTouchDevice = event.pointerType === "touch")}
 />
 
-<!-- Badge like NEW or FEATURED -->
+<!-- Badge NEW or FEATURED -->
 {#snippet gameBadge(isHovered, text)}
 	<div
-		class="bg-background absolute {inSidebar
-			? 'top-2 right-2'
-			: 'top-3 right-3'} z-3 px-2 py-0.5 transition-opacity select-none"
+		class="bg-background absolute top-3 right-3 z-3 px-2 py-0.5 transition-opacity select-none"
 		class:opacity-0={isHovered}
-		class:text-xs={inSidebar}
 		class:text-sm={inWidget}
 	>
 		<p class="font-bold text-white uppercase">{text}</p>
@@ -70,21 +69,19 @@
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
 	bind:this={cardElement}
-	class="highlight-border group relative flex aspect-[2/3] cursor-pointer flex-col shadow-xl transition hover:outline-2 {coverImageLoaded
+	class="highlight-border group bg-background relative mb-[calc(min(5dvh,55px)+min(1vw,20px))] block aspect-[2/3] shrink-0 cursor-pointer shadow-xl transition hover:outline-2 {coverImageLoaded
 		? ''
-		: 'animate-pulse'} {inSidebar ? 'h-44' : inWidget ? 'h-62' : 'h-92'} {inSidebar
-		? 'bg-muted'
-		: 'bg-background mt-5 mb-[calc(3dvh+1.5vw)]'}"
+		: 'animate-pulse'} {inWidget ? 'mt-5 h-62' : 'mt-5 w-[clamp(min(85vw,17.75rem),calc((100%-10.5rem)/4),25rem)]'}"
 	onmouseenter={handleHover}
 	onmouseleave={handleUnhover}
 	role="button"
 	tabindex="0"
 	onclick={() => {
-		if (isTouchDevice && !isFullyHovered && !inSidebar) {
+		if (isTouchDevice && !isFullyHovered) {
 			handleHover();
 			return;
 		}
-		openGame(game.domain, game.id, inWidget ? "widget" : inSidebar ? "sidebar" : "discovery");
+		openGame(game.domain, game.id, inWidget ? "widget" : "discovery");
 	}}
 >
 	{#if game?.featured}
@@ -120,7 +117,7 @@
 		}}
 	/>
 
-	{#if isHovered && !inSidebar}
+	{#if isHovered}
 		<div
 			transition:slide
 			class="bg-background/75 absolute right-0 bottom-0 left-0 z-2 flex max-h-1/3 flex-col overflow-hidden text-white backdrop-blur-xl"
@@ -147,22 +144,20 @@
 		</div>
 	{/if}
 
-	{#if !inSidebar}
-		<!-- Skeleton for circular image -->
-		<div
-			class="prevent-image-select bg-background absolute right-0 -bottom-[18%] left-0 mx-auto aspect-square w-1/5 animate-pulse rounded-full shadow-xl"
-		></div>
-		<img
-			src={game.logo_url}
-			alt="game logo"
-			class="prevent-image-select absolute right-0 -bottom-[18%] left-0 mx-auto aspect-square w-1/5 overflow-hidden rounded-full object-center opacity-0 transition group-hover:outline-2"
-			class:opacity-100={logoImageLoaded}
-			fetchpriority="high"
-			onload={() => {
-				logoImageLoaded = true;
-			}}
-		/>
-	{/if}
+	<!-- Skeleton for circular image -->
+	<div
+		class="prevent-image-select bg-background absolute right-0 -bottom-[18%] left-0 mx-auto aspect-square w-1/5 animate-pulse rounded-full shadow-xl"
+	></div>
+	<img
+		src={game.logo_url}
+		alt="game logo"
+		class="prevent-image-select absolute right-0 -bottom-[18%] left-0 mx-auto aspect-square w-1/5 overflow-hidden rounded-full object-center opacity-0 transition group-hover:outline-2"
+		class:opacity-100={logoImageLoaded}
+		fetchpriority="high"
+		onload={() => {
+			logoImageLoaded = true;
+		}}
+	/>
 </div>
 
 <style>

@@ -1,5 +1,5 @@
 import { createConfig } from "./lib/config.js";
-import { config, discoveryOpen, userIsFromPlaylight } from "./lib/store.js";
+import { config, discoveryOpen } from "./lib/store.js";
 import { eventCallbacks } from "./lib/utils/trigger-event.js";
 import { initWidgets, setupWidgetObserver } from "./lib/utils/mount-widgets.js";
 import { mountPlaylight } from "./lib/utils/mount-components.js";
@@ -25,12 +25,6 @@ class PlaylightSDK {
 		initWidgets();
 		setupWidgetObserver();
 
-		// Set user origin
-		const isPlaylightSession = sessionStorage.getItem("fromPlaylight") === "true";
-		const isFromPlaylight = new URLSearchParams(window.location.search).get("utm_source") === "playlight";
-		if (isFromPlaylight) sessionStorage.setItem("fromPlaylight", "true"); // Save in session storage to persist on MPAs
-		userIsFromPlaylight.set(isPlaylightSession || isFromPlaylight);
-
 		// Set initialized
 		window.playlightInitialized = true;
 	}
@@ -50,7 +44,7 @@ class PlaylightSDK {
 	 * @param {object} callback - Callback function
 	 */
 	onEvent(event, callback) {
-		const validEvents = ["discoveryOpen", "discoveryClose", "exitIntent", "sidebarEnable", "sidebarDisable"];
+		const validEvents = ["discoveryOpen", "discoveryClose", "exitIntent"];
 		if (!validEvents.includes(event)) return console.warn(`Invalid event type "${event}!"`);
 		if (!eventCallbacks.has(event)) eventCallbacks.set(event, []);
 		eventCallbacks.get(event).push(callback);

@@ -101,22 +101,6 @@
 			background-color: white;
 			color: black;
 		}
-
-		.vw-test {
-			margin-top: 2rem;
-			width: 50vw;
-			height: 25px;
-			background-color: black;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-		}
-
-		@media (max-width: 768px) {
-			.vw-test {
-				color: red;
-			}
-		}
 	</style>
 </head>
 
@@ -130,22 +114,12 @@
 
 				<div class="options">
 					<button class="button" id="show-discovery">Open discovery</button>
-					<button class="button" id="toggle-sidebar">Toggle sidebar</button>
 					<button class="button" id="toggle-exit-intent">Toggle exit intent</button>
 				</div>
 			</div>
 		</div>
 
 		<button class="button" onclick="openModal()">Open modal</button>
-
-		<div class="vw-test">
-			<p>50vw</p>
-		</div>
-
-		<div style="margin-top: 2rem; text-align: center">
-			<p>regular matchMedia event listener: <span id="mq-before">-</span></p>
-			<p>polyfilled matchMedia event listener: <span id="mq-after">-</span></p>
-		</div>
 
 		<details class="expandable-details">
 			<summary>Scrollable content test</summary>
@@ -215,13 +189,6 @@
 	</main>
 
 	<script type="module">
-		// matchMedia listener BEFORE SDK init
-		const mqBefore = window.matchMedia("(max-width: 768px)");
-		document.getElementById("mq-before").textContent = mqBefore.matches;
-		mqBefore.addEventListener("change", (e) => {
-			document.getElementById("mq-before").textContent = e.matches;
-		});
-
 		try {
 			const module = await import("../dist/playlight-sdk.es.js");
 			const playlightSDK = module.default;
@@ -238,14 +205,6 @@
 				console.log("Exit intent triggered event!");
 			});
 
-			playlightSDK.onEvent("sidebarEnable", () => {
-				console.log("Sidebar enable event!");
-			});
-
-			playlightSDK.onEvent("sidebarDisable", () => {
-				console.log("Sidebar disable event!");
-			});
-
 			playlightSDK.init();
 
 			// Wait for the SDK to be fully loaded to add event listeners
@@ -254,35 +213,16 @@
 			});
 
 			let discoveryToggled = true;
+
 			document.getElementById("toggle-exit-intent").addEventListener("click", () => {
 				discoveryToggled = !discoveryToggled;
 				applyConfig();
-			});
-
-			let sidebarToggled = false;
-			let mediaQueryListenerCreated = false;
-			document.getElementById("toggle-sidebar").addEventListener("click", () => {
-				sidebarToggled = !sidebarToggled;
-				applyConfig();
-
-				// Create matchMedia listener AFTER sidebar becomes visible for the first time
-				if (sidebarToggled && !mediaQueryListenerCreated) {
-					mediaQueryListenerCreated = true;
-					const query = window.matchMedia("(max-width: 768px)");
-					document.getElementById("mq-after").textContent = query.matches;
-					query.addEventListener("change", (e) => {
-						document.getElementById("mq-after").textContent = e.matches;
-					});
-				}
 			});
 
 			function applyConfig() {
 				playlightSDK?.setConfig({
 					exitIntent: {
 						enabled: discoveryToggled,
-					},
-					sidebar: {
-						forceVisible: sidebarToggled,
 					},
 				});
 			}

@@ -1,4 +1,3 @@
-import { toast } from "svelte-sonner";
 import { get } from "svelte/store";
 import { apiURL } from "./store";
 
@@ -45,7 +44,6 @@ class PlayLightAPI {
 
 				return await response.json();
 			} catch (error) {
-				toast.error("Request failed: " + error.message);
 				console.error("Playlight API request error:", error);
 			}
 		};
@@ -67,19 +65,9 @@ class PlayLightAPI {
 		return hostname.startsWith("www.") ? hostname.substring(4) : hostname;
 	}
 
-	// Get all categories
-	async getCategories() {
-		const endpoint = "/categories";
-		if (this.cachedRequests.has(endpoint)) return structuredClone(this.cachedRequests.get(endpoint)); // Cache
-		const data = await this.request(endpoint, { deduplicate: true });
-		if (data) this.cachedRequests.set(endpoint, data);
-		return structuredClone(data);
-	}
-
-	// Get game suggestions, optionally filtered by category
-	async getSuggestions(category, page = 1) {
+	// Get game suggestions
+	async getSuggestions(page = 1) {
 		let endpoint = "/suggestions";
-		if (category) endpoint += "/" + category;
 		endpoint += "?without=" + this.#getHostnameWithoutWWW();
 		if (page) endpoint += "&page=" + page;
 		if (this.cachedRequests.has(endpoint)) return structuredClone(this.cachedRequests.get(endpoint)); // Cache
@@ -120,15 +108,6 @@ class PlayLightAPI {
 				format,
 			}),
 		});
-	}
-
-	// Like or unlike a game (pass gameId and true to like, false to unlike)
-	async toggleLike(gameId, isLike = true) {
-		const action = isLike ? "like" : "unlike";
-		const result = await this.request(`/rating/${gameId}/${action}`, {
-			method: "POST",
-		});
-		return result?.success || false;
 	}
 }
 

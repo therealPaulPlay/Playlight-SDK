@@ -20,7 +20,7 @@
 
 	onMount(async () => {
 		isLoading = true;
-		games = await fetchQuickSuggestions(10, true);
+		games = await fetchQuickSuggestions(10);
 		isLoading = false;
 
 		// Wait for games to be rendered, then adjust mask image
@@ -70,8 +70,12 @@
 		style={maskStyle}
 	>
 		{#if isLoading}
-			<div class="flex h-62 w-full items-center justify-center">
+			<div class="flex h-full w-full items-center justify-center">
 				<LoaderCircle class="animate-spin opacity-75" size={30} strokeWidth={2.5} />
+			</div>
+		{:else if games.length === 0}
+			<div class="flex h-full w-full items-center justify-center">
+				<p class="text-white">No games available.</p>
 			</div>
 		{:else}
 			{#each games as game, i}
@@ -95,7 +99,7 @@
 		{#if hasLeftScroll}
 			<button
 				transition:blur
-				class="bg-background/85 absolute top-4/9 left-2 z-20 -translate-y-1/2 transform border p-1 py-4 text-white shadow-lg backdrop-blur-xl transition hover:bg-white hover:text-black max-sm:hidden"
+				class="bg-background/85 absolute top-4/9 left-2 z-20 -translate-y-1/2 transform border p-1 py-4 text-white shadow-lg backdrop-blur-xl transition hover:bg-foreground hover:text-black max-sm:hidden"
 				onclick={() => containerRef.scrollBy({ left: 2 * -cardWidth, behavior: "smooth" })}
 			>
 				<ChevronLeft size={22} strokeWidth={2.75} />
@@ -105,7 +109,7 @@
 		{#if hasRightScroll}
 			<button
 				transition:blur
-				class="bg-background/85 absolute top-4/9 right-2 z-20 -translate-y-1/2 transform border p-1 py-4 text-white shadow-lg backdrop-blur-xl transition hover:bg-white hover:text-black max-sm:hidden"
+				class="bg-background/85 absolute top-4/9 right-2 z-20 -translate-y-1/2 transform border p-1 py-4 text-white shadow-lg backdrop-blur-xl transition hover:bg-foreground hover:text-black max-sm:hidden"
 				onclick={() => containerRef.scrollBy({ left: 2 * cardWidth, behavior: "smooth" })}
 			>
 				<ChevronRight size={22} strokeWidth={2.75} />
