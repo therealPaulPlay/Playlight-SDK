@@ -201,7 +201,7 @@
 	<!-- Game grid -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
-		class="mask-fade relative h-full w-full overflow-y-auto overscroll-contain p-4 pt-18 sm:pt-24"
+		class="mask-fade relative h-full w-full overflow-y-auto overscroll-contain p-4 pt-20 sm:pt-24"
 		bind:this={scrollContainer}
 		onpointerup={closeDiscoveryOnEmptyClick}
 		onscroll={(e) => (scrollTop = e.currentTarget.scrollTop)}
