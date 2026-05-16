@@ -41,13 +41,25 @@ class PlaylightSDK {
 	/**
 	 * Register an event callback
 	 * @param {string} event - Event name
-	 * @param {object} callback - Callback function
+	 * @param {Function} callback - Callback function
 	 */
 	onEvent(event, callback) {
 		const validEvents = ["discoveryOpen", "discoveryClose", "exitIntent"];
 		if (!validEvents.includes(event)) return console.warn(`Invalid event type "${event}!"`);
 		if (!eventCallbacks.has(event)) eventCallbacks.set(event, []);
 		eventCallbacks.get(event).push(callback);
+	}
+
+	/**
+	 * Remove an event callback previously registered with onEvent
+	 * @param {string} event - Event name
+	 * @param {Function} callback - The same callback reference that was passed to onEvent
+	 */
+	offEvent(event, callback) {
+		const callbacks = eventCallbacks.get(event);
+		if (!callbacks) return;
+		const index = callbacks.indexOf(callback);
+		if (index !== -1) callbacks.splice(index, 1);
 	}
 
 	/**
