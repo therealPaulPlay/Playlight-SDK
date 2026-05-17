@@ -11,7 +11,7 @@
 	let isLoading = $state(true);
 	let games = $state([]);
 	let containerRef = $state();
-	let cardWidth = $state(0);
+	let cardElement = $state();
 
 	// Computed values
 	let hasLeftScroll = $state(false);
@@ -78,10 +78,8 @@
 				<p class="text-white">No games available.</p>
 			</div>
 		{:else}
-			{#each games as game, i}
-				<div class="snap-center" bind:clientWidth={cardWidth}>
-					<GameCard {game} inWidget={true} />
-				</div>
+			{#each games as game}
+				<GameCard {game} inWidget={true} bind:cardElement />
 			{/each}
 
 			<!-- View more card -->
@@ -100,7 +98,7 @@
 			<button
 				transition:blur
 				class="bg-background/85 absolute top-4/9 left-2 z-20 -translate-y-1/2 transform border p-1 py-4 text-white shadow-lg backdrop-blur-xl transition hover:bg-foreground hover:text-black max-sm:hidden"
-				onclick={() => containerRef.scrollBy({ left: 2 * -cardWidth, behavior: "smooth" })}
+				onclick={() => containerRef.scrollBy({ left: 2 * -cardElement?.offsetWidth, behavior: "smooth" })}
 			>
 				<ChevronLeft size={22} strokeWidth={2.75} />
 			</button>
@@ -110,7 +108,7 @@
 			<button
 				transition:blur
 				class="bg-background/85 absolute top-4/9 right-2 z-20 -translate-y-1/2 transform border p-1 py-4 text-white shadow-lg backdrop-blur-xl transition hover:bg-foreground hover:text-black max-sm:hidden"
-				onclick={() => containerRef.scrollBy({ left: 2 * cardWidth, behavior: "smooth" })}
+				onclick={() => containerRef.scrollBy({ left: 2 * cardElement?.offsetWidth, behavior: "smooth" })}
 			>
 				<ChevronRight size={22} strokeWidth={2.75} />
 			</button>

@@ -30,7 +30,7 @@
 	let resizeObserver;
 	let bottomDetector = $state();
 	let scrollContainer = $state();
-	let firstCard = $state();
+	let cardElement = $state();
 
 	// Timeout
 	let showScrollHintTimeout;
@@ -173,7 +173,7 @@
 				uppercase={false}
 				onclick={() => {
 					// Card height + logo overflow (18% of card height) + half the row gap (gap-14 = 3.5rem)
-					if (firstCard) scrollContainer.scrollBy({ top: firstCard.getBoundingClientRect().height * 1.18 + 28, behavior: "smooth" });
+					if (cardElement) scrollContainer.scrollBy({ top: cardElement.getBoundingClientRect().height * 1.18 + 28, behavior: "smooth" });
 				}}
 				class="shadow-lg backdrop-blur-xl"
 			>
@@ -201,7 +201,7 @@
 	<!-- Game grid -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
-		class="mask-fade relative h-full w-full overflow-y-auto overscroll-contain p-4 pt-26 sm:pt-30"
+		class="mask-fade relative h-full w-full overflow-y-auto overscroll-contain p-4 pt-26 sm:pt-30 max-sm:snap-y snap-mandatory"
 		bind:this={scrollContainer}
 		onpointerup={closeDiscoveryOnEmptyClick}
 		onscroll={(e) => (scrollTop = e.currentTarget.scrollTop)}
@@ -218,12 +218,8 @@
 			<div
 				class="pointer-events-none container mx-auto flex h-fit flex-wrap content-start justify-center gap-14 sm:!px-14 2xl:!max-w-[1420px]"
 			>
-				{#each games as game, i}
-					{#if i === 0}
-						<GameCard {game} bind:cardElement={firstCard} />
-					{:else}
-						<GameCard {game} />
-					{/if}
+				{#each games as game}
+					<GameCard {game} bind:cardElement />
 				{/each}
 
 				<!-- Bottom detector with loading icon -->

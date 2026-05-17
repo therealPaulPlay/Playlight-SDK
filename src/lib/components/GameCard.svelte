@@ -69,7 +69,7 @@
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
 	bind:this={cardElement}
-	class="highlight-border group bg-background relative mb-[calc(min(5dvh,55px)+min(1vw,20px))] block aspect-[2/3] shrink-0 cursor-pointer shadow-xl transition hover:outline-2 {coverImageLoaded
+	class="highlight-border group bg-background relative mb-[calc(min(5dvh,55px)+min(1vw,20px))] block aspect-[2/3] shrink-0 cursor-pointer shadow-xl transition hover:outline-2 snap-center {coverImageLoaded
 		? ''
 		: 'animate-pulse'} {inWidget ? 'mt-5 h-62' : 'mt-5 w-[clamp(min(85vw,17.75rem),calc((100%-10.5rem)/4),25rem)]'}"
 	onmouseenter={handleHover}
