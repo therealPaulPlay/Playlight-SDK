@@ -218,8 +218,12 @@
 			<div
 				class="pointer-events-none container mx-auto flex h-fit flex-wrap content-start justify-center gap-14 sm:!px-14 2xl:!max-w-[1420px]"
 			>
-				{#each games as game}
-					<GameCard {game} bind:cardElement />
+				{#each games as game, i}
+					{#if i === 0}
+						<GameCard {game} bind:cardElement />
+					{:else}
+						<GameCard {game} />
+					{/if}
 				{/each}
 
 				<!-- Bottom detector with loading icon -->
