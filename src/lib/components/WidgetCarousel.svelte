@@ -78,8 +78,12 @@
 				<p class="text-white">No games available.</p>
 			</div>
 		{:else}
-			{#each games as game}
-				<GameCard {game} inWidget={true} bind:cardElement />
+			{#each games as game, i}
+				{#if i === 0}
+					<GameCard {game} inWidget={true} bind:cardElement />
+				{:else}
+					<GameCard {game} inWidget={true} />
+				{/if}
 			{/each}
 
 			<!-- View more card -->
