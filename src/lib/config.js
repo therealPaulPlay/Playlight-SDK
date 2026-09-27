@@ -4,6 +4,9 @@ const defaultConfig = {
 		enabled: true,
 		immediate: false,
 	},
+	widget: {
+		externalGames: []
+	}
 };
 
 // Create configuration by merging defaults with user config
