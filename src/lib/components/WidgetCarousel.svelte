@@ -77,6 +77,20 @@
 			rgba(0, 0, 0, ${0.05 * rightFactor + (1 - rightFactor)})
 		)`;
 	}
+
+	// Scroll by two cards, with edge snapping
+	function scrollWidget(direction) {
+		const maxScroll = containerRef.scrollWidth - containerRef.clientWidth;
+		const step = 2 * cardElement.offsetWidth;
+		let left = containerRef.scrollLeft + direction * step;
+
+		// Snapping
+		if (left < step / 2) left = 0; // Margin of one card
+		if (left > maxScroll - step / 2) left = maxScroll;
+
+		// Scroll
+		containerRef.scrollTo({ left, behavior: "smooth" });
+	}
 </script>
 
 <div class="playlight-sdk playlight-sdk-widget">
@@ -129,7 +143,7 @@
 			<button
 				transition:blur
 				class="bg-background/85 absolute top-4/9 left-2 z-20 -translate-y-1/2 transform border p-1 py-4 text-white shadow-lg backdrop-blur-xl transition hover:bg-foreground hover:text-black max-sm:hidden"
-				onclick={() => containerRef.scrollBy({ left: 2 * -cardElement?.offsetWidth, behavior: "smooth" })}
+				onclick={() => scrollWidget(-1)}
 			>
 				<ChevronLeft size={22} strokeWidth={2.75} />
 			</button>
@@ -139,7 +153,7 @@
 			<button
 				transition:blur
 				class="bg-background/85 absolute top-4/9 right-2 z-20 -translate-y-1/2 transform border p-1 py-4 text-white shadow-lg backdrop-blur-xl transition hover:bg-foreground hover:text-black max-sm:hidden"
-				onclick={() => containerRef.scrollBy({ left: 2 * cardElement?.offsetWidth, behavior: "smooth" })}
+				onclick={() => scrollWidget(1)}
 			>
 				<ChevronRight size={22} strokeWidth={2.75} />
 			</button>
