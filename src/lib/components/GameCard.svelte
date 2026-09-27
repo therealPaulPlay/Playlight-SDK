@@ -5,7 +5,7 @@
 	import { Info } from "@lucide/svelte";
 	import { openGame } from "../utils/open-game.js";
 
-	let { game, inWidget = false, cardElement = $bindable() } = $props();
+	let { game, inWidget = false, square = false, cardElement = $bindable() } = $props();
 
 	// State
 	let isHovered = $state(false);
@@ -40,6 +40,7 @@
 	}
 
 	function isNewGame(createdAtString) {
+		if (!createdAtString) return false;
 		const sevenDaysAgo = new Date();
 		sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 		const createdAt = new Date(createdAtString);
@@ -72,6 +73,7 @@
 	class="highlight-border group bg-background relative mb-[calc(min(5dvh,55px)+min(1vw,20px))] block aspect-[2/3] shrink-0 cursor-pointer shadow-xl transition hover:outline-2 snap-center {coverImageLoaded
 		? ''
 		: 'animate-pulse'} {inWidget ? 'mt-5 h-62' : 'mt-5 w-[clamp(min(85vw,17.75rem),calc((100%-10.5rem)/4),25rem)]'}"
+	class:aspect-square={square}
 	onmouseenter={handleHover}
 	onmouseleave={handleUnhover}
 	role="button"
@@ -81,12 +83,14 @@
 			handleHover();
 			return;
 		}
-		openGame(game.domain, game.id, inWidget ? "widget" : "discovery");
+		openGame(game.domain, game.id ?? null, inWidget ? "widget" : "discovery");
 	}}
 >
-	{#if game?.featured}
+	{#if game.featured}
 		{@render gameBadge(isHovered, "Featured")}
-	{:else if isNewGame(game?.created_at)}
+	{:else if game.external}
+		{@render gameBadge(isHovered, game.badge ? game.badge : "External")}
+	{:else if isNewGame(game.created_at)}
 		{@render gameBadge(isHovered, "New")}
 	{/if}
 
@@ -95,6 +99,7 @@
 			bind:this={videoElement}
 			src={game.cover_video_url}
 			class="absolute top-0 left-0 z-1 aspect-[2/3] w-full object-cover opacity-0"
+			class:aspect-square={square}
 			class:opacity-100={isHovered && videoLoaded && game.cover_video_url}
 			muted
 			playsinline
@@ -110,6 +115,7 @@
 		src={game.cover_image_url}
 		alt="cover"
 		class="prevent-image-select absolute top-0 left-0 aspect-[2/3] w-full object-cover opacity-0 transition"
+		class:aspect-square={square}
 		class:opacity-100={coverImageLoaded && (!isHovered || !videoLoaded || !game.cover_video_url)}
 		fetchpriority="high"
 		onload={() => {
@@ -145,19 +151,21 @@
 	{/if}
 
 	<!-- Skeleton for circular image -->
-	<div
-		class="prevent-image-select bg-background absolute right-0 -bottom-[18%] left-0 mx-auto aspect-square w-1/5 animate-pulse rounded-full shadow-xl"
-	></div>
-	<img
-		src={game.logo_url}
-		alt="game logo"
-		class="prevent-image-select absolute right-0 -bottom-[18%] left-0 mx-auto aspect-square w-1/5 overflow-hidden rounded-full object-center opacity-0 transition group-hover:outline-2"
-		class:opacity-100={logoImageLoaded}
-		fetchpriority="high"
-		onload={() => {
-			logoImageLoaded = true;
-		}}
-	/>
+	{#if !game.external}
+		<div
+			class="prevent-image-select bg-background absolute right-0 -bottom-[18%] left-0 mx-auto aspect-square w-1/5 animate-pulse rounded-full shadow-xl"
+		></div>
+		<img
+			src={game.logo_url}
+			alt="game logo"
+			class="prevent-image-select absolute right-0 -bottom-[18%] left-0 mx-auto aspect-square w-1/5 overflow-hidden rounded-full object-center opacity-0 transition group-hover:outline-2"
+			class:opacity-100={logoImageLoaded}
+			fetchpriority="high"
+			onload={() => {
+				logoImageLoaded = true;
+			}}
+		/>
+	{/if}
 </div>
 
 <style>

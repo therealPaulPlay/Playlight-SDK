@@ -205,7 +205,11 @@
 				console.log("Exit intent triggered event!");
 			});
 
-			playlightSDK.init();
+			playlightSDK.init({
+				widget: {
+					externalGames: [{ name: "Test game", description: "This is a test.", domain: "example.com", cover_video_url: "https://lorem.video/720p", logo_url: "https://picsum.photos/100", cover_image_url: "https://picsum.photos/300/200", square: true, badge: "Partner" }]
+				}
+			});
 
 			// Wait for the SDK to be fully loaded to add event listeners
 			document.getElementById("show-discovery").addEventListener("click", () => {

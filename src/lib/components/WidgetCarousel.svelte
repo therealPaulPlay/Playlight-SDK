@@ -6,6 +6,7 @@
 	import Button from "./ui/Button.svelte";
 	import { fetchQuickSuggestions } from "../utils/quick-suggestions.js";
 	import { openDiscovery } from "../utils/open-discovery.js";
+	import { config } from "../store";
 
 	// State
 	let isLoading = $state(true);
@@ -18,9 +19,31 @@
 	let hasRightScroll = $state(true);
 	let maskStyle = $state("");
 
+	// Validate the schema of externally passed in games
+	function validateExternalGames(games = []) {
+		if (!Array.isArray(games)) {
+			console.error("External games must be an array!");
+			return [];
+		}
+
+		for (const game of games) {
+			if (typeof game !== "object" || game === null) {
+				console.error("External games must all be objects!");
+				return [];
+			}
+			if (!game.description || !game.logo_url || !game.cover_video_url || !game.cover_image_url || !game.domain || !game.name) {
+				console.error(
+					"Game objects must include: description, logo_url, cover_video_url, cover_image_url, domain, and name!",
+				);
+				return [];
+			}
+		}
+		return games.map((game) => ({ ...game, external: true }));
+	}
+
 	onMount(async () => {
 		isLoading = true;
-		games = await fetchQuickSuggestions(10);
+		games = [...validateExternalGames($config?.widget?.externalGames), ...(await fetchQuickSuggestions(10))];
 		isLoading = false;
 
 		// Wait for games to be rendered, then adjust mask image
@@ -54,6 +77,20 @@
 			rgba(0, 0, 0, ${0.05 * rightFactor + (1 - rightFactor)})
 		)`;
 	}
+
+	// Scroll by two cards, with edge snapping
+	function scrollWidget(direction) {
+		const maxScroll = containerRef.scrollWidth - containerRef.clientWidth;
+		const step = 2 * cardElement.offsetWidth;
+		let left = containerRef.scrollLeft + direction * step;
+
+		// Snapping
+		if (left < step / 2) left = 0; // Margin of one card
+		if (left > maxScroll - step / 2) left = maxScroll;
+
+		// Scroll
+		containerRef.scrollTo({ left, behavior: "smooth" });
+	}
 </script>
 
 <div class="playlight-sdk playlight-sdk-widget">
@@ -79,10 +116,14 @@
 			</div>
 		{:else}
 			{#each games as game, i}
+				{@const externalToRegIndex = games.findIndex((e) => !e.external)}
 				{#if i === 0}
-					<GameCard {game} inWidget={true} bind:cardElement />
+					<GameCard {game} square={game.square} inWidget={true} bind:cardElement />
 				{:else}
-					<GameCard {game} inWidget={true} />
+					{#if i === externalToRegIndex && i !== 0}
+						<div class="h-62 w-px opacity-60 bg-muted-foreground shrink-0 mt-5"></div>
+					{/if}
+					<GameCard {game} square={game.square} inWidget={true} />
 				{/if}
 			{/each}
 
@@ -102,7 +143,7 @@
 			<button
 				transition:blur
 				class="bg-background/85 absolute top-4/9 left-2 z-20 -translate-y-1/2 transform border p-1 py-4 text-white shadow-lg backdrop-blur-xl transition hover:bg-foreground hover:text-black max-sm:hidden"
-				onclick={() => containerRef.scrollBy({ left: 2 * -cardElement?.offsetWidth, behavior: "smooth" })}
+				onclick={() => scrollWidget(-1)}
 			>
 				<ChevronLeft size={22} strokeWidth={2.75} />
 			</button>
@@ -112,7 +153,7 @@
 			<button
 				transition:blur
 				class="bg-background/85 absolute top-4/9 right-2 z-20 -translate-y-1/2 transform border p-1 py-4 text-white shadow-lg backdrop-blur-xl transition hover:bg-foreground hover:text-black max-sm:hidden"
-				onclick={() => containerRef.scrollBy({ left: 2 * cardElement?.offsetWidth, behavior: "smooth" })}
+				onclick={() => scrollWidget(1)}
 			>
 				<ChevronRight size={22} strokeWidth={2.75} />
 			</button>
