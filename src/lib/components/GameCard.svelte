@@ -67,8 +67,11 @@
 	</div>
 {/snippet}
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-<div
+<!-- Real a tag for SEO, Playlight games are nofollow since which ones are shown changes based on the algo -->
+<a
+	href={"https://" + game.domain}
+	target="_blank"
+	rel={game.external ? "noopener" : "noopener nofollow"}
 	bind:this={cardElement}
 	class="highlight-border group bg-background relative mb-[calc(min(5dvh,55px)+min(1vw,20px))] block aspect-[2/3] shrink-0 cursor-pointer shadow-xl transition hover:outline-2 snap-center {coverImageLoaded
 		? ''
@@ -76,9 +79,8 @@
 	class:aspect-square={square}
 	onmouseenter={handleHover}
 	onmouseleave={handleUnhover}
-	role="button"
-	tabindex="0"
-	onclick={() => {
+	onclick={(e) => {
+		e.preventDefault();
 		if (isTouchDevice && !isFullyHovered) {
 			handleHover();
 			return;
@@ -113,7 +115,7 @@
 
 	<img
 		src={game.cover_image_url}
-		alt="cover"
+		alt={game.name}
 		class="prevent-image-select absolute top-0 left-0 aspect-[2/3] w-full object-cover opacity-0 transition"
 		class:aspect-square={square}
 		class:opacity-100={coverImageLoaded && (!isHovered || !videoLoaded || !game.cover_video_url)}
@@ -166,12 +168,16 @@
 			}}
 		/>
 	{/if}
-</div>
+</a>
 
 <style>
 	.highlight-border,
 	.highlight-border img {
 		outline-color: rgba(255, 255, 255, 0.75);
+	}
+
+	.highlight-border {
+		-webkit-touch-callout: none;
 	}
 
 	/* this also prevents 3d-touch / haptic touch on ios */
