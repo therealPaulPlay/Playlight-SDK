@@ -31,9 +31,9 @@
 				console.error("External games must all be objects!");
 				return [];
 			}
-			if (!game.description || !game.logo_url || !game.cover_video_url || !game.cover_image_url || !game.domain || !game.name) {
+			if (!game.description || !game.cover_video_url || !game.cover_image_url || !game.domain || !game.name) {
 				console.error(
-					"Game objects must include: description, logo_url, cover_video_url, cover_image_url, domain, and name!",
+					"Game objects must include: description, cover_video_url, cover_image_url, domain, and name!",
 				);
 				return [];
 			}
