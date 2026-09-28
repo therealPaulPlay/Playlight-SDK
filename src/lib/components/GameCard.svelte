@@ -10,6 +10,7 @@
 	// State
 	let isHovered = $state(false);
 	let isFullyHovered = $state(false);
+	let fullyHoveredAtClickStart = false; // Save isFullyHovered value at pointer down and utilize for click event since mobile browsers like to re-emit desktop events in a delayed manner
 	let isTouchDevice = $state(false);
 	let coverImageLoaded = $state(false);
 	let logoImageLoaded = $state(false);
@@ -70,8 +71,7 @@
 <!-- Real a tag for SEO, Playlight games are nofollow since which ones are shown changes based on the algo -->
 <a
 	href={"https://" + game.domain}
-	target="_blank"
-	rel={game.external ? "noopener" : "noopener nofollow"}
+	rel={game.external ? undefined : "nofollow"}
 	bind:this={cardElement}
 	class="highlight-border group bg-background relative mb-[calc(min(5dvh,55px)+min(1vw,20px))] block aspect-[2/3] shrink-0 cursor-pointer shadow-xl transition hover:outline-2 snap-center {coverImageLoaded
 		? ''
@@ -79,9 +79,10 @@
 	class:aspect-square={square}
 	onmouseenter={handleHover}
 	onmouseleave={handleUnhover}
+	onpointerdown={() => (fullyHoveredAtClickStart = isFullyHovered)}
 	onclick={(e) => {
 		e.preventDefault();
-		if (isTouchDevice && !isFullyHovered) {
+		if (isTouchDevice && !fullyHoveredAtClickStart) {
 			handleHover();
 			return;
 		}
