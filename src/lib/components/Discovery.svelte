@@ -139,13 +139,13 @@
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
-	class="bg-background/75 fixed inset-0 top-0 right-0 bottom-0 left-0 flex flex-col justify-center text-white backdrop-blur-md"
+	class="bg-background/75 fixed inset-0 top-0 right-0 bottom-0 left-0 flex flex-col justify-center pr-[env(safe-area-inset-right)] pl-[env(safe-area-inset-left)] text-white backdrop-blur-md"
 	id="playlight-discovery"
 	transition:blur={{ duration: 250 }}
 	onpointerup={closeDiscoveryOnEmptyClick}
 >
 	<!-- Header -->
-	<div class="pointer-events-none absolute top-0 right-0 left-0 z-1 flex items-center justify-between p-4">
+	<div class="pointer-events-none absolute top-[env(safe-area-inset-top)] right-[env(safe-area-inset-right)] left-[env(safe-area-inset-left)] z-1 flex items-center justify-between p-4">
 		<img
 			alt="logo"
 			src={$cdnURL + "/assets/images/logo-white-small.png"}
@@ -166,7 +166,7 @@
 	{#if showScrollHint && isScrollable}
 		<div
 			transition:fly={{ y: 100, easing: backOut, duration: 500 }}
-			class="fixed right-6 bottom-6 left-6 z-2 mx-auto w-fit max-w-[calc(100%-2rem)] max-lg:hidden"
+			class="fixed right-[calc(1.5rem+env(safe-area-inset-right))] bottom-[calc(1.5rem+env(safe-area-inset-bottom))] left-[calc(1.5rem+env(safe-area-inset-left))] z-2 mx-auto w-fit max-w-[calc(100%-2rem)] max-lg:hidden"
 		>
 			<Button
 				size="lg"
@@ -216,7 +216,7 @@
 			</div>
 		{:else}
 			<div
-				class="pointer-events-none container mx-auto flex h-fit flex-wrap content-start justify-center gap-14 sm:!px-14 2xl:!max-w-[1420px]"
+				class="pointer-events-none container mx-auto flex h-fit flex-wrap pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] content-start justify-center gap-14 sm:!px-14 2xl:!max-w-[1420px]"
 			>
 				{#each games as game, i}
 					{#if i === 0}
