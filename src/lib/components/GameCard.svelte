@@ -129,7 +129,7 @@
 	{#if isHovered}
 		<div
 			transition:slide
-			class="bg-background/75 absolute right-0 bottom-0 left-0 z-2 flex max-h-1/3 flex-col overflow-hidden text-white backdrop-blur-xl"
+			class="bg-background/75 absolute right-0 bottom-0 left-0 z-2 flex {inWidget ? (isTouchDevice ? "max-h-3/5" : "max-h-1/2") : (isTouchDevice ? "max-h-2/5" : "max-h-1/3")} flex-col overflow-hidden text-white backdrop-blur-xl"
 		>
 			<div class="h-full w-full overflow-y-auto p-3">
 				<h3 class="mb-2 truncate text-center text-lg font-bold">{game.name}</h3>
